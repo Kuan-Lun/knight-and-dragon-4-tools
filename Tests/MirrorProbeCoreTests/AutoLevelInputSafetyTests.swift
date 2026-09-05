@@ -25,6 +25,28 @@ struct AutoLevelInputSafetyTests {
         )
     }
 
+    @Test("Another window from the focused application still obscures the locked window")
+    func rejectsSameProcessWindowAboveTarget() {
+        #expect(
+            rejection(
+                frontmostProcessID: identity.processID,
+                topmostWindowIdentity: AutoLevelWindowIdentity(
+                    processID: identity.processID, windowID: identity.windowID + 1
+                )
+            ) == .clickPointObscured
+        )
+    }
+
+    @Test("An unfocused application's covering window is not ignored")
+    func rejectsUnfocusedApplicationWindowAboveTarget() {
+        #expect(
+            rejection(
+                frontmostProcessID: identity.processID,
+                topmostWindowIdentity: AutoLevelWindowIdentity(processID: 98, windowID: 8)
+            ) == .clickPointObscured
+        )
+    }
+
     @Test("Unavailable live focus never authorizes a click on an otherwise matching window")
     func rejectsUnavailableFocusedProcess() {
         let snapshot = AutoLevelInputSnapshot(

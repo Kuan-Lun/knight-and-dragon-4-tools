@@ -458,8 +458,47 @@ The reason the game ignored the original event remains unproven. A read-only `wi
 diagnostic now records AX focused-window versus hit-window agreement for success-page advances;
 unknown AX data remains diagnostic and cannot override the existing input checks.
 The 0.4.12 source suite passes 408 tests, including the recorded EXP failure, both pages' retry
-limits, and cancellation when the page advances before a retry is posted. Live validation of
-the rebuilt app remains pending renewed macOS permissions.
+limits, and cancellation when the page advances before a retry is posted. After renewed macOS
+permissions were verified, `logs/auto-level-20260905-233335.Io9WAe/run-report.json` stopped after
+14.361 seconds: its one `selectMissionRepeat` input left the EXP page unselected. This establishes
+that ignored input also affects the repeat row, before the new advance retry path is reached.
+The user reproduced the problem with overlapping Firefox and Terminal windows above the mirror.
+The final input guard already compares the actual topmost CG window ID, including windows owned
+by an unfocused application or another window owned by the focused application. That check does
+not establish that the mirror's content window has key focus, however. The root cause of the
+ignored input was not established.
+
+The following run at 23:39:51 stopped after 3.831 seconds with no posted input because all three
+preflight focus checks still found Firefox. The user confirmed manually clicking Firefox during
+that test; it is a user focus change, not evidence that window activation itself failed. The
+LaunchServices comparisons that evening were also inconclusive: one included user input during
+the borrow, and the other found a battle already underway rather than the expected result page.
+
+With the user preserving the overlapping arrangement for a short comparison,
+`logs/auto-level-20260905-234640.PlxUAx/run-report.json` posted six actions and stopped on the
+requested STOP after 28.990 seconds. It closed the existing battle-end prompt, selected repeat,
+advanced EXP to loot and then left loot on the first posted attempt for each page, handled the
+following prompts, and entered a new battle. The recorded cycle was the result present at
+startup; this short test did not complete another battle. Both success-advance diagnostics
+reported matching AX focused and hit windows with the expected PID and frame. Those reads precede
+the fresh preflight capture and are not atomic evidence of focus at mouse-down. A later modal
+action encountered one Terminal focus change with a user-input notification; its next activation
+attempt succeeded without an extra posted click. No ignored advance or timeout retry occurred.
+The user elected not to pursue the rare overlap failure further. No speculative AXRaise or
+key-window mutation was added; the additional regression tests confirm that covering windows are
+rejected regardless of whether they share the focused process or belong to an unfocused app.
+
+The subsequent five-minute 0.4.12 run at 23:49:35
+(`logs/auto-level-20260905-234935.CkAjqU/run-report.json`) reached the configured limit normally
+after 300.491 seconds, with 28 posted actions and five recorded success cycles: one existing
+startup result and four newly completed battles. It also exercised the previously unverified EXP
+retry naturally: action 18's after-frame at 178.773 seconds remained on EXP, action 19's after-frame
+at 194.663 seconds showed loot, and action 20 then left loot. The runner returned to battle at
+208.237 seconds. Two unposted focus retries recovered, and five user-input notifications cancelled
+individual focus restorations; no diagnostic persistence error was recorded. This validates the
+bounded EXP retry in practice without establishing why the original click was ignored. The full
+source suite, including the two added window-overlap regressions, passes 410 tests. No app rebuild
+or additional macOS permission grant was needed for these test/documentation changes.
 
 ## Read-only state analysis
 
