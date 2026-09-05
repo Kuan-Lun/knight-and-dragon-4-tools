@@ -109,7 +109,6 @@ struct AutoLevelControllerTests {
         )))?.intent == .pressWideModalTopButton)
 
         var changingLayout = makeController(
-            noTalisman: true,
             policy: policy(actionCooldown: 0)
         )
         _ = changingLayout.consume(makeSnapshot(
@@ -126,23 +125,16 @@ struct AutoLevelControllerTests {
         )))?.intent == .pressWideModalTopButton)
     }
 
-    @Test("A geometry-only two-button modal retains the no-talisman boundary")
-    func geometryTwoButtonRequiresNoTalismanConfirmation() {
-        var unconfirmed = makeController()
-        #expect(unconfirmed.consume(makeSnapshot(
-            state: .wideModalTwoButtons,
-            time: 1,
-            fingerprint: "two",
-            actions: [gameAction(.pressWideModalTopButton)]
-        )) == .stop(.retreatRequiresNoTalismanConfirmation))
-
-        var confirmed = makeController(noTalisman: true)
-        #expect(requireAction(confirmed.consume(makeSnapshot(
+    @Test("A geometry-only two-button modal uses its upper-row rule without equipment metadata")
+    func geometryTwoButtonNeedsNoEquipmentMetadata() {
+        var controller = makeController()
+        #expect(requireAction(controller.consume(makeSnapshot(
             state: .wideModalTwoButtons,
             time: 1,
             fingerprint: "two",
             actions: [gameAction(.pressWideModalTopButton)]
         )))?.intent == .pressWideModalTopButton)
+        #expect(controller.actionsIssued == 1)
     }
 
     @Test("Closing a battle event may reach mission success before the next poll")
@@ -309,6 +301,49 @@ struct AutoLevelControllerTests {
             fingerprint: "same",
             actions: [gameAction(.closeBattlePrompt)]
         )) == .stop(.actionDidNotAdvance(intent: .closeBattlePrompt)))
+    }
+
+    @Test("Capture recovery sees the original posted-action deadline until acknowledgement")
+    func pendingAcknowledgementDeadlineDoesNotRenewWhileWaiting() throws {
+        var controller = makeController(policy: policy(
+            actionCooldown: 0,
+            postActionTimeout: 5
+        ))
+        #expect(controller.pendingActionAcknowledgementDeadline == nil)
+        let request = try #require(requireAction(controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "prompt",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))))
+        #expect(controller.pendingActionAcknowledgementDeadline == nil)
+        let posted = controller.markActionPosted(request, at: 2)
+        #expect(posted)
+        #expect(controller.pendingActionAcknowledgementDeadline == 7)
+
+        #expect(controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 3,
+            fingerprint: "prompt",
+            actions: [gameAction(.closeBattlePrompt)]
+        )) == .wait(.awaitingFrameChange(intent: .closeBattlePrompt)))
+        #expect(controller.pendingActionAcknowledgementDeadline == 7)
+        #expect(controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 4,
+            fingerprint: "prompt-animation",
+            actions: [gameAction(.closeBattlePrompt)]
+        )) == .wait(.awaitingStateChange(intent: .closeBattlePrompt)))
+        #expect(controller.pendingActionAcknowledgementDeadline == 7)
+
+        #expect(controller.consume(makeSnapshot(
+            state: .missionComplete,
+            time: 5,
+            fingerprint: "success",
+            actions: [gameAction(.selectMissionRepeat)]
+        )) == .completedCycle(.init(count: 1, outcome: .success)))
+        #expect(controller.pendingActionAcknowledgementDeadline == nil)
+        #expect(controller.actionsIssued == 1)
     }
 
     @Test("A posted loot-page success advance retries twice before the third timeout stops")
@@ -1025,7 +1060,7 @@ struct AutoLevelControllerTests {
 
     @Test("Failed result counts once, selects repeat, then uses failure top advance")
     func failedCycleSequence() {
-        var controller = makeController(noTalisman: true, policy: policy(actionCooldown: 0))
+        var controller = makeController(policy: policy(actionCooldown: 0))
         let result = makeSnapshot(
             state: .missionFailed,
             time: 1,
@@ -1084,7 +1119,6 @@ struct AutoLevelControllerTests {
     @Test("An unposted repeat action can be cancelled after its exact forward failure transition")
     func cancelsUnpostedFailureRepeatAfterForwardTransition() {
         var controller = makeController(
-            noTalisman: true,
             policy: policy(actionCooldown: 0)
         )
         let result = makeSnapshot(
@@ -1679,49 +1713,75 @@ struct AutoLevelControllerTests {
 
     @Test("An OCR-only external retreat confirmation remains unauthorized without geometry")
     func externalOCRRetreatConfirmationStops() {
-        var controller = makeController(noTalisman: false)
+        var controller = makeController()
         let decision = controller.consume(makeSnapshot(
             state: .retreatConfirmation,
             time: 1,
             fingerprint: "retreat-confirm",
-            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .verifiedNoTalismanRun)]
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
         ))
 
         #expect(decision == .stop(.retreatConfirmationWasNotRequested))
         #expect(controller.actionsIssued == 0)
     }
 
-    @Test("A no-talisman recovery transaction may confirm the exact gated yes target once")
-    func confirmsRetreatWhenNoTalisman() {
-        var controller = makeController(noTalisman: true, policy: policy(actionCooldown: 0))
-        _ = controller.consume(makeSnapshot(
+    @Test("A posted recovery transaction may confirm the exact gated yes target once")
+    func confirmsPostedRetreat() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        guard let request = requireAction(controller.consume(makeSnapshot(
             state: .battle,
             time: 1,
             fingerprint: "stalled",
             gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
             battleStatus: .stalledAfterDefeat
-        ))
+        ))) else { return }
+        let marked = controller.markActionPosted(request, at: 1.5)
+        #expect(marked)
         let decision = controller.consume(makeSnapshot(
             state: .retreatConfirmation,
             time: 2,
             fingerprint: "retreat-confirm",
-            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .verifiedNoTalismanRun)]
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
         ))
 
         #expect(requireAction(decision)?.intent == .confirmRetreatWithoutTalisman)
         #expect(controller.actionsIssued == 2)
     }
 
-    @Test("Geometry-only modals carry the stalled-defeat recovery through its button sequence")
-    func geometryRetreatRecoveryTransaction() {
-        var controller = makeController(noTalisman: true, policy: policy(actionCooldown: 0))
-        #expect(requireAction(controller.consume(makeSnapshot(
+    @Test("An unposted retreat cannot authorize an OCR-only confirmation")
+    func unpostedRetreatDoesNotAuthorizeConfirmation() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        guard let request = requireAction(controller.consume(makeSnapshot(
             state: .battle,
             time: 1,
             fingerprint: "stalled",
             gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
             battleStatus: .stalledAfterDefeat
-        )))?.intent == .requestRetreat)
+        ))) else { return }
+        #expect(request.intent == .requestRetreat)
+
+        #expect(controller.consume(makeSnapshot(
+            state: .retreatConfirmation,
+            time: 2,
+            fingerprint: "external-confirmation",
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
+        )) == .stop(.retreatConfirmationWasNotRequested))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("Geometry-only modals carry the stalled-defeat recovery through its button sequence")
+    func geometryRetreatRecoveryTransaction() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        guard let request = requireAction(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        ))) else { return }
+        #expect(request.intent == .requestRetreat)
+        let marked = controller.markActionPosted(request, at: 1.5)
+        #expect(marked)
 
         #expect(requireAction(controller.consume(makeSnapshot(
             state: .wideModalTwoButtons,
@@ -1748,7 +1808,7 @@ struct AutoLevelControllerTests {
 
     @Test("Only temporal stalled-defeat metadata can request retreat")
     func temporalDefeatRequestsRetreat() {
-        var controller = makeController(noTalisman: true)
+        var controller = makeController()
         let normal = makeSnapshot(
             state: .battle,
             time: 1,
@@ -1772,9 +1832,165 @@ struct AutoLevelControllerTests {
         #expect(requireAction(controller.consume(stalled))?.intent == .requestRetreat)
     }
 
-    @Test("Stalled defeat is also gated by no-talisman policy")
-    func stalledDefeatWithoutPolicyStops() {
-        var controller = makeController(noTalisman: false)
+    @Test("Cancelling an unposted retreat resumes battle observations and preserves limits")
+    func cancelledRetreatResumesObservations() {
+        var controller = makeController(
+            policy: policy(actionCooldown: 10)
+        )
+        guard let request = requireAction(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        ))) else { return }
+
+        let cancelled = controller.cancelUnpostedRetreat(request)
+        #expect(cancelled)
+        #expect(controller.actionsIssued == 1)
+        #expect(controller.completedCycles == 0)
+        let cancelledTwice = controller.cancelUnpostedRetreat(request)
+        #expect(!cancelledTwice)
+        let markedAfterCancellation = controller.markActionPosted(request, at: 2)
+        #expect(!markedAfterCancellation)
+        #expect(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "moving-again",
+            allAutoStatus: .active
+        )) == .wait(.battleInProgress))
+
+        #expect(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 3,
+            fingerprint: "new-stall-during-cooldown",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        )) == .wait(.actionCooldown(remaining: 8)))
+
+        let newRequest = requireAction(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 11,
+            fingerprint: "new-confirmed-stall",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        )))
+        #expect(newRequest?.intent == .requestRetreat)
+        #expect(newRequest?.requestID == request.requestID + 1)
+        #expect(newRequest?.frameFingerprint == "new-confirmed-stall")
+        #expect(controller.actionsIssued == 2)
+    }
+
+    @Test("A cancelled retreat does not authorize a later OCR-only confirmation")
+    func cancelledRetreatDoesNotAuthorizeConfirmation() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        guard let request = requireAction(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        ))) else { return }
+
+        let cancelled = controller.cancelUnpostedRetreat(request)
+        #expect(cancelled)
+        #expect(controller.consume(makeSnapshot(
+            state: .retreatConfirmation,
+            time: 2,
+            fingerprint: "external-confirmation",
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
+        )) == .stop(.retreatConfirmationWasNotRequested))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test(
+        "Retreat cancellation requires every field of the pending request to match",
+        arguments: ["requestID", "intent", "target", "observedState", "frameFingerprint", "completedCycles"]
+    )
+    func retreatCancellationRejectsDifferentRequest(changedField: String) {
+        var controller = makeController()
+        guard let request = requireAction(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        ))) else { return }
+
+        let differentTarget = AutoLevelActionTarget(
+            name: request.target.name,
+            sourceText: "different source text",
+            rect: request.target.rect
+        )
+        let differentRequest = AutoLevelActionRequest(
+            requestID: changedField == "requestID" ? request.requestID + 1 : request.requestID,
+            intent: changedField == "intent" ? .closeBattlePrompt : request.intent,
+            target: changedField == "target" ? differentTarget : request.target,
+            observedState: changedField == "observedState" ? .defeat : request.observedState,
+            frameFingerprint: changedField == "frameFingerprint" ? "different" : request.frameFingerprint,
+            completedCycles: changedField == "completedCycles" ? 1 : request.completedCycles
+        )
+
+        let cancelledDifferentRequest = controller.cancelUnpostedRetreat(differentRequest)
+        #expect(!cancelledDifferentRequest)
+        #expect(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "moving-again",
+            allAutoStatus: .active
+        )) == .wait(.awaitingStateChange(intent: .requestRetreat)))
+        let cancelled = controller.cancelUnpostedRetreat(request)
+        #expect(cancelled)
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("A posted retreat cannot be cancelled and retains its confirmation transaction")
+    func postedRetreatCannotBeCancelled() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        guard let request = requireAction(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        ))) else { return }
+
+        let marked = controller.markActionPosted(request, at: 2)
+        #expect(marked)
+        let cancelled = controller.cancelUnpostedRetreat(request)
+        #expect(!cancelled)
+        #expect(requireAction(controller.consume(makeSnapshot(
+            state: .retreatConfirmation,
+            time: 3,
+            fingerprint: "requested-confirmation",
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
+        )))?.intent == .confirmRetreatWithoutTalisman)
+    }
+
+    @Test("Retreat cancellation cannot discard an unrelated pending action")
+    func retreatCancellationRejectsNonRetreat() {
+        var controller = makeController()
+        guard let request = requireAction(controller.consume(makeSnapshot(
+            state: .battleEventPrompt,
+            time: 1,
+            fingerprint: "prompt",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))) else { return }
+
+        let cancelled = controller.cancelUnpostedRetreat(request)
+        #expect(!cancelled)
+        #expect(controller.consume(makeSnapshot(
+            state: .battleEventPrompt,
+            time: 2,
+            fingerprint: "prompt",
+            actions: [gameAction(.closeBattlePrompt)]
+        )) == .wait(.awaitingFrameChange(intent: .closeBattlePrompt)))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("Verified stalled defeat requests retreat without equipment metadata")
+    func stalledDefeatNeedsNoEquipmentMetadata() {
+        var controller = makeController()
         let decision = controller.consume(makeSnapshot(
             state: .battle,
             time: 1,
@@ -1783,7 +1999,8 @@ struct AutoLevelControllerTests {
             battleStatus: .stalledAfterDefeat
         ))
 
-        #expect(decision == .stop(.retreatRequiresNoTalismanConfirmation))
+        #expect(requireAction(decision)?.intent == .requestRetreat)
+        #expect(controller.actionsIssued == 1)
     }
 
     @Test("Unknown state gets bounded count grace then stops")
@@ -2018,8 +2235,7 @@ struct AutoLevelControllerTests {
         var invalidSession = AutoLevelController(session: .init(
             sessionID: "",
             startedAt: 0,
-            windowIdentity: testWindow,
-            noTalismanConfirmed: false
+            windowIdentity: testWindow
         ))
         #expect(invalidSession.consume(makeSnapshot(
             state: .battle, time: 1, fingerprint: "x", allAutoStatus: .active
@@ -2033,15 +2249,13 @@ struct AutoLevelControllerTests {
     }
 
     private func makeController(
-        noTalisman: Bool = false,
         policy: AutoLevelPolicy = AutoLevelPolicy()
     ) -> AutoLevelController {
         AutoLevelController(
             session: AutoLevelSessionMetadata(
                 sessionID: "test-session",
                 startedAt: 0,
-                windowIdentity: testWindow,
-                noTalismanConfirmed: noTalisman
+                windowIdentity: testWindow
             ),
             policy: policy
         )

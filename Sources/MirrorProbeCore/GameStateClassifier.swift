@@ -145,7 +145,7 @@ public enum GameActionName: String, Codable, Equatable, Sendable {
     case confirmLootCollection
     /// Opens the destructive retreat confirmation sheet. This is never a normal allowed action.
     case openBattleRetreatConfirmation
-    /// Confirms retreat only after the runtime has independently guaranteed a no-talisman run.
+    /// Legacy serialized name; confirms the runtime's retreat transaction regardless of talismans.
     case confirmNoTalismanRetreat
 }
 
@@ -200,7 +200,7 @@ public struct AllowedGameAction: Codable, Equatable, Sendable {
 /// single OCR snapshot before promoting the candidate to an actual click.
 public enum GameActionPolicyRequirement: String, Codable, Equatable, Sendable {
     case temporalDefeatRecovery
-    case verifiedNoTalismanRun
+    case explicitRetreatConfirmation
 }
 
 public struct PolicyGatedGameAction: Codable, Equatable, Sendable {
@@ -439,14 +439,14 @@ public enum GameStateClassifier {
                     )
                 }
 
-                // The OCR frame cannot prove that no talisman is equipped. This is intentionally
-                // excluded from `allowedActions`; only a runtime with the explicit no-talisman
-                // policy may promote and execute this candidate.
+                // A recognized confirmation is not an independent retreat authorization. The
+                // runtime must bind it to its already-posted recovery action. Talisman use does
+                // not affect this candidate or the user's authorization to retreat.
                 policyGatedActions = [
                     PolicyGatedGameAction(
                         name: .confirmNoTalismanRetreat,
                         target: target(.retreatConfirmationYes, from: yes),
-                        requirement: .verifiedNoTalismanRun
+                        requirement: .explicitRetreatConfirmation
                     ),
                 ]
             }

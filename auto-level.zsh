@@ -13,7 +13,7 @@ max_minutes=120
 window_id=""
 requested_output_dir=""
 capture_level=error
-confirm_no_talisman=0
+legacy_talisman_flag_was_set=0
 max_cycles_was_set=0
 max_minutes_was_set=0
 window_id_was_set=0
@@ -26,12 +26,7 @@ usage() {
     print -r -- '騎士與龍 IV 自動練等啟動器'
     print -r -- ''
     print -r -- '用法：'
-    print -r -- '  ./auto-level.zsh --confirm-no-talisman [options]'
-    print -r -- ''
-    print -r -- '必要參數：'
-    print -r -- '  --confirm-no-talisman'
-    print -r -- '      確認本次沒有使用護符。只有獨立確認自然戰敗且畫面停滯後，'
-    print -r -- '      程式才可能按下撤退確認。'
+    print -r -- '  ./auto-level.zsh [options]'
     print -r -- ''
     print -r -- '選用參數：'
     print -r -- '  --max-cycles N       完成 N 場後停止（範圍：1–500）。'
@@ -44,11 +39,17 @@ usage() {
     print -r -- '      info 另保留開場、結束，以及每次完成後測之操作的前後畫面。'
     print -r -- '  --wait               讓目前終端等待到程序停止；預設會在背景執行。'
     print -r -- '  --dry-run            只顯示啟動指令，不建立檔案也不開啟程式。'
+    print -r -- '  --confirm-no-talisman, --no-talisman'
+    print -r -- '      舊指令相容參數；可省略，程式不檢查護符使用狀態。'
     print -r -- '  -h, --help           顯示這份說明後退出；必須單獨使用。'
     print -r -- ''
     print -r -- '程式固定使用 foreground 輸入：只有需要按下已授權按鈕時，才會短暫將'
-    print -r -- 'iPhone 鏡像切到前景並使用共用滑鼠。'
+    print -r -- 'iPhone 鏡像切到前景並使用共用滑鼠，點擊後等待約一秒並擷取後測畫面，再切回原程式。'
+    print -r -- '若期間偵測到你手動操作或切換程式，會取消該次切回；下次操作重新辨識目前焦點。'
+    print -r -- '鏡像可被其他一般視窗完全遮住，無須保留螢幕區塊；請勿最小化或切換 Space。'
+    print -r -- '切換及點擊前辨識仍會暫時佔用焦點，同時打字或移動滑鼠仍可能受影響。'
     print -r -- '若其他程式瞬間搶走前景，會重新擷取並完整驗證，最多嘗試三次後才停止。'
+    print -r -- '原鏡像視窗暫時查不到時會停止輸入，最多查詢四次；恢復後重新辨識畫面。'
     print -r -- ''
     print -r -- '兩個限制都不指定時，預設為 20 場與 120 分鐘，先到者停止。只指定其中'
     print -r -- '一個時，另一個會提高到安全上限（500 場或 480 分鐘）。兩個都指定時，'
@@ -100,8 +101,8 @@ is_unsigned_integer() {
 while (( $# > 0 )); do
     case "$1" in
         --confirm-no-talisman|--no-talisman)
-            (( confirm_no_talisman == 0 )) || fail '無護符確認參數不可重複'
-            confirm_no_talisman=1
+            (( legacy_talisman_flag_was_set == 0 )) || fail '舊版護符參數不可重複'
+            legacy_talisman_flag_was_set=1
             shift
             ;;
         --max-cycles|--cycles)
@@ -197,9 +198,6 @@ while (( $# > 0 )); do
     esac
 done
 
-(( confirm_no_talisman == 1 )) || fail \
-    '確認這一輪沒有使用護符後，請加上 --confirm-no-talisman'
-
 if (( window_id_was_set == 1 )) && [[ -z "$window_id" ]]; then
     fail '--window-id 需要一個數值'
 fi
@@ -263,7 +261,7 @@ fi
 
 runner_arguments=(
     run
-    --confirm AUTO_LEVEL_NO_TALISMAN
+    --confirm AUTO_LEVEL
     --input-mode foreground
     --max-cycles "$max_cycles_number"
     --max-minutes "$max_minutes_number"
@@ -280,7 +278,7 @@ if (( dry_run == 1 )); then
     stdout_log="$run_dir.stdout.log"
     stderr_log="$run_dir.stderr.log"
     runner_arguments+=(--output-dir "$run_dir")
-    open_arguments=(-n -o "$stdout_log" --stderr "$stderr_log")
+    open_arguments=(-g -n -o "$stdout_log" --stderr "$stderr_log")
     (( wait_for_completion == 1 )) && open_arguments+=(-W)
     printf 'DRY RUN：'
     printf '%q ' open "${open_arguments[@]}" "$app_path" --args "${runner_arguments[@]}"
@@ -304,7 +302,7 @@ stderr_log="$run_dir.stderr.log"
     '預定的 stdout/stderr 紀錄檔已存在，請改用另一個 --output-dir'
 
 runner_arguments+=(--output-dir "$run_dir")
-open_arguments=(-n -o "$stdout_log" --stderr "$stderr_log")
+open_arguments=(-g -n -o "$stdout_log" --stderr "$stderr_log")
 (( wait_for_completion == 1 )) && open_arguments+=(-W)
 
 print -r -- "紀錄：$run_dir"

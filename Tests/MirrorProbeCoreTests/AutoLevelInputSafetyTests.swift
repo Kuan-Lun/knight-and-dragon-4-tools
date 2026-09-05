@@ -25,6 +25,26 @@ struct AutoLevelInputSafetyTests {
         )
     }
 
+    @Test("Unavailable live focus never authorizes a click on an otherwise matching window")
+    func rejectsUnavailableFocusedProcess() {
+        let snapshot = AutoLevelInputSnapshot(
+            windowIdentity: identity,
+            windowGeometry: geometry,
+            frontmostProcessID: nil,
+            topmostWindowIdentity: identity,
+            targetProcessTopmostWindowIdentity: identity
+        )
+        #expect(AutoLevelInputSafety.rejection(
+            expectedWindowIdentity: identity,
+            expectedWindowGeometry: geometry,
+            snapshot: snapshot,
+            now: 100,
+            actionDeadline: 112,
+            sessionDeadline: 200,
+            stopRequested: false
+        ) == .applicationNotFrontmost)
+    }
+
     @Test("Process routing permits another app in front but binds the destination window")
     func processRoutingUsesTargetProcessWindow() {
         let other = AutoLevelWindowIdentity(processID: 98, windowID: 8)

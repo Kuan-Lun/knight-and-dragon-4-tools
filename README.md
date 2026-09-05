@@ -31,6 +31,7 @@ It uses only public APIs:
 - ScreenCaptureKit for one-window screenshots.
 - Apple Vision for Traditional Chinese and English OCR.
 - Core Graphics for a single mouse-down/up pair.
+- AppKit activation with an Accessibility `AXFrontmost` fallback for borrowing and restoring focus.
 - A conservative image-health check that rejects transparent, uniform, and nearly black frames.
 
 ## Build and test
@@ -43,6 +44,11 @@ zsh scripts/build-app.sh
 ```
 
 The packaged app is written to `.build/Mirror Probe.app` with a fixed bundle identifier so it is recognizable in the privacy panes. Its current ad-hoc signature is not a stable TCC identity: rebuilding may invalidate the grants. A maintained app should use a stable Development or Developer ID certificate.
+
+When the project is on the Desktop, macOS may also request Desktop folder access for the runner
+to read its log directory. This is separate from Screen Recording and Accessibility. A pending
+Desktop permission dialog can block directory access and take foreground focus; complete that
+request before starting an automation run.
 
 ## Custom-character reroll usage
 
@@ -69,8 +75,8 @@ Missing, ambiguous, low-confidence, misplaced, or inconsistent evidence stops th
 Immediately before an input event, it performs an additional pixel-only capture and requires the
 page identity, Random control, generated result, and lower controls to remain identical. The event
 authorization expires 0.5 seconds after
-that capture began; macOS does not expose an atomic compare-and-click API, so avoid interacting
-with the Mac while a run is active.
+that capture began; macOS does not expose an atomic compare-and-click API. Foreground input still
+shares the Mac's keyboard focus and pointer during preflight and the click.
 
 Vision sometimes reports an otherwise exact full-frame `total` row at confidence 0.30. That one
 reading is only provisional: the independently cropped OCR must still have confidence 0.50 or
@@ -98,22 +104,24 @@ conflicting boundary evidence appeared earlier during stabilization, even if the
 frame is a later low or unavailable OCR sample. No character-reroll images are written to the root `captures/`
 directory. The launcher prints the exact
 `touch .../STOP` command, and Ctrl-C creates that same stop file before exiting. Foreground input
-briefly activates iPhone Mirroring for each verified click, so do not move or resize the mirror
-window, and avoid using the mouse or keyboard while a run is active.
+activates iPhone Mirroring only when it is not already frontmost. Immediately after the click,
+the runner requests a return to the previously active application before waiting for the generated
+result. A cancelled or failed preflight also releases borrowed focus. If a different application
+is already frontmost at cleanup, it is left alone. This reduces focus occupation but cannot prevent
+simultaneous typing or pointer movement from being interrupted. Do not move or resize the mirror
+window during a run.
 
 ## Auto-level usage
 
-1. Ensure this particular run uses **no talisman**. The recovery confirmation may otherwise
-   destroy a used talisman.
-2. In the game, enable the persistent/default `全部自動` setting before the run. The runner
+1. In the game, enable the persistent/default `全部自動` setting before the run. The runner
    treats the visible control as a toggle and never presses it, because pressing it when the
    default is already active would disable automatic combat.
-3. Open iPhone Mirroring and manually enter the stage you want to repeat. Leave the game on its
+2. Open iPhone Mirroring and manually enter the stage you want to repeat. Leave the game on its
    battle-introduction prompt or active battle screen.
-4. Keep exactly one iPhone Mirroring window open, then start a bounded run with the launcher:
+3. Keep exactly one iPhone Mirroring window open, then start a bounded run with the launcher:
 
 ```sh
-./auto-level.zsh --confirm-no-talisman
+./auto-level.zsh
 ```
 
 The launcher locates the project independently of the current shell directory, verifies the final
@@ -121,17 +129,18 @@ app and its signature, creates a unique empty run directory under `logs/`, start
 report, error log, and exact `STOP` command. Run `./auto-level.zsh --help` by itself for built-in
 help; `--help` displays usage and never starts a run.
 
-`--confirm-no-talisman` is required for every run. It maps to the app's internal
-`--confirm AUTO_LEVEL_NO_TALISMAN` assertion: the runner may confirm retreat after a verified
-natural stalled defeat only because the user has stated that this run uses no talisman.
+Talisman use does not restrict launching, automation, or retreat. The launcher supplies the app's
+general `--confirm AUTO_LEVEL` token. The old `--confirm-no-talisman` / `--no-talisman` flags and
+the raw app token `AUTO_LEVEL_NO_TALISMAN` remain compatibility aliases; none asserts or checks
+talisman status. Choosing whether to use talismans is left to the user.
 
 The launcher's common optional limits are:
 
 ```sh
-./auto-level.zsh --confirm-no-talisman --max-cycles 50
-./auto-level.zsh --confirm-no-talisman --max-minutes 180
-./auto-level.zsh --confirm-no-talisman --max-cycles 50 --max-minutes 180
-./auto-level.zsh --confirm-no-talisman --capture-level info
+./auto-level.zsh --max-cycles 50
+./auto-level.zsh --max-minutes 180
+./auto-level.zsh --max-cycles 50 --max-minutes 180
+./auto-level.zsh --capture-level info
 ```
 
 - `--max-cycles N` limits the number of completed missions, including the stage already in
@@ -156,8 +165,11 @@ The launcher's common optional limits are:
   makes the launcher exit nonzero. The default launch is asynchronous.
 - `--dry-run` prints the exact launch command without creating files or launching the app.
 
-The launcher deliberately fixes the app's internal `--input-mode foreground`. This mode briefly
-activates iPhone Mirroring and uses the shared pointer for each authorized click. The known-rejected
+Both launchers use `open -g` so starting the runner does not itself take focus away from the
+application the user is working in.
+
+The launcher deliberately fixes the app's internal `--input-mode foreground`. This mode temporarily
+activates iPhone Mirroring and uses the shared pointer for each authorized click. The unverified
 background/process input mode is not exposed by the normal launcher.
 
 If startup fails, its reason is written to the printed error log even when no `run-report.json`
@@ -166,18 +178,68 @@ could be initialized.
 At the cycle limit, the program stops on the result page before starting another mission. If more
 than one eligible mirror window exists, first run `doctor` and add `--window-id WINDOW_ID`.
 
-`--input-mode foreground` is the reliable mode for iPhone Mirroring. It activates the mirror for
-each authorized action, posts a normal HID click, and restores the cursor position afterward.
-Because those events use the shared macOS pointer and focus, using the mouse or keyboard in
-another application at the same instant can be interrupted. If another application momentarily
+`--input-mode foreground` is the working input path for iPhone Mirroring. Each activation attempt
+remembers the previously active application and activates the mirror only if it is not frontmost.
+After a normal HID click, it restores the cursor position, retains focus through the one-second
+settle and first post-action capture, then requests activation of the previous application. This
+uses its main/key windows rather than raising all of its windows. Subsequent result observation
+continues in the background. Cancellation, stop, and preflight errors also release borrowed
+focus. Restoration is attempted at most once per activation attempt, only while the mirror is still
+frontmost and the original application is still alive. If the user has already selected another
+application, cleanup leaves it alone; it never relaunches an exited application.
+
+Version 0.4.11 also observes explicit user input and application activation during each borrow.
+Clicking the mirror yourself, dragging, scrolling, typing, or leaving the borrowed app cancels
+that attempt's restoration, even if the mirror is frontmost again at cleanup. The runner tags its
+own clicks so they do not cancel restoration. Pointer movement alone does not count as takeover.
+Observers retain no key text or coordinates and are removed at cleanup. Each subsequent attempt
+starts with the user's then-current app; cancellation never permanently disables restoration.
+If input observation is unavailable, that attempt skips restoration. These passive observers and
+macOS activation are asynchronous, so a user action concurrent with an already-issued activation
+request is still not an atomic handoff.
+
+Once a run has locked a window, a temporary absence from the eligible capture list pauses input
+and allows at most four queries with 0.5, 1, and 1.5 second backoffs, within a fixed five-second
+recovery budget. Recovery accepts only the original PID, window ID, and geometry. It does not
+reopen the app, select a replacement window, or treat hidden/minimized windows as click targets.
+STOP and the original session/action deadlines remain effective; post-click capture uses the
+original acknowledgement deadline and cannot resend the click. Every gap discards prior pixel
+continuity and any pending stall proof, including gaps shorter than the normal sample interval.
+The `windowAvailability` stderr entries record the phase, attempts, mirror candidates before
+filtering, and the matching WindowServer entry. This distinguishes a failed query from proof that
+the user closed the window. Persistent absence still stops the run.
+
+macOS activation is asynchronous and advisory, so this is a best-effort return to the previous
+application, not a guarantee of exact window/control focus or desktop stacking order. A rejected
+AppKit activation request now falls back to setting `AXFrontmost` on that exact running process,
+using the existing Accessibility permission. This also applies when restoring the previous app.
+The fallback does not relaunch either app or use the pointer to switch windows. It is skipped if
+focus changed before the fallback request. API acceptance alone never authorizes a click: the
+existing preflight and input boundary checks still require the mirror's actual foreground PID.
+Version 0.4.6 reads that PID directly through Accessibility's `AXFocusedApplication`, including
+when remembering and restoring the user's app. An unavailable AX result remains unknown and
+cannot authorize input. A separately created `NSRunningApplication.isActive` can disagree during
+rapid switches and is now diagnostic only. The log distinguishes `notRequestedAlreadyFrontmost`
+from an actual activation request returning `false`; it no longer substitutes `isActive` for an
+API return value. The locked window, geometry, click-point obstruction, and deadline checks remain
+mandatory at the final input boundary.
+Live commands run the full AppKit event loop so AppKit can update its cached foreground and
+application-state properties. Initializing `NSApplication.shared` alone left those observations
+stale during the packaged focus test; an async settling delay did not refresh them. Offline
+`analyze-file` and help commands continue without initializing AppKit.
+AppKit rejection and the fallback outcome are recorded in stderr. Focus occupation includes the activation settling delay
+(350 ms on the first attempt, longer on retries) and the complete capture/recognition preflight,
+in addition to the 60 ms mouse-down/up interval. Because these events use the shared macOS pointer
+and focus, typing or moving the pointer at the same instant can still be interrupted. If another application momentarily
 takes focus before input, the runner makes at most three total activation attempts. Every attempt
 uses a fresh capture and repeats the complete window, state, and target validation; no failed
 attempt posts input. Three consecutive focus failures still stop the run safely.
 
 `--input-mode process` is retained as a safe diagnostic mode. It routes the down/up pair only to
 the locked iPhone Mirroring PID, never moves the global cursor, and never falls back to a global
-click. Live testing on the current ScreenContinuity build showed that the event was rejected: the
-recognized control did not advance and the unchanged-frame timeout stopped the run. Do not use
+click. A prior live test recorded in this README did not advance the recognized control and ended
+at the unchanged-frame timeout. That observation does not identify which layer ignored the event
+or prove that every form of background input is impossible. Do not use
 this mode for unattended leveling unless a later macOS/iPhone Mirroring version is first verified
 to accept the background event.
 
@@ -199,6 +261,12 @@ absolute output path printed or chosen when the run was started, for example:
 ```sh
 touch "/absolute/path/to/logs/auto-level-YYYYMMDD-HHMMSS/STOP"
 ```
+
+The mirror does not need a reserved visible area: ordinary windows in the same Space may fully
+cover it between actions. ScreenCaptureKit captures the specified window's content independently
+of that occlusion; the runner brings it forward only when input is needed. Keep it open and
+unminimized in the same Space. App hiding, other Spaces, and full-screen transitions are not
+supported by the current on-screen-window discovery and input checks.
 
 Do not move, resize, minimize, or send the mirror window to another Space during a run. Every
 proposed click is confirmed against a fresh second capture. The exact window/process identity,
@@ -249,6 +317,136 @@ open -W -n ".build/Mirror Probe.app" --args capture \
 ```
 
 The JSON report includes the `windowID` and frame-health metrics. Inspect the PNG before using it as a state-recognition fixture.
+
+To verify focus switching separately from game input, leave another app (for example Terminal)
+frontmost and run the packaged diagnostic with the same background launch option as the runner:
+
+```sh
+open -g -W -n ".build/Mirror Probe.app" --args focus-check \
+  --window-id WINDOW_ID \
+  --output "$PWD/captures/focus-check.json"
+```
+
+This temporarily activates the mirror and then requests restoration of the original app. It sends
+no mouse or keyboard events, and takes the same window lock as the runner. The report records both
+API outcomes and observed foreground PIDs; successful verification requires an actual switch from
+a different application and a return to that application. Starting with the mirror already
+frontmost is not a valid restoration test. A concurrent user focus change can cause verification
+to fail; cleanup does not intentionally override a newly selected app. Run this again after
+granting permissions if the ad-hoc rebuild invalidated them. Version 0.4.5 adds this diagnostic,
+the Accessibility fallback, and the AppKit event loop for the background-launch
+activation failure and stale foreground state observed during 0.4.3–0.4.4 validation.
+
+Local 0.4.5 validation on 2026-09-05 verified a background-launched focus check switching from
+Codex to iPhone Mirroring and back, with zero input events. A subsequent launcher run limited to
+one minute and two completed-cycle counts posted six clicks, advanced from an existing result
+page through the next battle to its result page, and stopped normally at the cycle limit after
+50.5 seconds. The two-cycle count includes the result already reached when the run began.
+
+The subsequent 0.4.6 test began with Terminal frontmost and ran to the five-minute limit,
+finishing after 303.1 seconds with 12 posted clicks and two success cycles. Its one initial focus
+retry recovered; there were no exhausted retries, AX focus-read failures, or session errors.
+The final reason was `maximumRuntimeReached(limit: 300.0)`. This verifies the longer focus-switching
+path, but not all battle-stall recovery: the third cycle was still in battle when time expired,
+and the observed enemy HP did not change over the final roughly 144 seconds.
+
+Follow-up capture-only sampling found the battle image itself frozen for over nine consecutive
+seconds, including the damage overlay. The old loop ran OCR on every stability sample, so its
+roughly three-second capture/recognition/poll cycle frequently exceeded the three-second sample
+gap limit; a five-second candidate could also contain fewer than the required five samples.
+Version 0.4.7 separates capture from OCR and uses a short, bounded burst of pixel comparisons
+after a stable battle pair. It records actual capture time before OCR, compares both consecutive
+frames and a fixed starting frame, and revalidates fresh OCR before requesting retreat and again
+at input preflight. If combat resumes during preflight, the unposted retreat is cancelled and
+observation continues.
+
+The 0.4.7 build passed 367 tests, including dense sampling, accumulated visual drift, stale or
+changed preflight evidence, and cancellation of unposted retreat requests. Offline Vision
+analysis also recognized the recorded frozen frame as battle with all four strict layout anchors.
+Two subsequent live runs stopped after 112.965 and 40.284 seconds when Accessibility returned
+`AXError.noValue` while acquiring the original focused application. They posted 9 and 2 clicks
+respectively, and neither reached dense stability or retreat. The first completed two success
+cycles. Thus live stalled-battle recovery is still unverified.
+
+Version 0.4.8 treats an unavailable original focus read as an unposted focus failure in the same
+three-attempt budget used for activation contention. It waits 250/500 ms, rechecks STOP and both
+deadlines, then obtains a new original-application identity and performs the full action preflight.
+It never guesses the original PID or extends authorization; persistent unavailable focus still
+stops after the bounded retries. The 367 tests passed again after this change. Renewed macOS grants
+and a fresh live run are required for the rebuilt app.
+
+After renewed grants, the first 0.4.8 live run was stopped through its STOP file at 220.318 seconds
+because a read-only inspection showed `[護符 戰神 風神]`, conflicting with the no-talisman launch
+precondition. It posted five clicks and counted the result already present at startup; no new
+complete battle cycle or retreat was observed. A dense candidate at 214.435 seconds was correctly
+cancelled on moving pixels (adjacent MAD 0.006629, fixed-anchor MAD 0.006927, threshold 0.002).
+There were no focus errors or retries in this run, so transient focus-read recovery and confirmed
+stalled-battle retreat still require live validation. Continuing the retreat test requires
+resolving the talisman precondition first.
+
+The user's subsequent instruction removes that talisman restriction in 0.4.9: equipment choice
+no longer affects launch or retreat, and reports use schema 4 with `talismanPolicy: unrestricted`.
+The same update handles a system-wide AX `noValue` by checking a candidate application's live
+`AXFrontmost` attribute. AppKit proposes the PID only; the AX read must succeed with an actual
+CFBoolean true and the candidate must remain the same before/after that read. All other failed,
+unknown, or conflicting focus reads still reject input. The source and both query outcomes are
+logged separately. A stronger fallback is necessary because a later 0.4.8 run exhausted all three
+original-focus reads after 1.265 seconds without posting any input.
+
+The strict battle fingerprint now also accepts OCR's measured `利品` truncation in the same unique
+loot-header position at confidence 0.50 or higher; all other control anchors remain required.
+This addresses the extra header row observed with talismans without making equipment status a
+policy input. The full 0.4.9 source suite passed 378 tests. A read-only capture returned the current
+floor-69 menu correctly; that page is classified unknown because the runner does not automate
+stage selection, not because capture failed. The user clarified that the mirror was still in
+front during that capture, so it does not establish occluded capture support. A subsequent
+explicitly occluded test was initially blocked by the rebuilt app's missing Screen Recording grant.
+After renewed authorization, both partial occlusion and the user's ordinary Firefox window filling
+the desktop captured the mirror correctly. `lsappinfo` reported Firefox PID 1341 before and after
+each capture, with zero input events. The fully covered capture at 20:36:07 local time recognized
+the current mission-complete page. This does not test macOS full-screen Spaces or minimization.
+
+The first 0.4.9 live run demonstrated successful AXFrontmost fallback but stopped after 17.423
+seconds because the posted repeat-selection click did not select the row. A controlled one-click
+comparison at the same coordinates, initially activating the mirror with `open -b` and retaining
+mirror focus through the after capture, produced the visible SELECTED stamp. This changed both
+initial activation and focus duration, so it does not isolate the cause. Version 0.4.10 retains
+borrowed focus until the existing
+first post-action capture completes instead of treating event posting as delivery. It preserves
+the posted timestamp, counts the input immediately, honors STOP/session deadlines, and feeds that
+after frame to the controller once. A missing change still follows the existing wait/stop path;
+the toggle is not blindly clicked again. The full suite still passes 378 tests.
+
+The first 0.4.10 run still stopped on an unacknowledged result-page advance. A subsequent doctor
+check found the same mirror process and window, with the required permissions granted; the
+mirror had not closed. After an initial `open -b com.apple.ScreenContinuity`, the retry at
+20:52:19 completed 301.613 seconds and stopped normally at the configured 300-second limit.
+`logs/auto-level-20260905-205219.1l7YEa/run-report.json` records 29 posted actions and six result
+cycles, of which one was already present at startup and five were new battle-to-success cycles.
+The run borrowed and restored focus to Firefox and other foreground applications. All 25 primary
+AX `noValue` reads recovered through the validated AXFrontmost fallback, with no exhausted focus
+retries or diagnostic persistence errors. Some clicks still needed the existing bounded retry
+before the page advanced, so this does not establish that every click is received. No natural
+stall occurred, leaving live retreat and post-retreat recovery unverified in this run.
+
+A later 0.4.10 run (`logs/auto-level-20260905-213112.wCV6yG`) lasted 2,978.330 seconds,
+recording 54 result cycles and 273 posted actions before one eligible-window query omitted
+51767. The last successful battle capture preceded the error by 3.063 seconds. A subsequent
+read-only check found the same PID 9823 and window 51767, with no process restart. This motivated
+0.4.11's bounded window recovery and per-borrow user takeover tracking. Its source suite passes
+397 tests, including fixed recovery deadlines, acknowledgement deadlines that do not slide,
+and cancellation that applies to one borrow even when the user leaves and returns to the mirror.
+After renewed macOS permissions, `logs/focus-check-0.4.11-firefox.json` verified Firefox PID 1341
+to mirror PID 9823 and back with zero input events. The 0.4.11 run at 22:51:51
+(`logs/auto-level-20260905-225151.kDI6JD/run-report.json`) reached the five-minute limit normally
+with 36 posted actions and seven recorded result cycles: one existing startup result, then three
+successes and three failures. Two failures followed confirmed stalls: 5.338 seconds/nine samples
+and 5.479 seconds/ten samples. Both retreat confirmations succeeded and both flows entered a new
+battle afterward. No focus error, restoration-skip, monitoring-unavailable, or diagnostic
+persistence error was recorded. This also found no evidence of the runner mistaking its tagged
+clicks for user input. There was no live window-availability interruption or observed mid-borrow
+user takeover during this run; those new branches remain covered by source review and the
+automated tests rather than a reproduced live interruption.
 
 ## Read-only state analysis
 
@@ -312,7 +510,12 @@ accepted as progress; after closing a prompt within the same battle, the runner 
 activity has been independently verified can the stalled-defeat detector begin its visual check.
 It then requires the unique battle-layout anchors and at least five dense, consecutive samples
 whose gameplay ROI remains nearly unchanged for at least five seconds; samples may be no more than
-three seconds apart. HP values are diagnostic only and are not required for this frozen-screen
+three seconds apart. A stable pair starts a capture-only burst with a 400 ms pause between captures
+and a seven-second time bound; actual capture overhead adds to that interval. Both the previous
+image and the fixed starting image must remain close, so gradual accumulated changes also cancel
+confirmation. Only the boundaries run OCR; intermediate images establish visual continuity and
+are never represented as newly recognized battle states. The burst honors STOP and the session
+deadline without borrowing focus. HP values are diagnostic only and are not required for this frozen-screen
 decision. A moving frame, unknown/non-battle state, prompt, pause, window change, input, or sampling
 gap immediately clears the candidate. The changing phone status bar is outside the ROI, and the
 same conditions are checked again immediately before `撤退`. A single screenshot never authorizes
@@ -320,17 +523,15 @@ same conditions are checked again immediately before `撤退`. A single screensh
 
 The safe operating policy is therefore:
 
-- Auto-level runs have a no-talisman precondition. Under the user-authorized button-count rule, a
-  reliably measured two-row modal may choose its upper row; the required launch confirmation is
-  what makes that safe when the modal is the talisman-loss retreat confirmation.
+- Talisman status does not change automation decisions. The user's run authorization includes
+  confirming retreat regardless of whether a talisman was used.
 - A reliably measured one-row central modal always presses its sole row; a reliably measured
   two-row central modal always presses the upper row. Text recognition is not required. Ordinary
   page controls and unsupported button counts are outside this rule.
 - The same rule closes returned-party and skill notifications and chooses the upper recruitment
   row. If the resulting page has no recognized modal or auto-level state, the run stops for manual
   handling.
-- Natural stalled-defeat recovery is enabled only by the multi-frame detector and the explicit
-  `AUTO_LEVEL_NO_TALISMAN` assertion. The detector still controls whether the runner may press the
+- Natural stalled-defeat recovery is enabled only by the multi-frame detector. It controls whether the runner may press the
   battle-screen `撤退` button; the resulting two-row confirmation then follows the general upper-row
   rule.
 

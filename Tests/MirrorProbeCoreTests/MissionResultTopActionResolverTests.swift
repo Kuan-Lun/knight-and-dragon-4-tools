@@ -78,8 +78,7 @@ struct MissionResultTopActionResolverTests {
                 session: AutoLevelSessionMetadata(
                     sessionID: "result-top",
                     startedAt: 0,
-                    windowIdentity: AutoLevelWindowIdentity(processID: 7, windowID: 9),
-                    noTalismanConfirmed: true
+                    windowIdentity: AutoLevelWindowIdentity(processID: 7, windowID: 9)
                 ),
                 policy: AutoLevelPolicy(actionCooldown: 0)
             )

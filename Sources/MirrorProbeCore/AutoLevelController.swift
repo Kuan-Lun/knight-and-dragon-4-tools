@@ -19,20 +19,14 @@ public struct AutoLevelSessionMetadata: Codable, Equatable, Sendable {
     public let startedAt: TimeInterval
     public let windowIdentity: AutoLevelWindowIdentity
 
-    /// This must be an explicit assertion for this run. It is intentionally not inferred from a
-    /// screenshot because the retreat sheet says that an equipped talisman would be destroyed.
-    public let noTalismanConfirmed: Bool
-
     public init(
         sessionID: String,
         startedAt: TimeInterval,
-        windowIdentity: AutoLevelWindowIdentity,
-        noTalismanConfirmed: Bool
+        windowIdentity: AutoLevelWindowIdentity
     ) {
         self.sessionID = sessionID
         self.startedAt = startedAt
         self.windowIdentity = windowIdentity
-        self.noTalismanConfirmed = noTalismanConfirmed
     }
 }
 
@@ -92,6 +86,7 @@ public enum AutoLevelActionIntent: String, Codable, Equatable, Hashable, Sendabl
     /// Retained for decoding older reports; the controller no longer requests this intent.
     case leaveAdventurer
     case requestRetreat
+    /// Legacy internal name for confirming a requested retreat; no equipment prerequisite applies.
     case confirmRetreatWithoutTalisman
 }
 
@@ -209,7 +204,7 @@ public struct AutoLevelSnapshot: Codable, Equatable, Sendable {
             switch (action.name, action.requirement) {
             case (.openBattleRetreatConfirmation, .temporalDefeatRecovery):
                 intent = .requestRetreat
-            case (.confirmNoTalismanRetreat, .verifiedNoTalismanRun):
+            case (.confirmNoTalismanRetreat, .explicitRetreatConfirmation):
                 intent = .confirmRetreatWithoutTalisman
             default:
                 return nil
@@ -345,7 +340,6 @@ public enum AutoLevelStopReason: Codable, Equatable, Sendable {
         from: GameState,
         to: GameState
     )
-    case retreatRequiresNoTalismanConfirmation
     case retreatConfirmationWasNotRequested
     case recoveryTransactionInterrupted(state: GameState)
     case allAutoBecameInactive(battleSessionID: String?)
@@ -377,11 +371,17 @@ public struct AutoLevelController: Sendable {
     /// after the next battle-family state establishes a new result episode boundary.
     private var repeatSelectionObservedForActiveResult = false
     private var pendingAction: PendingAction?
+
+    /// Capture recovery must not renew an already-posted action's acknowledgement budget.
+    /// Ordinary fresh observations still go through `consume`, including its bounded result retry.
+    public var pendingActionAcknowledgementDeadline: TimeInterval? {
+        pendingAction?.postedAt.map { $0 + policy.postActionTimeout }
+    }
     private var uncertainty: UncertaintyStreak?
     private var allAutoEnabledBattleSessions: Set<String> = []
     private var allAutoEnabledWithoutBattleID = false
     /// One-shot authorization for the OCR-only retreat fallback. Geometry-resolved two-row modals
-    /// follow the separate user-authorized upper-row rule and the session's no-talisman guard.
+    /// follow the separate user-authorized upper-row rule.
     private var recoveryConfirmationAuthorized = false
     private var terminalReason: AutoLevelStopReason?
 
@@ -495,12 +495,6 @@ public struct AutoLevelController: Sendable {
             return request(.pressWideModalTopButton, from: snapshot, at: now)
 
         case .wideModalTwoButtons:
-            // The launch token always supplies this confirmation. Keeping the guard here means a
-            // direct controller caller still cannot let an unidentified two-row modal bypass the
-            // retreat/talisman boundary.
-            guard session.noTalismanConfirmed else {
-                return stop(.retreatRequiresNoTalismanConfirmation)
-            }
             let decision = request(.pressWideModalTopButton, from: snapshot, at: now)
             if recoveryConfirmationAuthorized,
                case .requestAction = decision
@@ -544,9 +538,6 @@ public struct AutoLevelController: Sendable {
         case .retreatConfirmation:
             guard recoveryConfirmationAuthorized else {
                 return stop(.retreatConfirmationWasNotRequested)
-            }
-            guard session.noTalismanConfirmed else {
-                return stop(.retreatRequiresNoTalismanConfirmation)
             }
             return request(.confirmRetreatWithoutTalisman, from: snapshot, at: now)
 
@@ -611,6 +602,25 @@ public struct AutoLevelController: Sendable {
         return true
     }
 
+    /// Discards an unposted retreat when the caller's final temporal check observes activity.
+    /// The caller must resume observations before requesting another action. Keep the issued
+    /// action count and cooldown consumed, but discard any recovery confirmation authorization.
+    public mutating func cancelUnpostedRetreat(_ request: AutoLevelActionRequest) -> Bool {
+        guard terminalReason == nil,
+              let pendingAction,
+              pendingAction.request == request,
+              pendingAction.postedAt == nil,
+              request.intent == .requestRetreat
+        else {
+            return false
+        }
+
+        self.pendingAction = nil
+        uncertainty = nil
+        recoveryConfirmationAuthorized = false
+        return true
+    }
+
     /// Starts the acknowledgement timeout only after the caller confirms that the authorized
     /// input was posted. The original request time continues to bound preflight authorization;
     /// this method never creates a new request or expands that input deadline.
@@ -642,9 +652,6 @@ public struct AutoLevelController: Sendable {
     ) -> AutoLevelDecision {
         switch snapshot.runtime.battleStatus {
         case .stalledAfterDefeat:
-            guard session.noTalismanConfirmed else {
-                return stop(.retreatRequiresNoTalismanConfirmation)
-            }
             return request(.requestRetreat, from: snapshot, at: now)
 
         case .unknown:
@@ -830,8 +837,9 @@ public struct AutoLevelController: Sendable {
             to: snapshot.classification.state
         ) {
             if pendingAction.request.intent == .requestRetreat {
-                recoveryConfirmationAuthorized = snapshot.classification.state == .retreatConfirmation
-                    || snapshot.classification.state == .wideModalTwoButtons
+                recoveryConfirmationAuthorized = pendingAction.postedAt != nil
+                    && (snapshot.classification.state == .retreatConfirmation
+                        || snapshot.classification.state == .wideModalTwoButtons)
             }
             self.pendingAction = nil
             uncertainty = nil

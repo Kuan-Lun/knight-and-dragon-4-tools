@@ -143,14 +143,22 @@ public struct BattleStallFrameEvidence: Codable, Equatable, Sendable {
                 && !canonicalBattleText($0.text).isEmpty
         }
 
-        let loot = valid.filter { canonicalBattleText($0.text).hasPrefix("戰利品") }
+        let loot = valid.filter {
+            let text = canonicalBattleText($0.text)
+            return text.hasPrefix("戰利品") || text.hasPrefix("利品")
+        }
         let pause = valid.filter { canonicalBattleText($0.text) == "暫停" }
         let retreat = valid.filter { canonicalBattleText($0.text) == "撤退" }
         let automatic = valid.filter { canonicalBattleText($0.text) == "全部自動" }
         let background = BattleStallBackgroundEvidence(
             lootCandidates: loot.count,
             trustedLootAnchors: loot.filter {
-                $0.confidence >= 0.30 && rectCenter($0.rect, isInside: (0.75...0.98, 0.08...0.15))
+                // Vision can lose the leading 戰 beside the talisman header. The measured
+                // 利品 reading needs a higher confidence floor and the same unique location;
+                // all three independent battle controls remain mandatory.
+                let minimumConfidence = canonicalBattleText($0.text).hasPrefix("戰利品") ? 0.30 : 0.50
+                return $0.confidence >= minimumConfidence
+                    && rectCenter($0.rect, isInside: (0.75...0.98, 0.08...0.15))
             }.count,
             pauseCandidates: pause.count,
             trustedPauseAnchors: pause.filter {
@@ -415,6 +423,33 @@ public struct BattleStallDetector: Sendable {
             inputGeneration: activation.inputGeneration,
             progressObservedAt: lastSample.monotonicTime
         )
+    }
+
+    /// Starts a new pixel-only confirmation from a trusted battle frame. It carries no time
+    /// from earlier observations and never grants progress verification to an unarmed detector.
+    public func beginVisualConfirmation(
+        from sample: BattleStallSample
+    ) -> BattleVisualStabilityConfirmation? {
+        guard genuineProgressObserved,
+              let activation,
+              configuration.isValid,
+              activation.monotonicTime.isFinite,
+              activation.monotonicTime >= 0,
+              sample.monotonicTime.isFinite,
+              sample.monotonicTime >= activation.monotonicTime,
+              lastSample.map({ sample.monotonicTime >= $0.monotonicTime }) != false,
+              sample.context.isValid,
+              sample.context == activation.context,
+              sample.inputGeneration == activation.inputGeneration,
+              sample.battleScreenConfirmed,
+              !sample.modalPresent,
+              !sample.paused,
+              sample.frameEvidence.background.isStrict,
+              sample.battleROIDifferenceFromPrevious.map({ $0.isFinite && $0 >= 0 }) != false
+        else {
+            return nil
+        }
+        return BattleVisualStabilityConfirmation(configuration: configuration, baseline: sample)
     }
 
     /// Arms monitoring after the runtime establishes that this battle is expected to be in

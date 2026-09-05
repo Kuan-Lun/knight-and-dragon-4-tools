@@ -1549,8 +1549,8 @@ struct GameStateClassifierTests {
         ])
     }
 
-    @Test("The measured retreat Yes is exposed only as a no-talisman policy candidate")
-    func retreatConfirmationGatesYesBehindNoTalismanPolicy() {
+    @Test("The measured retreat Yes requires an explicit recovery transaction")
+    func retreatConfirmationGatesYesBehindRecoveryTransaction() {
         let yesRect = rect(0.47783, 0.53708, 0.04433, 0.02022)
         let result = GameStateClassifier.classify(observations: [
             OCRTextObservation(
@@ -1584,7 +1584,7 @@ struct GameStateClassifierTests {
         #expect(result.policyGatedActions.map(\.name) == [.confirmNoTalismanRetreat])
         #expect(result.policyGatedActions.first?.target.name == .retreatConfirmationYes)
         #expect(result.policyGatedActions.first?.target.rect == yesRect)
-        #expect(result.policyGatedActions.first?.requirement == .verifiedNoTalismanRun)
+        #expect(result.policyGatedActions.first?.requirement == .explicitRetreatConfirmation)
     }
 
     @Test("Ambiguous retreat Yes controls are never exposed as policy candidates")

@@ -23,6 +23,8 @@ usage() {
     print -r -- '請先在 iPhone 鏡像中停留於自訂創角頁。程式只會在完整辨識頁面、'
     print -r -- '兩路 total OCR 與實際數字字形長度一致、畫面穩定，且 total 小於門檻時'
     print -r -- '按右上角「隨機」。預設門檻為 90；低側兩路 OCR 數值不同時會安全停止。'
+    print -r -- '需要點擊時才切到鏡像，點擊後請求切回原程式；同時打字或移動滑鼠仍可能受影響。'
+    print -r -- '鏡像可被其他一般視窗完全遮住，請保持開啟且未最小化，並留在同一個 Space。'
     print -r -- ''
     print -r -- '選用參數：'
     print -r -- '  --minimum-total N   目標門檻（預設 90，範圍 90–100）。'
@@ -143,7 +145,7 @@ fi
 
 if (( dry_run == 1 )); then
     printf 'DRY RUN：'
-    printf '%q ' open -W -n "$app_path" --args "${runner_arguments[@]}"
+    printf '%q ' open -g -W -n "$app_path" --args "${runner_arguments[@]}"
     printf '\n'
     exit 0
 fi
@@ -174,7 +176,7 @@ open_wait_complete=0
     # Keep the LaunchServices waiter alive when Ctrl-C targets the whole process group. The
     # parent handles the signal by writing STOP, then reaps this proxy after the app exits.
     trap '' INT TERM HUP
-    exec open -W -n -o "$stdout_path" --stderr "$stderr_path" \
+    exec open -g -W -n -o "$stdout_path" --stderr "$stderr_path" \
         "$app_path" --args "${runner_arguments[@]}"
 ) &
 open_pid=$!

@@ -56,6 +56,92 @@ struct BattleStallDetectorTests {
         #expect(!BattleStallFrameEvidence.extract(from: belowFloor).background.isStrict)
     }
 
+    @Test("The measured truncated loot header supports freeze detection with or without talismans")
+    func measuredTruncatedLootHeaderSupportsVisualFreeze() {
+        let measured = measuredTruncatedLootObservations()
+        for observations in [measured, measured.filter { !$0.text.contains("護符") }] {
+            let classification = GameStateClassifier.classify(observations: observations)
+            let evidence = BattleStallFrameEvidence.extract(from: observations)
+            #expect(classification.state == .battle)
+            #expect(evidence.background.isStrict)
+
+            var detector = fiveSecondVisualDetector()
+            _ = detector.markVerifiedNormalBattleProgress(
+                at: 0,
+                context: context,
+                inputGeneration: 7
+            )
+            for time in [1.0, 2.5, 4.0, 5.5] {
+                #expect(!detector.observe(sample(
+                    at: time,
+                    evidence: evidence,
+                    difference: time == 1 ? nil : 0,
+                    battleScreenConfirmed: classification.state == .battle
+                )).isConfirmedEvidence)
+            }
+            let confirmed = detector.observe(sample(at: 6, evidence: evidence, difference: 0))
+            #expect(confirmed.isConfirmedEvidence)
+            #expect(confirmed.stableDuration == 5)
+            #expect(confirmed.stableSampleCount == 5)
+        }
+    }
+
+    @Test("Truncated loot requires its own confidence floor and exact header region")
+    func truncatedLootConfidenceAndLocationFailClosed() {
+        let measured = measuredTruncatedLootObservations()
+        let rejectedLoot = [
+            observation("利品", 0.874, 0.117, 0.062, 0.013, 0.499),
+            observation("利品", 0.60, 0.117, 0.062, 0.013, 1),
+            observation("利品", 0.874, 0.30, 0.062, 0.013, 1),
+            observation("利品", 0.874, 0.06, 0.062, 0.013, 1),
+            observation("品", 0.874, 0.117, 0.062, 0.013, 1),
+            observation("戰品", 0.874, 0.117, 0.062, 0.013, 1),
+            observation("獲得利品", 0.874, 0.117, 0.062, 0.013, 1),
+        ]
+        for replacement in rejectedLoot {
+            let observations = measured.map { $0.text == "利品" ? replacement : $0 }
+            #expect(!BattleStallFrameEvidence.extract(from: observations).background.isStrict)
+        }
+    }
+
+    @Test("Full and truncated loot readings share one global uniqueness requirement")
+    func duplicateTruncatedLootFailsClosed() {
+        let measured = measuredTruncatedLootObservations()
+        for duplicate in [
+            observation("利品", 0.874, 0.117, 0.062, 0.013, 1),
+            observation("戰利品6", 0.833, 0.108, 0.103, 0.016, 0.30),
+            observation("利品", 0.10, 0.40, 0.062, 0.013, 0.10),
+        ] {
+            let evidence = BattleStallFrameEvidence.extract(from: measured + [duplicate])
+            #expect(evidence.background.lootCandidates == 2)
+            #expect(!evidence.background.isStrict)
+        }
+    }
+
+    @Test("Truncated loot cannot replace any other trusted unique battle control")
+    func truncatedLootPreservesOtherAnchorRequirements() throws {
+        let measured = measuredTruncatedLootObservations()
+        for (name, confidence) in [("暫停", 0.499), ("撤退", 0.499), ("全部自動", 0.599)] {
+            let original = try #require(measured.first { $0.text == name })
+            let lowConfidence = measured.map {
+                $0.text == name
+                    ? OCRTextObservation(text: $0.text, rect: $0.rect, confidence: confidence)
+                    : $0
+            }
+            let misplaced = measured.map {
+                $0.text == name ? observation(name, 0.45, 0.35, 0.10, 0.02, 1) : $0
+            }
+            for observations in [
+                measured.filter { $0.text != name },
+                measured + [original],
+                lowConfidence,
+                misplaced,
+            ] {
+                #expect(!BattleStallFrameEvidence.extract(from: observations).background.isStrict)
+            }
+        }
+    }
+
     @Test("The measured 0.50 pause remains strict and fails below its local floor")
     func measuredPauseConfidenceUsesDedicatedFloor() {
         let observations = measuredFrame03Observations()
@@ -636,6 +722,25 @@ struct BattleStallDetectorTests {
 
     private func measuredFrame03Observations() -> [OCRTextObservation] {
         measuredNaturalDefeatObservations(clock: "7:18")
+    }
+
+    private func measuredTruncatedLootObservations() -> [OCRTextObservation] {
+        // Relevant anchors from auto-level-20260905-200757.b9x4bU/live-observe.json.
+        // The classifier already accepts its four-control grid despite the missing leading 戰.
+        [
+            observation("【護符 戰神「風神", 0.7142857119211824, 0.09887640458426972,
+                        0.23645320197044328, 0.017977528089887618, 0.30000001192092896),
+            observation("利品", 0.8743842369207623, 0.11685393250936327,
+                        0.061576355854278786, 0.013483146067415741, 0.5),
+            observation("暫停", 0.847290640851513, 0.6292134830497592,
+                        0.0640394088669951, 0.017977528089887618, 1),
+            observation("撤退", 0.8423645311576354, 0.6584269664044945,
+                        0.06896551724137934, 0.017977528089887618, 0.5),
+            observation("全部自動", 0.23131222197696935, 0.8693390502288849,
+                        0.12850856311215555, 0.018625271186400005, 1),
+            observation("跳過", 0.0738916247536946, 0.8696629214606743,
+                        0.06896551724137931, 0.017977528089887618, 1),
+        ]
     }
 
     private func measuredFrame04Observations() -> [OCRTextObservation] {

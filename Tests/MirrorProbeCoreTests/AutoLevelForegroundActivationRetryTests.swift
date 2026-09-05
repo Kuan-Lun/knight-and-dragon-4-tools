@@ -43,11 +43,13 @@ struct AutoLevelForegroundActivationRetryTests {
         #expect(second.settleDelayMilliseconds == 350)
     }
 
-    @Test("Observed focus wins over the activation call's advisory return value", arguments: [
+    @Test("Live AX focus wins over advisory activation and stale AppKit active flags", arguments: [
         (false, true, true, true),
         (true, true, true, true),
-        (true, false, true, false),
+        (true, false, true, true),
+        (false, false, true, true),
         (true, true, false, false),
+        (false, true, false, false),
         (false, false, false, false),
     ])
     func observedFocusIsAuthoritative(

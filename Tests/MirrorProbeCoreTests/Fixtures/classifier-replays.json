@@ -1997,7 +1997,7 @@
     "selectionRule": "top",
     "knownTargetMismatch": false,
     "expectedTransition": "defeatPrompt",
-    "notes": "撤退確認是二列中央 modal；明確無護符且 temporal recovery 已成立時，目標為頂部「是」。"
+    "notes": "撤退確認是二列中央 modal；temporal recovery 已成立並送出撤退時，目標為頂部「是」，不限制護符使用。"
   },
   {
     "label": "adventurer-two-rows-new-policy-top",

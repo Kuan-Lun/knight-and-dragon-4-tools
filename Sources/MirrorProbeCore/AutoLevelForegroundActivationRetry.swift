@@ -17,15 +17,18 @@ public struct AutoLevelForegroundActivationRetryState: Equatable, Sendable {
 
     public init() {}
 
-    /// The observed focus state after settling is authoritative. The activation API's return
-    /// value is retained for diagnostics but cannot prove that focus was kept or lost afterward.
+    /// The live focused-process observation after settling is authoritative. Callers read it
+    /// through AXFocusedApplication, failing closed on an unavailable or different process.
+    /// AppKit activation and a separate NSRunningApplication.isActive handle are diagnostic:
+    /// their asynchronous updates must not override the live focus observation.
     public static func activationIsReady(
         activateReturned: Bool,
         targetApplicationIsActive: Bool,
         frontmostProcessMatches: Bool
     ) -> Bool {
         _ = activateReturned
-        return targetApplicationIsActive && frontmostProcessMatches
+        _ = targetApplicationIsActive
+        return frontmostProcessMatches
     }
 
     public static func permitsRetry(
