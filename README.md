@@ -448,6 +448,19 @@ clicks for user input. There was no live window-availability interruption or obs
 user takeover during this run; those new branches remain covered by source review and the
 automated tests rather than a reproduced live interruption.
 
+Version 0.4.12 addresses `logs/auto-level-20260905-230008.3OTiLw`: its only advance left the
+selected EXP page unchanged, but the former retry policy allowed only loot-page recovery. Both
+known success pages now use the same three-attempt limit with fixed per-attempt acknowledgement
+windows. Retry requires the original page identity, exact unique measured target, SELECTED state,
+and clean evidence. EXP-to-loot transitions are handled separately and are never inferred from
+pixel differences alone. The actual failed classification is retained as a regression fixture.
+The reason the game ignored the original event remains unproven. A read-only `windowFocusBeforePost`
+diagnostic now records AX focused-window versus hit-window agreement for success-page advances;
+unknown AX data remains diagnostic and cannot override the existing input checks.
+The 0.4.12 source suite passes 408 tests, including the recorded EXP failure, both pages' retry
+limits, and cancellation when the page advances before a retry is posted. Live validation of
+the rebuilt app remains pending renewed macOS permissions.
+
 ## Read-only state analysis
 
 Analyze an existing PNG without requesting macOS privacy permissions or initializing the iPhone Mirroring connection:
@@ -475,7 +488,7 @@ The fixed `zh-Hant-v1` profile uses Vision revision 3 with accurate `zh-Hant` an
 The local fixtures currently calibrate these result-page transitions:
 
 - `missionComplete` → suggest `selectMissionRepeat`, targeting the observed `重複進行此任務` text box.
-- `missionCompleteRepeatSelected` → suggest `advanceMissionComplete` only when the calibrated area beside the repeat row contains the rendered red selection stamp and exactly one trusted page header (`獲得經驗值` or `獲得拾得物`) establishes the result layout. Runtime selection detection uses pixels, not Vision's reading of the word `SELECTED`; OCR variants remain diagnostic only. The runtime then uses the calibrated fixed upper continuation coordinate; OCR of `>>`, `22`, or the lower decorative glyph does not choose the target. Because both success pages reuse that point, a second click is allowed only after the recognized page identity changes from EXP to loot; animation or fingerprint change alone cannot replay it.
+- `missionCompleteRepeatSelected` → suggest `advanceMissionComplete` only when the calibrated area beside the repeat row contains the rendered red selection stamp and exactly one trusted page header (`獲得經驗值` or `獲得拾得物`) establishes the result layout. Runtime selection detection uses pixels, not Vision's reading of the word `SELECTED`; OCR variants remain diagnostic only. The runtime then uses the calibrated fixed upper continuation coordinate; OCR of `>>`, `22`, or the lower decorative glyph does not choose the target. Both success pages reuse that point. Before timeout, an explicit EXP-to-loot transition acknowledges the first click and permits the next page's action. If the original page remains visible after timeout, versions 0.4.12 and later allow at most three total posted attempts on that same independently recognized page and exact target; animation or fingerprint change alone cannot authorize a retry.
 - `missionFailed` → suggest selecting `重複進行此任務`.
 - `missionFailedRepeatSelected` → use the same calibrated upper continuation coordinate after the failure title, repeat row, and rendered red-stamp region are established. The lower glyph is never actionable.
 
@@ -491,9 +504,11 @@ battle/result samples and all 85 explicitly labelled modal layouts resolved corr
 Immediately before every click, the runner captures and classifies the window again. If a pending
 `selectMissionRepeat` is already satisfied by the exact corresponding selected result state, the
 stale selection is cancelled without posting input and the fresh state is polled normally. This
-exception is limited to `missionComplete` → `missionCompleteRepeatSelected` and the equivalent
-failure pair; every other preflight state change remains a safety error, and the runner never turns
-the stale request directly into a continuation click.
+result-selection exception covers `missionComplete` → `missionCompleteRepeatSelected` and the
+equivalent failure pair. A success advance also records its expected EXP/loot page for preflight.
+If an unposted EXP request now sees a verified loot page, it is cancelled and that fresh frame is
+processed before a new action is authorized. Other existing modal/retreat cancellation rules still
+apply; an unsupported state or content-page change stops instead of reusing stale coordinates.
 
 The battle detector requires multiple independent, layout-constrained anchors, such as `第…場戰鬥`, `戰利品…`, and controls such as `暫停`, `撤退`, or `全部自動`. The unique `全部自動` target may still be located as classification evidence and for supervised diagnostics, but the auto-level runner never executes it: the control is a toggle and the run requires the game's default automatic mode to be on. `撤退` is merely located as a policy-gated target until the temporal detector confirms a stalled defeat. OCR remains diagnostic for modal contents, but complete calibrated modal geometry takes priority over OCR conflicts or missing text. Without such geometry, empty OCR, low-confidence uncorroborated markers, conflicting states, invalid geometry, inventory-full, and unknown screens produce no ordinary executable action.
 

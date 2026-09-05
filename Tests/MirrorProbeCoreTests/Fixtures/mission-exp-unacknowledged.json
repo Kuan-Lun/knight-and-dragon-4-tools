@@ -1,0 +1,80 @@
+{
+  "sourceRun": "auto-level-20260905-230008.3OTiLw",
+  "sourceImage": "final.png",
+  "note": "Actual EXP result classification after the only posted top-arrow click failed to advance. The selected stamp was verified from pixels by the runtime.",
+  "classification": {
+    "allowedActions": [
+      {
+        "name": "advanceMissionComplete",
+        "target": {
+          "name": "missionCompleteAdvance",
+          "point": {
+            "x": 0.04679802898193762,
+            "y": 0.20337078632958805
+          },
+          "rect": {
+            "height": 0.011235955056179803,
+            "width": 0.04433497536945812,
+            "x": 0.024630541297208562,
+            "y": 0.19775280880149815
+          },
+          "sourceText": "<measured-result-top-advance>"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "detail": "任務完成!",
+        "kind": "missionCompleteTitle",
+        "observation": {
+          "confidence": 1,
+          "rect": {
+            "height": 0.02269178776258829,
+            "width": 0.21193422589983257,
+            "x": 0.3891067804403232,
+            "y": 0.10550803805301134
+          },
+          "text": "任務完成！"
+        }
+      },
+      {
+        "detail": "重複進行此任務",
+        "kind": "missionRepeatOption",
+        "observation": {
+          "confidence": 1,
+          "rect": {
+            "height": 0.020224719101123556,
+            "width": 0.2857142857142857,
+            "x": 0.024630543912737477,
+            "y": 0.23595505606741574
+          },
+          "text": "重複進行此任務"
+        }
+      },
+      {
+        "detail": "<measured-repeat-selected-red-stamp>; redPixelRatio=0.10749330954504906",
+        "kind": "repeatSelectedMarker"
+      },
+      {
+        "detail": "獲得經驗值",
+        "kind": "missionExperiencePage",
+        "observation": {
+          "confidence": 1,
+          "rect": {
+            "height": 0.020224719101123556,
+            "width": 0.1921182266009852,
+            "x": 0.7783251247536944,
+            "y": 0.1460674156367041
+          },
+          "text": "獲得經驗值"
+        }
+      },
+      {
+        "detail": "<measured-result-top-advance>",
+        "kind": "missionResultAdvanceMeasuredFallback"
+      }
+    ],
+    "policyGatedActions": [],
+    "state": "missionCompleteRepeatSelected"
+  }
+}

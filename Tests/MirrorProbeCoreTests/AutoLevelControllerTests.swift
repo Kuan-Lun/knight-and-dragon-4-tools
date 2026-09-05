@@ -346,14 +346,16 @@ struct AutoLevelControllerTests {
         #expect(controller.actionsIssued == 1)
     }
 
-    @Test("A posted loot-page success advance retries twice before the third timeout stops")
-    func lootPageSuccessAdvanceHasThreeAttemptBound() {
+    @Test("A posted success advance retries twice on the same page before the third timeout stops",
+          arguments: [MissionSuccessPageIdentity.experience, .loot])
+    func successAdvanceHasThreeAttemptBound(page: MissionSuccessPageIdentity) {
         var controller = makeController(policy: policy(
             actionCooldown: 0,
             postActionTimeout: 3
         ))
         let snapshotAt: (Double) -> AutoLevelSnapshot = { observedAt in
-            self.measuredLootFallbackSnapshot(
+            self.measuredSuccessFallbackSnapshot(
+                page: page,
                 time: observedAt,
                 fingerprint: "frozen-loot-page"
             )
@@ -396,14 +398,16 @@ struct AutoLevelControllerTests {
         #expect(controller.actionsIssued == 3)
     }
 
-    @Test("An unposted loot-page request is never converted into a retry")
-    func unpostedLootPageRequestDoesNotRetry() {
+    @Test("An unposted success-page request is never converted into a retry",
+          arguments: [MissionSuccessPageIdentity.experience, .loot])
+    func unpostedSuccessPageRequestDoesNotRetry(page: MissionSuccessPageIdentity) {
         var controller = makeController(policy: policy(
             actionCooldown: 0,
             postActionTimeout: 3
         ))
         let snapshotAt: (Double) -> AutoLevelSnapshot = { observedAt in
-            self.measuredLootFallbackSnapshot(
+            self.measuredSuccessFallbackSnapshot(
+                page: page,
                 time: observedAt,
                 fingerprint: "unposted-loot-page"
             )
@@ -474,10 +478,9 @@ struct AutoLevelControllerTests {
         #expect(controller.completedCycles == 1)
     }
 
-    @Test("Success advance retry requires loot identity in both result snapshots")
-    func successAdvanceRetryRequiresLootOriginAndCurrentPage() {
+    @Test("A timed-out success advance cannot retry across different result pages")
+    func successAdvanceRetryRequiresSameOriginAndCurrentPage() {
         let scenarios: [(GameEvidenceKind, String, GameEvidenceKind, String)] = [
-            (.missionExperiencePage, "獲得經驗值", .missionExperiencePage, "獲得經驗值"),
             (.missionExperiencePage, "獲得經驗值", .missionLootPage, "獲得拾得物"),
             (.missionLootPage, "獲得拾得物", .missionExperiencePage, "獲得經驗值"),
         ]
@@ -511,11 +514,211 @@ struct AutoLevelControllerTests {
         }
     }
 
-    @Test("Loot-page retry requires the same unique exact action target")
-    func lootPageRetryRequiresSameUniqueExactTarget() {
-        let baseline = MissionResultTopActionResolver.resolve(
-            classification: measuredLootFallbackClassification()
+    @Test("An acknowledged EXP retry starts a fresh loot-page budget without recounting success")
+    func experienceRetryAcknowledgesForwardLootPage() throws {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let experience = measuredSuccessFallbackSnapshot(page: .experience, time: 1, fingerprint: "exp")
+        _ = controller.consume(experience)
+        let first = try #require(requireAction(controller.consume(experience)))
+        let firstPosted = controller.markActionPosted(first, at: 2)
+        #expect(firstPosted)
+        let second = try #require(requireAction(controller.consume(measuredSuccessFallbackSnapshot(
+            page: .experience, time: 5, fingerprint: "exp"
+        ))))
+        let secondPosted = controller.markActionPosted(second, at: 6)
+        #expect(secondPosted)
+
+        // This visible page transition acknowledges EXP before its timeout and issues loot's
+        // first action. Sharing the same arrow must not inherit EXP's already-used retry count.
+        var lootRequest = try #require(requireAction(controller.consume(measuredSuccessFallbackSnapshot(
+            page: .loot, time: 7, fingerprint: "loot"
+        ))))
+        #expect(lootRequest.target == second.target)
+        #expect(controller.pendingActionAcknowledgementDeadline == nil)
+        for (postTime, timeout) in [(8.0, 11.0), (12.0, 15.0)] {
+            let posted = controller.markActionPosted(lootRequest, at: postTime)
+            #expect(posted)
+            lootRequest = try #require(requireAction(controller.consume(measuredSuccessFallbackSnapshot(
+                page: .loot, time: timeout, fingerprint: "loot"
+            ))))
+        }
+        let lastPosted = controller.markActionPosted(lootRequest, at: 16)
+        #expect(lastPosted)
+        #expect(controller.consume(measuredSuccessFallbackSnapshot(
+            page: .loot, time: 19, fingerprint: "loot"
+        )) == .stop(.actionDidNotAdvance(intent: .advanceMissionSuccess)))
+        #expect(controller.actionsIssued == 5)
+        #expect(controller.completedCycles == 1)
+    }
+
+    @Test("Preflight EXP-to-loot cancellation preserves the action count and cooldown")
+    func cancelsUnpostedSuccessAdvanceAfterForwardPageTransition() throws {
+        var controller = makeController(policy: policy(actionCooldown: 3))
+        let experience = measuredSuccessFallbackSnapshot(page: .experience, time: 1, fingerprint: "shared")
+        _ = controller.consume(experience)
+        let request = try #require(requireAction(controller.consume(experience)))
+        let loot = measuredSuccessFallbackSnapshot(page: .loot, time: 2, fingerprint: "shared")
+
+        let cancelled = controller.cancelUnpostedSuccessAdvanceAfterPageTransition(
+            request, observedClassification: loot.classification
         )
+        #expect(cancelled)
+        #expect(controller.actionsIssued == 1)
+        #expect(controller.completedCycles == 1)
+        #expect(controller.pendingActionAcknowledgementDeadline == nil)
+        let stalePost = controller.markActionPosted(request, at: 2)
+        #expect(!stalePost)
+        #expect(controller.consume(loot) == .wait(.actionCooldown(remaining: 2)))
+        let fresh = try #require(requireAction(controller.consume(measuredSuccessFallbackSnapshot(
+            page: .loot, time: 4, fingerprint: "shared"
+        ))))
+        #expect(fresh.requestID == request.requestID + 1)
+        #expect(controller.actionsIssued == 2)
+        #expect(controller.completedCycles == 1)
+
+        var limited = makeController(policy: policy(actionCooldown: 0, maxActions: 1))
+        _ = limited.consume(experience)
+        let limitedRequest = try #require(requireAction(limited.consume(experience)))
+        let limitedCancelled = limited.cancelUnpostedSuccessAdvanceAfterPageTransition(
+            limitedRequest, observedClassification: loot.classification
+        )
+        #expect(limitedCancelled)
+        #expect(limited.consume(loot) == .stop(.maximumActionsReached(limit: 1)))
+    }
+
+    @Test("Success-page preflight cancellation requires every field of the unposted request")
+    func successPageCancellationRequiresExactPendingRequest() throws {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let experience = measuredSuccessFallbackSnapshot(page: .experience, time: 1, fingerprint: "exp")
+        _ = controller.consume(experience)
+        let request = try #require(requireAction(controller.consume(experience)))
+        let loot = measuredSuccessFallbackSnapshot(page: .loot, time: 2, fingerprint: "loot").classification
+        for changedField in 0..<6 {
+            let altered = AutoLevelActionRequest(
+                requestID: request.requestID + (changedField == 0 ? 1 : 0),
+                intent: changedField == 1 ? .advanceMissionFailure : request.intent,
+                target: changedField == 2 ? AutoLevelActionTarget(
+                    name: request.target.name, sourceText: "changed", rect: request.target.rect
+                ) : request.target,
+                observedState: changedField == 3 ? .missionFailedRepeatSelected : request.observedState,
+                frameFingerprint: changedField == 4 ? "different" : request.frameFingerprint,
+                completedCycles: request.completedCycles + (changedField == 5 ? 1 : 0)
+            )
+            let cancelled = controller.cancelUnpostedSuccessAdvanceAfterPageTransition(
+                altered, observedClassification: loot
+            )
+            #expect(!cancelled)
+            #expect(controller.actionsIssued == 1)
+        }
+        let cancelled = controller.cancelUnpostedSuccessAdvanceAfterPageTransition(
+            request, observedClassification: loot
+        )
+        #expect(cancelled)
+        let cancelledAgain = controller.cancelUnpostedSuccessAdvanceAfterPageTransition(
+            request, observedClassification: loot
+        )
+        #expect(!cancelledAgain)
+    }
+
+    @Test("Success-page cancellation rejects uncertain pages and ambiguous or incompatible targets")
+    func successPageCancellationRequiresTrustedForwardPageAndTarget() throws {
+        let experience = measuredSuccessFallbackSnapshot(page: .experience, time: 1, fingerprint: "exp")
+        let loot = measuredSuccessFallbackSnapshot(page: .loot, time: 2, fingerprint: "loot").classification
+        let page = try #require(loot.evidence.first { $0.kind == .missionLootPage })
+        var invalidClassifications = [experience.classification]
+        for state in [GameState.unknown, .missionComplete, .missionFailedRepeatSelected, .wideModalOneButton] {
+            invalidClassifications.append(GameStateClassification(
+                state: state, evidence: loot.evidence, allowedActions: loot.allowedActions, policyGatedActions: []
+            ))
+        }
+        for evidence in [
+            loot.evidence.filter { $0.kind != .missionLootPage },
+            loot.evidence + [page],
+        ] + [GameEvidenceKind.invalidObservation, .lowConfidenceMarker, .conflictingStateMarkers].map({ kind in
+            loot.evidence + [GameStateEvidence(kind: kind, observation: nil, detail: "uncertain preflight")]
+        }) {
+            invalidClassifications.append(GameStateClassification(
+                state: loot.state, evidence: evidence, allowedActions: loot.allowedActions, policyGatedActions: []
+            ))
+        }
+        for actions in [
+            [],
+            loot.allowedActions + loot.allowedActions,
+            [gameAction(.advanceMissionComplete,
+                        rect: NormalizedRect(x: 0.02, y: 0.70, width: 0.05, height: 0.02))],
+            [gameAction(.advanceMissionComplete,
+                        rect: NormalizedRect(x: -0.02, y: 0.20, width: 0.05, height: 0.02))],
+        ] {
+            invalidClassifications.append(GameStateClassification(
+                state: loot.state, evidence: loot.evidence, allowedActions: actions, policyGatedActions: []
+            ))
+        }
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        _ = controller.consume(experience)
+        let request = try #require(requireAction(controller.consume(experience)))
+        for classification in invalidClassifications {
+            let cancelled = controller.cancelUnpostedSuccessAdvanceAfterPageTransition(
+                request, observedClassification: classification
+            )
+            #expect(!cancelled)
+            #expect(controller.actionsIssued == 1)
+        }
+        let validCancelled = controller.cancelUnpostedSuccessAdvanceAfterPageTransition(
+            request, observedClassification: loot
+        )
+        #expect(validCancelled)
+    }
+
+    @Test("Posted actions, reverse transitions, unrelated actions, and stopped sessions cannot cancel")
+    func successPageCancellationRejectsOtherPendingContexts() throws {
+        let experience = measuredSuccessFallbackSnapshot(page: .experience, time: 1, fingerprint: "exp")
+        let loot = measuredSuccessFallbackSnapshot(page: .loot, time: 2, fingerprint: "loot")
+        var postedController = makeController(policy: policy(actionCooldown: 0))
+        _ = postedController.consume(experience)
+        let postedRequest = try #require(requireAction(postedController.consume(experience)))
+        let posted = postedController.markActionPosted(postedRequest, at: 1.5)
+        #expect(posted)
+        let postedCancelled = postedController.cancelUnpostedSuccessAdvanceAfterPageTransition(
+            postedRequest, observedClassification: loot.classification
+        )
+        #expect(!postedCancelled)
+        #expect(postedController.pendingActionAcknowledgementDeadline == 9.5)
+
+        var reverse = makeController(policy: policy(actionCooldown: 0))
+        _ = reverse.consume(loot)
+        let reverseRequest = try #require(requireAction(reverse.consume(loot)))
+        for classification in [experience.classification, loot.classification] {
+            let cancelled = reverse.cancelUnpostedSuccessAdvanceAfterPageTransition(
+                reverseRequest, observedClassification: classification
+            )
+            #expect(!cancelled)
+        }
+
+        var unrelated = makeController(policy: policy(actionCooldown: 0))
+        let close = try #require(requireAction(unrelated.consume(makeSnapshot(
+            state: .battleEncounterPrompt, time: 1, fingerprint: "prompt", actions: [gameAction(.closeBattlePrompt)]
+        ))))
+        let closeCancelled = unrelated.cancelUnpostedSuccessAdvanceAfterPageTransition(
+            close, observedClassification: loot.classification
+        )
+        #expect(!closeCancelled)
+
+        var stopped = makeController(policy: policy(actionCooldown: 0, maxRuntime: 2))
+        _ = stopped.consume(experience)
+        let stoppedRequest = try #require(requireAction(stopped.consume(experience)))
+        #expect(stopped.consume(loot) == .stop(.maximumRuntimeReached(limit: 2)))
+        let terminalCancelled = stopped.cancelUnpostedSuccessAdvanceAfterPageTransition(
+            stoppedRequest, observedClassification: loot.classification
+        )
+        #expect(!terminalCancelled)
+    }
+
+    @Test("Success-page retry requires the same unique exact action target",
+          arguments: [MissionSuccessPageIdentity.experience, .loot])
+    func successPageRetryRequiresSameUniqueExactTarget(page: MissionSuccessPageIdentity) {
+        let baseline = measuredSuccessFallbackSnapshot(
+            page: page, time: 1, fingerprint: "baseline"
+        ).classification
         let originalAction = baseline.allowedActions[0]
         let changedTarget = NormalizedRect(
             x: 0.03,
@@ -538,7 +741,8 @@ struct AutoLevelControllerTests {
                 actionCooldown: 0,
                 postActionTimeout: 3
             ))
-            let origin = measuredLootFallbackSnapshot(
+            let origin = measuredSuccessFallbackSnapshot(
+                page: page,
                 time: 1,
                 fingerprint: "target-origin-\(index)"
             )
@@ -547,7 +751,8 @@ struct AutoLevelControllerTests {
             let marked = controller.markActionPosted(request, at: 2)
             #expect(marked)
 
-            let current = measuredLootFallbackSnapshot(
+            let current = measuredSuccessFallbackSnapshot(
+                page: page,
                 time: 5,
                 fingerprint: "target-current-\(index)",
                 allowedActions: currentActions
@@ -559,13 +764,15 @@ struct AutoLevelControllerTests {
         }
     }
 
-    @Test("An uncertain timeout snapshot cannot authorize a loot-page retry")
-    func uncertainSnapshotCannotAuthorizeLootPageRetry() {
+    @Test("An uncertain timeout snapshot cannot authorize a success-page retry",
+          arguments: [MissionSuccessPageIdentity.experience, .loot])
+    func uncertainSnapshotCannotAuthorizeSuccessPageRetry(page: MissionSuccessPageIdentity) {
         var controller = makeController(policy: policy(
             actionCooldown: 0,
             postActionTimeout: 3
         ))
-        let origin = measuredLootFallbackSnapshot(
+        let origin = measuredSuccessFallbackSnapshot(
+            page: page,
             time: 1,
             fingerprint: "certain-loot-origin"
         )
@@ -2441,6 +2648,21 @@ struct AutoLevelControllerTests {
         measuredResultFallbackSnapshot(
             pageKind: .missionLootPage,
             pageText: "獲得拾得物",
+            time: time,
+            fingerprint: fingerprint,
+            allowedActions: allowedActions
+        )
+    }
+
+    private func measuredSuccessFallbackSnapshot(
+        page: MissionSuccessPageIdentity,
+        time: Double,
+        fingerprint: String,
+        allowedActions: [AllowedGameAction]? = nil
+    ) -> AutoLevelSnapshot {
+        measuredResultFallbackSnapshot(
+            pageKind: page == .experience ? .missionExperiencePage : .missionLootPage,
+            pageText: page == .experience ? "獲得經驗值" : "獲得拾得物",
             time: time,
             fingerprint: fingerprint,
             allowedActions: allowedActions

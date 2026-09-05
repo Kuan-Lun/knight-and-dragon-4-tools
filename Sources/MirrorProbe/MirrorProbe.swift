@@ -3661,7 +3661,10 @@ private struct MirrorProbe {
                         battleStatus: battleStatus,
                         captureRecorder: captureRecorder,
                         windowRecovery: windowRecovery,
-                        actionDeadline: actionDeadline
+                        actionDeadline: actionDeadline,
+                        expectedSuccessPage: MissionSuccessPageIdentity.resolve(
+                            in: observation.classification
+                        )
                     )
                     let preflight: AutomationObservation
                     let confirmedTarget: AutoLevelActionTarget
@@ -3704,6 +3707,10 @@ private struct MirrorProbe {
                             observedState: observation.classification.state
                         ) {
                             cancellationReason = "forwardResultTransition"
+                        } else if controller.cancelUnpostedSuccessAdvanceAfterPageTransition(
+                            request, observedClassification: observation.classification
+                        ) {
+                            cancellationReason = "experienceToLootPageTransition"
                         } else if controller.cancelUnpostedActionForObservedModal(
                             request,
                             observedState: observation.classification.state
@@ -3712,7 +3719,7 @@ private struct MirrorProbe {
                         } else {
                             throw ProbeError.unsafeWindow(
                                 "the game state changed from \(request.observedState.rawValue) to "
-                                    + "\(observation.classification.state.rawValue) during action confirmation"
+                                    + "\(observation.classification.state.rawValue), or its result page changed, during action confirmation"
                             )
                         }
                         currentObservation = observation
@@ -4233,7 +4240,8 @@ private struct MirrorProbe {
         battleStatus: AutoLevelBattleStatus,
         captureRecorder: AutomationCaptureRecorder,
         windowRecovery: AutomationWindowRecoveryContext,
-        actionDeadline: TimeInterval
+        actionDeadline: TimeInterval,
+        expectedSuccessPage: MissionSuccessPageIdentity?
     ) async throws -> AutomationActionPreflightResult {
         guard request.intent != .enableAllAuto else {
             throw ProbeError.unsafeWindow(
@@ -4264,6 +4272,18 @@ private struct MirrorProbe {
         } else {
             activateReturned = nil
         }
+        if request.intent == .advanceMissionSuccess, inputMode == .foreground {
+            AutomationWindowFocusDiagnostic.log(
+                processID: identity.processID,
+                point: CGPoint(
+                    x: expectedFrame.minX + expectedFrame.width * request.target.point.x,
+                    y: expectedFrame.minY + expectedFrame.height * request.target.point.y
+                ),
+                expectedFrame: expectedFrame
+            )
+        }
+        // Keep the fresh capture after diagnostic reads so their latency cannot age the page
+        // evidence used below. Diagnostics never replace the final input-boundary checks.
         let preflight = try await captureAutomationObservation(
             requestedID: identity.windowID,
             expectedIdentity: identity,
@@ -4299,6 +4319,16 @@ private struct MirrorProbe {
         }
         guard preflight.classification.state == request.observedState else {
             return .stateChanged(observation: preflight, activation: activation)
+        }
+        if request.intent == .advanceMissionSuccess {
+            // EXP and loot share both state and coordinates. A delayed first click may have
+            // advanced the page after a retry was requested; cancel that stale request instead
+            // of treating the same arrow as proof that its original page is still visible.
+            guard let expectedSuccessPage,
+                  MissionSuccessPageIdentity.resolve(in: preflight.classification) == expectedSuccessPage
+            else {
+                return .stateChanged(observation: preflight, activation: activation)
+            }
         }
         let runtime = AutoLevelRuntimeMetadata(
             observedAt: preflight.capturedAt,

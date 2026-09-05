@@ -515,7 +515,7 @@ public struct AutoLevelController: Sendable {
             return request(.selectMissionRepeat, from: snapshot, at: now)
 
         case .missionCompleteRepeatSelected:
-            guard missionSuccessPageIdentity(in: snapshot.classification) != nil else {
+            guard MissionSuccessPageIdentity.resolve(in: snapshot.classification) != nil else {
                 return observeUncertainty(.missingAction, at: now)
             }
             return request(.advanceMissionSuccess, from: snapshot, at: now)
@@ -572,6 +572,50 @@ public struct AutoLevelController: Sendable {
             || (pendingAction.originState == .missionFailed
                 && observedState == .missionFailedRepeatSelected)
         guard isEquivalentForwardTransition else {
+            return false
+        }
+
+        self.pendingAction = nil
+        uncertainty = nil
+        return true
+    }
+
+    /// Discards a stale EXP-page advance when preflight already sees the loot page. Both pages
+    /// share an arrow, so the caller must observe and authorize the new page before clicking.
+    /// Cancellation preserves the original cycle count, issued-action count, and cooldown.
+    public mutating func cancelUnpostedSuccessAdvanceAfterPageTransition(
+        _ request: AutoLevelActionRequest,
+        observedClassification: GameStateClassification
+    ) -> Bool {
+        guard terminalReason == nil,
+              let pendingAction,
+              pendingAction.request == request,
+              pendingAction.postedAt == nil,
+              request.intent == .advanceMissionSuccess,
+              pendingAction.originState == .missionCompleteRepeatSelected,
+              pendingAction.originMissionSuccessPage == .experience,
+              observedClassification.state == .missionCompleteRepeatSelected,
+              MissionSuccessPageIdentity.resolve(in: observedClassification) == .loot,
+              !observedClassification.evidence.contains(where: {
+                  $0.kind == .invalidObservation
+                      || $0.kind == .lowConfidenceMarker
+                      || $0.kind == .conflictingStateMarkers
+              })
+        else {
+            return false
+        }
+        let actions = observedClassification.allowedActions.filter {
+            $0.name == .advanceMissionComplete
+        }
+        guard actions.count == 1, let action = actions.first else { return false }
+        let target = AutoLevelActionTarget(action.target)
+        guard target.isValid,
+              targetIsCompatible(
+                  target,
+                  with: .advanceMissionSuccess,
+                  classification: observedClassification
+              )
+        else {
             return false
         }
 
@@ -756,7 +800,7 @@ public struct AutoLevelController: Sendable {
             postedAt: nil,
             originState: snapshot.classification.state,
             originFrameFingerprint: snapshot.runtime.frameFingerprint,
-            originMissionSuccessPage: missionSuccessPageIdentity(in: snapshot.classification),
+            originMissionSuccessPage: MissionSuccessPageIdentity.resolve(in: snapshot.classification),
             postAttempt: postAttempt
         )
         if intent == .confirmRetreatWithoutTalisman {
@@ -780,7 +824,7 @@ public struct AutoLevelController: Sendable {
         }
         let elapsed = now - acknowledgementStartedAt
         if elapsed >= policy.postActionTimeout {
-            if let retry = retryTimedOutMissionSuccessLootAdvance(
+            if let retry = retryTimedOutMissionSuccessAdvance(
                 pendingAction,
                 with: snapshot,
                 at: now
@@ -809,7 +853,7 @@ public struct AutoLevelController: Sendable {
         if pendingAction.request.intent == .advanceMissionSuccess,
            snapshot.classification.state == pendingAction.originState,
            let previousPage = pendingAction.originMissionSuccessPage,
-           let nextPage = missionSuccessPageIdentity(in: snapshot.classification),
+           let nextPage = MissionSuccessPageIdentity.resolve(in: snapshot.classification),
            previousPage == .experience,
            nextPage == .loot,
            let nextTarget = uniqueMatchingCandidateTarget(
@@ -823,9 +867,9 @@ public struct AutoLevelController: Sendable {
                classification: snapshot.classification
            )
         {
-            // Both recognized success pages share the exact same top arrow. Only the explicit
-            // EXP -> loot content-page transition can authorize the second click; a fingerprint
-            // change or OCR jitter while the page identity is unchanged is never sufficient.
+            // Before timeout, an explicit EXP -> loot transition acknowledges the previous
+            // advance and permits fresh authorization for loot's shared arrow. A fingerprint
+            // change alone does not acknowledge it; timed-out same-page retries are separate.
             self.pendingAction = nil
             uncertainty = nil
             return nil
@@ -858,11 +902,10 @@ public struct AutoLevelController: Sendable {
     }
 
     /// The game's result-page arrow occasionally ignores a posted event even though the locked
-    /// mirror remained frontmost. Re-post only the final loot-page advance: it is idempotent while
-    /// that exact page and target remain visible. EXP is excluded because a successful first post
-    /// legitimately reveals a second page with the same arrow, and toggles/confirmations are never
-    /// safe to replay merely because their acknowledgement was delayed.
-    private mutating func retryTimedOutMissionSuccessLootAdvance(
+    /// mirror remained frontmost. Re-post only while the same independently identified EXP or
+    /// loot page and exact target remain visible. A different page sharing the arrow is not a
+    /// retry, and toggles/confirmations never inherit this bounded replay allowance.
+    private mutating func retryTimedOutMissionSuccessAdvance(
         _ pendingAction: PendingAction,
         with snapshot: AutoLevelSnapshot,
         at now: TimeInterval
@@ -870,10 +913,10 @@ public struct AutoLevelController: Sendable {
         guard pendingAction.postedAt != nil,
               pendingAction.request.intent == .advanceMissionSuccess,
               pendingAction.originState == .missionCompleteRepeatSelected,
-              pendingAction.originMissionSuccessPage == .loot,
-              pendingAction.postAttempt < Self.maximumMissionSuccessLootAdvancePostAttempts,
+              let originPage = pendingAction.originMissionSuccessPage,
+              pendingAction.postAttempt < Self.maximumMissionSuccessAdvancePostAttempts,
               snapshot.classification.state == .missionCompleteRepeatSelected,
-              missionSuccessPageIdentity(in: snapshot.classification) == .loot,
+              MissionSuccessPageIdentity.resolve(in: snapshot.classification) == originPage,
               !snapshot.classification.evidence.contains(where: {
                   $0.kind == .invalidObservation
                       || $0.kind == .lowConfidenceMarker
@@ -1135,7 +1178,7 @@ public struct AutoLevelController: Sendable {
             guard classifierAllowedMissionAdvance(
                 matching: target,
                 in: classification
-            ), let page = missionSuccessPageIdentity(in: classification) else {
+            ), let page = MissionSuccessPageIdentity.resolve(in: classification) else {
                 return false
             }
             return isTopMissionAdvanceTarget(
@@ -1333,36 +1376,7 @@ public struct AutoLevelController: Sendable {
         let postAttempt: Int
     }
 
-    private static let maximumMissionSuccessLootAdvancePostAttempts = 3
-
-    private enum MissionSuccessPageIdentity: Sendable {
-        case experience
-        case loot
-    }
-
-    private func missionSuccessPageIdentity(
-        in classification: GameStateClassification
-    ) -> MissionSuccessPageIdentity? {
-        let markers = classification.evidence.filter {
-            $0.kind == .missionExperiencePage || $0.kind == .missionLootPage
-        }
-        guard markers.count == 1,
-              let marker = markers.first,
-              let observation = marker.observation,
-              observation.confidence >= GameStateClassifier.minimumMarkerConfidence,
-              observation.rect.isValid,
-              (0.70...1.0).contains(observation.rect.center.x),
-              (0.12...0.20).contains(observation.rect.center.y)
-        else {
-            return nil
-        }
-        let canonical = compactResultText(observation.text)
-        switch (marker.kind, canonical) {
-        case (.missionExperiencePage, "獲得經驗值"): return .experience
-        case (.missionLootPage, "獲得拾得物"): return .loot
-        default: return nil
-        }
-    }
+    private static let maximumMissionSuccessAdvancePostAttempts = 3
 
     private func compactResultText(_ text: String) -> String {
         let compatible = text.precomposedStringWithCompatibilityMapping
