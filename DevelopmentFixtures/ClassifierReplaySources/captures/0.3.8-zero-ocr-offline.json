@@ -1,0 +1,332 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "advanceMissionComplete",
+        "target" : {
+          "name" : "missionCompleteAdvance",
+          "point" : {
+            "x" : 0.04679802898193762,
+            "y" : 0.20337078632958805
+          },
+          "rect" : {
+            "height" : 0.011235955056179803,
+            "width" : 0.04433497536945812,
+            "x" : 0.024630541297208562,
+            "y" : 0.19775280880149815
+          },
+          "sourceText" : "<measured-loot-top-advance>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "任務完成!",
+        "kind" : "missionCompleteTitle",
+        "observation" : {
+          "confidence" : 1,
+          "rect" : {
+            "height" : 0.02269178776258829,
+            "width" : 0.21193422589983257,
+            "x" : 0.3891067804403232,
+            "y" : 0.10550803805301134
+          },
+          "text" : "任務完成！"
+        }
+      },
+      {
+        "detail" : "重複進行此任務",
+        "kind" : "missionRepeatOption",
+        "observation" : {
+          "confidence" : 1,
+          "rect" : {
+            "height" : 0.020224719101123556,
+            "width" : 0.2857142857142857,
+            "x" : 0.024630543912737477,
+            "y" : 0.23595505606741574
+          },
+          "text" : "重複進行此任務"
+        }
+      },
+      {
+        "detail" : "SELECTED",
+        "kind" : "repeatSelectedMarker",
+        "observation" : {
+          "confidence" : 0.5,
+          "rect" : {
+            "height" : 0.035046082400204126,
+            "width" : 0.26002105938389963,
+            "x" : 0.36982343572043463,
+            "y" : 0.2232546383556393
+          },
+          "text" : "SELECTED"
+        }
+      },
+      {
+        "detail" : "獲得拾得物",
+        "kind" : "missionLootPage",
+        "observation" : {
+          "confidence" : 1,
+          "rect" : {
+            "height" : 0.020224719101123556,
+            "width" : 0.1921182266009852,
+            "x" : 0.7783251214285715,
+            "y" : 0.14606741552808988
+          },
+          "text" : "獲得拾得物"
+        }
+      },
+      {
+        "detail" : "<measured-loot-top-advance>",
+        "kind" : "missionCompleteAdvanceMeasuredFallback"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "missionCompleteRepeatSelected"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.45098039215686275,
+    "luminanceP95" : 0.9215686274509803,
+    "luminanceStandardDeviation" : 0.16268231497278898,
+    "meanLuminance" : 0.8304746544650294,
+    "nearBlackRatio" : 0.00020440701524876334,
+    "quantizedColorCount" : 162,
+    "sampledPixels" : 73383
+  },
+  "image" : {
+    "height" : 890,
+    "orientation" : "up",
+    "pngSHA256" : "1bdc21a6ade5235af26b41c34f86196bf299384f000c7d29e6ebad3c01c98aac",
+    "width" : 406
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "appleVision",
+    "languages" : [
+      "zh-Hant",
+      "en-US"
+    ],
+    "observations" : [
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.020224719101123556,
+          "width" : 0.14778325123152708,
+          "x" : 0.09852216814449917,
+          "y" : 0.06292134814606742
+        },
+        "text" : "2:37$"
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.01573033707865168,
+          "width" : 0.059113300492610876,
+          "x" : 0.8522167492610837,
+          "y" : 0.06516853923220978
+        },
+        "text" : "724"
+      },
+      {
+        "confidence" : 1,
+        "rect" : {
+          "height" : 0.02269178776258829,
+          "width" : 0.21193422589983257,
+          "x" : 0.3891067804403232,
+          "y" : 0.10550803805301134
+        },
+        "text" : "任務完成！"
+      },
+      {
+        "confidence" : 1,
+        "rect" : {
+          "height" : 0.018990906704677624,
+          "width" : 0.1287448018642482,
+          "x" : 0.8124748884242489,
+          "y" : 0.10735847931164388
+        },
+        "text" : "全部出售"
+      },
+      {
+        "confidence" : 1,
+        "rect" : {
+          "height" : 0.020224719101123556,
+          "width" : 0.1921182266009852,
+          "x" : 0.7783251214285715,
+          "y" : 0.14606741552808988
+        },
+        "text" : "獲得拾得物"
+      },
+      {
+        "confidence" : 0.5,
+        "rect" : {
+          "height" : 0.035046082400204126,
+          "width" : 0.26002105938389963,
+          "x" : 0.36982343572043463,
+          "y" : 0.2232546383556393
+        },
+        "text" : "SELECTED"
+      },
+      {
+        "confidence" : 1,
+        "rect" : {
+          "height" : 0.020224719101123556,
+          "width" : 0.2857142857142857,
+          "x" : 0.024630543912737477,
+          "y" : 0.23595505606741574
+        },
+        "text" : "重複進行此任務"
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.013483146067415741,
+          "width" : 0.4285714285714286,
+          "x" : 0.0295566459605912,
+          "y" : 0.2629213484044943
+        },
+        "text" : "128 ［9,4,2］ 重量2（巫師 LV251）"
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.011235955056179803,
+          "width" : 0.0640394088669951,
+          "x" : 0.9064039411330048,
+          "y" : 0.26516853936905793
+        },
+        "text" : "HPII"
+      },
+      {
+        "confidence" : 1,
+        "rect" : {
+          "height" : 0.01573033707865168,
+          "width" : 0.14778325123152714,
+          "x" : 0.8275862083743842,
+          "y" : 0.28089887629213495
+        },
+        "text" : "攻25/防25"
+      },
+      {
+        "confidence" : 1,
+        "rect" : {
+          "height" : 0.017977528089887618,
+          "width" : 0.24630541871921185,
+          "x" : 0.019704431444991847,
+          "y" : 0.28089887651685397
+        },
+        "text" : "［輕飾］鉑金戒指"
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.01348314606741563,
+          "width" : 0.2463054187192118,
+          "x" : 0.02955664716748778,
+          "y" : 0.30337078662921346
+        },
+        "text" : "公1（食屍鬼 Lv228）"
+      },
+      {
+        "confidence" : 0.5,
+        "rect" : {
+          "height" : 0.011235955056179692,
+          "width" : 0.08374384236453203,
+          "x" : 0.8916256168103448,
+          "y" : 0.30561797744382024
+        },
+        "text" : "STRVI"
+      },
+      {
+        "confidence" : 0.5,
+        "rect" : {
+          "height" : 0.01893916397951967,
+          "width" : 0.18271014960528598,
+          "x" : 0.01948236590202687,
+          "y" : 0.32086749656160907
+        },
+        "text" : "［晶］ 晶石"
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.013483146067415741,
+          "width" : 0.2315270935960591,
+          "x" : 0.029556652561576302,
+          "y" : 0.34382022462921347
+        },
+        "text" : "女22（探索采集品）"
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.018948419978109587,
+          "width" : 0.20237491400958282,
+          "x" : 0.01950220069471064,
+          "y" : 0.3635594977759091
+        },
+        "text" : "［賓］上貴石\""
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.013483146067415741,
+          "width" : 0.23645320197044334,
+          "x" : 0.024630537931034594,
+          "y" : 0.38426966307116106
+        },
+        "text" : "女15（探索采集品）"
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.01797752808988773,
+          "width" : 0.19704433497536944,
+          "x" : 0.019704435960591075,
+          "y" : 0.40449438191011233
+        },
+        "text" : "［寶］上貴石II"
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.013483146067415741,
+          "width" : 0.22167487684729065,
+          "x" : 0.029556653017241318,
+          "y" : 0.42696629202247194
+        },
+        "text" : "众5（巫妖 Lv251）"
+      },
+      {
+        "confidence" : 0.30000001192092896,
+        "rect" : {
+          "height" : 0.01846119741375518,
+          "width" : 0.19725365474306303,
+          "x" : 0.019599771644866627,
+          "y" : 0.4447019857024541
+        },
+        "text" : "［蘂］火藥液川"
+      }
+    ],
+    "recognitionLevel" : "accurate",
+    "requestRevision" : 3,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/captures/0.3.7-pre-run.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-03T18:46:54Z"
+}

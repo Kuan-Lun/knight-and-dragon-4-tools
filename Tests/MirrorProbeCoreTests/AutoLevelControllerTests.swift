@@ -1,0 +1,2346 @@
+import Testing
+@testable import MirrorProbeCore
+
+enum UnpostedCancellationRejectionCase: String, CaseIterable, Sendable {
+    case noPending
+    case wrongRequestID
+    case differentRequest
+    case nonSelectIntent
+    case observedUnknown
+    case observedInventoryFull
+    case observedBattle
+    case observedDefeat
+    case observedMissionComplete
+    case observedMissionFailed
+    case observedSelectedFailure
+}
+
+@Suite("AutoLevelController")
+struct AutoLevelControllerTests {
+    @Test("Classifier actions adapt to result-specific neutral intents")
+    func adaptsClassifierActionsByState() {
+        let success = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "success",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        let failure = makeSnapshot(
+            state: .missionFailedRepeatSelected,
+            time: 1,
+            fingerprint: "failure",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+
+        #expect(success.actionCandidates.map(\.intent) == [.advanceMissionSuccess])
+        #expect(failure.actionCandidates.map(\.intent) == [.advanceMissionFailure])
+    }
+
+    @Test("A recognized battle prompt requests exactly its close action")
+    func closesBattlePrompt() {
+        var controller = makeController()
+        let decision = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "prompt",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        let request = requireAction(decision)
+        #expect(request?.intent == .closeBattlePrompt)
+        #expect(request?.requestID == 1)
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("A geometry-only modal closes and resumes the same result without recounting it")
+    func closesGeometryModalWithoutRecountingResult() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let result = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "result-exp",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+
+        #expect(controller.consume(result) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+        #expect(requireAction(controller.consume(makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 2,
+            fingerprint: "result-exp",
+            actions: [gameAction(.advanceMissionComplete)]
+        )))?.intent == .advanceMissionSuccess)
+
+        let promptDecision = controller.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 3,
+            fingerprint: "skill-prompt",
+            actions: [gameAction(.pressWideModalTopButton)]
+        ))
+        #expect(requireAction(promptDecision)?.intent == .pressWideModalTopButton)
+
+        let resumedDecision = controller.consume(makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 4,
+            fingerprint: "result-exp-resumed",
+            actions: [gameAction(.advanceMissionComplete)]
+        ))
+        #expect(requireAction(resumedDecision)?.intent == .advanceMissionSuccess)
+        #expect(controller.completedCycles == 1)
+        #expect(controller.actionsIssued == 3)
+    }
+
+    @Test("Consecutive geometry-only modals remain actionable without OCR identity")
+    func consecutiveGeometryModalsRemainActionable() {
+        var sameLayout = makeController(policy: policy(actionCooldown: 0))
+        #expect(requireAction(sameLayout.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 1,
+            fingerprint: "one-a",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))?.intent == .pressWideModalTopButton)
+        #expect(requireAction(sameLayout.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 2,
+            fingerprint: "one-b",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))?.intent == .pressWideModalTopButton)
+
+        var changingLayout = makeController(
+            noTalisman: true,
+            policy: policy(actionCooldown: 0)
+        )
+        _ = changingLayout.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 1,
+            fingerprint: "one",
+            actions: [gameAction(.pressWideModalTopButton)]
+        ))
+        #expect(requireAction(changingLayout.consume(makeSnapshot(
+            state: .wideModalTwoButtons,
+            time: 2,
+            fingerprint: "two",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))?.intent == .pressWideModalTopButton)
+    }
+
+    @Test("A geometry-only two-button modal retains the no-talisman boundary")
+    func geometryTwoButtonRequiresNoTalismanConfirmation() {
+        var unconfirmed = makeController()
+        #expect(unconfirmed.consume(makeSnapshot(
+            state: .wideModalTwoButtons,
+            time: 1,
+            fingerprint: "two",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )) == .stop(.retreatRequiresNoTalismanConfirmation))
+
+        var confirmed = makeController(noTalisman: true)
+        #expect(requireAction(confirmed.consume(makeSnapshot(
+            state: .wideModalTwoButtons,
+            time: 1,
+            fingerprint: "two",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))?.intent == .pressWideModalTopButton)
+    }
+
+    @Test("Closing a battle event may reach mission success before the next poll")
+    func battleEventCloseCanReachSuccess() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        _ = controller.consume(makeSnapshot(
+            state: .battleEventPrompt,
+            time: 1,
+            fingerprint: "event",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        let result = makeSnapshot(
+            state: .missionComplete,
+            time: 2,
+            fingerprint: "fast-success",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        #expect(controller.consume(result) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("Closing a battle encounter may reach mission failure before the next poll")
+    func battleEncounterCloseCanReachFailure() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        _ = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "encounter",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        let result = makeSnapshot(
+            state: .missionFailed,
+            time: 2,
+            fingerprint: "fast-failure",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        #expect(controller.consume(result) == .completedCycle(.init(
+            count: 1,
+            outcome: .failure
+        )))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("Closing a battle event may reach repeat-selected mission success before the next poll")
+    func battleEventCloseCanReachRepeatSelectedSuccess() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        _ = controller.consume(makeSnapshot(
+            state: .battleEventPrompt,
+            time: 1,
+            fingerprint: "event",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        let result = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 2,
+            fingerprint: "fast-selected-success",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        #expect(controller.consume(result) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+        #expect(requireAction(controller.consume(result))?.intent == .advanceMissionSuccess)
+        #expect(controller.actionsIssued == 2)
+    }
+
+    @Test("Closing a battle encounter may reach repeat-selected mission failure before the next poll")
+    func battleEncounterCloseCanReachRepeatSelectedFailure() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        _ = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "encounter",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        let result = makeSnapshot(
+            state: .missionFailedRepeatSelected,
+            time: 2,
+            fingerprint: "fast-selected-failure",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        #expect(controller.consume(result) == .completedCycle(.init(
+            count: 1,
+            outcome: .failure
+        )))
+        #expect(requireAction(controller.consume(result))?.intent == .advanceMissionFailure)
+        #expect(controller.actionsIssued == 2)
+    }
+
+    @Test("An identical post-click frame is never clicked twice")
+    func identicalFrameIsDebounced() {
+        var controller = makeController(policy: policy(postActionTimeout: 5))
+        let prompt = makeSnapshot(
+            state: .battleEventPrompt,
+            time: 1,
+            fingerprint: "same",
+            actions: [gameAction(.closeBattlePrompt)]
+        )
+        _ = controller.consume(prompt)
+
+        let decision = controller.consume(makeSnapshot(
+            state: .battleEventPrompt,
+            time: 2,
+            fingerprint: "same",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        #expect(decision == .wait(.awaitingFrameChange(intent: .closeBattlePrompt)))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("A click which never changes the frame stops at the bounded timeout")
+    func unchangedFrameTimesOut() {
+        var controller = makeController(policy: policy(postActionTimeout: 3))
+        _ = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "same",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        let decision = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 4,
+            fingerprint: "same",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        #expect(decision == .stop(.actionDidNotAdvance(intent: .closeBattlePrompt)))
+    }
+
+    @Test("A delayed post starts its acknowledgement timeout without extending authorization")
+    func delayedPostStartsAcknowledgementTimeout() {
+        var controller = makeController(policy: policy(
+            actionCooldown: 0,
+            postActionTimeout: 5
+        ))
+        let request = requireAction(controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "same",
+            actions: [gameAction(.closeBattlePrompt)]
+        )))
+        #expect(request != nil)
+        let marked = controller.markActionPosted(request!, at: 4.9)
+        #expect(marked)
+
+        #expect(controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 8.9,
+            fingerprint: "same",
+            actions: [gameAction(.closeBattlePrompt)]
+        )) == .wait(.awaitingFrameChange(intent: .closeBattlePrompt)))
+        #expect(controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 9.9,
+            fingerprint: "same",
+            actions: [gameAction(.closeBattlePrompt)]
+        )) == .stop(.actionDidNotAdvance(intent: .closeBattlePrompt)))
+    }
+
+    @Test("A posted loot-page success advance retries twice before the third timeout stops")
+    func lootPageSuccessAdvanceHasThreeAttemptBound() {
+        var controller = makeController(policy: policy(
+            actionCooldown: 0,
+            postActionTimeout: 3
+        ))
+        let snapshotAt: (Double) -> AutoLevelSnapshot = { observedAt in
+            self.measuredLootFallbackSnapshot(
+                time: observedAt,
+                fingerprint: "frozen-loot-page"
+            )
+        }
+
+        #expect(controller.consume(snapshotAt(1)) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+        let first = requireAction(controller.consume(snapshotAt(1)))!
+        #expect(first.requestID == 1)
+        #expect(first.target.sourceText == MissionResultTopActionResolver.measuredTopAdvanceSentinel)
+        #expect(first.target.rect == MissionResultTopActionResolver.measuredTopAdvanceRect)
+        let firstMarked = controller.markActionPosted(first, at: 2)
+        #expect(firstMarked)
+        #expect(controller.consume(snapshotAt(4.9)) == .wait(.awaitingFrameChange(
+            intent: .advanceMissionSuccess
+        )))
+
+        let second = requireAction(controller.consume(snapshotAt(5)))!
+        #expect(second.requestID == 2)
+        #expect(second.target == first.target)
+        let secondMarked = controller.markActionPosted(second, at: 6)
+        #expect(secondMarked)
+        #expect(controller.consume(snapshotAt(8.9)) == .wait(.awaitingFrameChange(
+            intent: .advanceMissionSuccess
+        )))
+
+        let third = requireAction(controller.consume(snapshotAt(9)))!
+        #expect(third.requestID == 3)
+        #expect(third.target == first.target)
+        let thirdMarked = controller.markActionPosted(third, at: 10)
+        #expect(thirdMarked)
+        #expect(controller.consume(snapshotAt(12.9)) == .wait(.awaitingFrameChange(
+            intent: .advanceMissionSuccess
+        )))
+        #expect(controller.consume(snapshotAt(13)) == .stop(.actionDidNotAdvance(
+            intent: .advanceMissionSuccess
+        )))
+        #expect(controller.actionsIssued == 3)
+    }
+
+    @Test("An unposted loot-page request is never converted into a retry")
+    func unpostedLootPageRequestDoesNotRetry() {
+        var controller = makeController(policy: policy(
+            actionCooldown: 0,
+            postActionTimeout: 3
+        ))
+        let snapshotAt: (Double) -> AutoLevelSnapshot = { observedAt in
+            self.measuredLootFallbackSnapshot(
+                time: observedAt,
+                fingerprint: "unposted-loot-page"
+            )
+        }
+
+        _ = controller.consume(snapshotAt(1))
+        let request = requireAction(controller.consume(snapshotAt(1)))!
+        #expect(request.requestID == 1)
+        #expect(controller.consume(snapshotAt(4)) == .stop(.actionDidNotAdvance(
+            intent: .advanceMissionSuccess
+        )))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("A longer cooldown preserves the timed-out retry context")
+    func lootPageRetryWaitsForLongerCooldown() {
+        var controller = makeController(policy: policy(
+            actionCooldown: 10,
+            postActionTimeout: 3
+        ))
+        let snapshotAt: (Double) -> AutoLevelSnapshot = { observedAt in
+            self.measuredLootFallbackSnapshot(
+                time: observedAt,
+                fingerprint: "cooldown-loot-page"
+            )
+        }
+
+        _ = controller.consume(snapshotAt(1))
+        let first = requireAction(controller.consume(snapshotAt(1)))!
+        let marked = controller.markActionPosted(first, at: 2)
+        #expect(marked)
+        #expect(controller.consume(snapshotAt(5)) == .wait(.actionCooldown(remaining: 6)))
+        let second = requireAction(controller.consume(snapshotAt(11)))!
+        #expect(second.requestID == 2)
+        #expect(second.target == first.target)
+        #expect(controller.actionsIssued == 2)
+    }
+
+    @Test("A forward transition acknowledges a bounded loot-page retry")
+    func successfulLootPageRetryIsAcknowledged() {
+        var controller = makeController(policy: policy(
+            actionCooldown: 0,
+            postActionTimeout: 3
+        ))
+        let snapshotAt: (Double) -> AutoLevelSnapshot = { observedAt in
+            self.measuredLootFallbackSnapshot(
+                time: observedAt,
+                fingerprint: "retryable-loot-page"
+            )
+        }
+
+        _ = controller.consume(snapshotAt(1))
+        let first = requireAction(controller.consume(snapshotAt(1)))!
+        let firstMarked = controller.markActionPosted(first, at: 2)
+        #expect(firstMarked)
+        let second = requireAction(controller.consume(snapshotAt(5)))!
+        let secondMarked = controller.markActionPosted(second, at: 6)
+        #expect(secondMarked)
+
+        let battle = makeSnapshot(
+            state: .battle,
+            time: 7,
+            fingerprint: "advanced-after-retry",
+            allAutoStatus: .active
+        )
+        #expect(controller.consume(battle) == .wait(.battleInProgress))
+        #expect(controller.actionsIssued == 2)
+        #expect(controller.completedCycles == 1)
+    }
+
+    @Test("Success advance retry requires loot identity in both result snapshots")
+    func successAdvanceRetryRequiresLootOriginAndCurrentPage() {
+        let scenarios: [(GameEvidenceKind, String, GameEvidenceKind, String)] = [
+            (.missionExperiencePage, "獲得經驗值", .missionExperiencePage, "獲得經驗值"),
+            (.missionExperiencePage, "獲得經驗值", .missionLootPage, "獲得拾得物"),
+            (.missionLootPage, "獲得拾得物", .missionExperiencePage, "獲得經驗值"),
+        ]
+
+        for (index, scenario) in scenarios.enumerated() {
+            var controller = makeController(policy: policy(
+                actionCooldown: 0,
+                postActionTimeout: 3
+            ))
+            let origin = measuredResultFallbackSnapshot(
+                pageKind: scenario.0,
+                pageText: scenario.1,
+                time: 1,
+                fingerprint: "page-origin-\(index)"
+            )
+            _ = controller.consume(origin)
+            let request = requireAction(controller.consume(origin))!
+            let marked = controller.markActionPosted(request, at: 2)
+            #expect(marked)
+
+            let current = measuredResultFallbackSnapshot(
+                pageKind: scenario.2,
+                pageText: scenario.3,
+                time: 5,
+                fingerprint: "page-current-\(index)"
+            )
+            #expect(controller.consume(current) == .stop(.actionDidNotAdvance(
+                intent: .advanceMissionSuccess
+            )))
+            #expect(controller.actionsIssued == 1)
+        }
+    }
+
+    @Test("Loot-page retry requires the same unique exact action target")
+    func lootPageRetryRequiresSameUniqueExactTarget() {
+        let baseline = MissionResultTopActionResolver.resolve(
+            classification: measuredLootFallbackClassification()
+        )
+        let originalAction = baseline.allowedActions[0]
+        let changedTarget = NormalizedRect(
+            x: 0.03,
+            y: 0.195,
+            width: 0.05,
+            height: 0.02
+        )
+        let currentActionSets: [[AllowedGameAction]] = [
+            [gameAction(
+                .advanceMissionComplete,
+                rect: changedTarget,
+                sourceText: MissionResultTopActionResolver.measuredTopAdvanceSentinel
+            )],
+            [],
+            [originalAction, originalAction],
+        ]
+
+        for (index, currentActions) in currentActionSets.enumerated() {
+            var controller = makeController(policy: policy(
+                actionCooldown: 0,
+                postActionTimeout: 3
+            ))
+            let origin = measuredLootFallbackSnapshot(
+                time: 1,
+                fingerprint: "target-origin-\(index)"
+            )
+            _ = controller.consume(origin)
+            let request = requireAction(controller.consume(origin))!
+            let marked = controller.markActionPosted(request, at: 2)
+            #expect(marked)
+
+            let current = measuredLootFallbackSnapshot(
+                time: 5,
+                fingerprint: "target-current-\(index)",
+                allowedActions: currentActions
+            )
+            #expect(controller.consume(current) == .stop(.actionDidNotAdvance(
+                intent: .advanceMissionSuccess
+            )))
+            #expect(controller.actionsIssued == 1)
+        }
+    }
+
+    @Test("An uncertain timeout snapshot cannot authorize a loot-page retry")
+    func uncertainSnapshotCannotAuthorizeLootPageRetry() {
+        var controller = makeController(policy: policy(
+            actionCooldown: 0,
+            postActionTimeout: 3
+        ))
+        let origin = measuredLootFallbackSnapshot(
+            time: 1,
+            fingerprint: "certain-loot-origin"
+        )
+        _ = controller.consume(origin)
+        let request = requireAction(controller.consume(origin))!
+        let marked = controller.markActionPosted(request, at: 2)
+        #expect(marked)
+
+        let uncertain = makeSnapshot(
+            state: .unknown,
+            time: 5,
+            fingerprint: "uncertain-at-timeout"
+        )
+        #expect(controller.consume(uncertain) == .stop(.actionDidNotAdvance(
+            intent: .advanceMissionSuccess
+        )))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("A posted non-success action never retries after its timeout")
+    func nonSuccessActionDoesNotRetry() {
+        var controller = makeController(policy: policy(
+            actionCooldown: 0,
+            postActionTimeout: 3
+        ))
+        let failure = makeSnapshot(
+            state: .missionFailedRepeatSelected,
+            time: 1,
+            fingerprint: "frozen-failure",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        _ = controller.consume(failure)
+        let request = requireAction(controller.consume(failure))!
+        #expect(request.intent == .advanceMissionFailure)
+        let marked = controller.markActionPosted(request, at: 2)
+        #expect(marked)
+
+        #expect(controller.consume(makeSnapshot(
+            state: .missionFailedRepeatSelected,
+            time: 5,
+            fingerprint: "frozen-failure",
+            actions: [gameAction(.advanceMissionComplete)]
+        )) == .stop(.actionDidNotAdvance(intent: .advanceMissionFailure)))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("Only the exact pending unposted request can start acknowledgement")
+    func postedActionMarkingIsOneShotAndBounded() {
+        var controller = makeController(policy: policy(
+            actionCooldown: 0,
+            postActionTimeout: 5
+        ))
+        let request = requireAction(controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "prompt",
+            actions: [gameAction(.closeBattlePrompt)]
+        )))!
+        let differentRequest = AutoLevelActionRequest(
+            requestID: request.requestID + 1,
+            intent: request.intent,
+            target: request.target,
+            observedState: request.observedState,
+            frameFingerprint: request.frameFingerprint,
+            completedCycles: request.completedCycles
+        )
+
+        let markedDifferentRequest = controller.markActionPosted(differentRequest, at: 2)
+        #expect(!markedDifferentRequest)
+        let markedAtNaN = controller.markActionPosted(request, at: .nan)
+        #expect(!markedAtNaN)
+        let markedBeforeIssue = controller.markActionPosted(request, at: 0.9)
+        #expect(!markedBeforeIssue)
+        let markedAtDeadline = controller.markActionPosted(request, at: 6)
+        #expect(!markedAtDeadline)
+        let marked = controller.markActionPosted(request, at: 2)
+        #expect(marked)
+        let markedTwice = controller.markActionPosted(request, at: 2.1)
+        #expect(!markedTwice)
+        let cancelledAfterPost = controller.cancelUnpostedActionForObservedModal(
+            request,
+            observedState: .wideModalOneButton
+        )
+        #expect(!cancelledAfterPost)
+    }
+
+    @Test("A changed frame in the same modal waits for a state transition without replay")
+    func changedFrameSameStateWaits() {
+        var controller = makeController(policy: policy(postActionTimeout: 5))
+        _ = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "before",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        let decision = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 2,
+            fingerprint: "animation",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        #expect(decision == .wait(.awaitingStateChange(intent: .closeBattlePrompt)))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("A changed result frame with the same target does not replay advance")
+    func sameResultTargetDoesNotReplay() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let target = NormalizedRect(x: 0.02, y: 0.19, width: 0.05, height: 0.02)
+        let selected = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "result-before",
+            actions: [gameAction(.advanceMissionComplete, rect: target)]
+        )
+        _ = controller.consume(selected)
+        #expect(requireAction(controller.consume(selected))?.intent == .advanceMissionSuccess)
+
+        let animated = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 2,
+            fingerprint: "result-animation",
+            actions: [gameAction(
+                .advanceMissionComplete,
+                rect: NormalizedRect(x: 0.021, y: 0.191, width: 0.05, height: 0.02)
+            )]
+        )
+        #expect(controller.consume(animated) == .wait(.awaitingStateChange(
+            intent: .advanceMissionSuccess
+        )))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("An explicit EXP-to-loot identity change authorizes the same top arrow once more")
+    func changedResultPageIdentityAdvancesNextPage() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let topArrow = NormalizedRect(x: 0.02, y: 0.19, width: 0.05, height: 0.02)
+        let measuredLootDoubleTwo = NormalizedRect(
+            x: 0.02463054162561577,
+            y: 0.19999999995006246,
+            width: 0.04433497536945813,
+            height: 0.008988764044943753
+        )
+        let firstPage = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "experience-page",
+            actions: [gameAction(
+                .advanceMissionComplete,
+                rect: topArrow
+            )]
+        )
+        _ = controller.consume(firstPage)
+        _ = controller.consume(firstPage)
+
+        var lootEvidence = resultPageEvidence(.missionLootPage, text: "獲得拾得物")
+        lootEvidence.append(GameStateEvidence(
+            kind: .missionCompleteAdvance,
+            observation: OCRTextObservation(
+                text: "22",
+                rect: measuredLootDoubleTwo,
+                confidence: 0.30000001192092896
+            ),
+            detail: "22"
+        ))
+        let nextPage = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 2,
+            fingerprint: "loot-page",
+            evidence: lootEvidence,
+            actions: [gameAction(
+                .advanceMissionComplete,
+                rect: measuredLootDoubleTwo,
+                sourceText: "22"
+            )]
+        )
+        let request = requireAction(controller.consume(nextPage))
+        #expect(request?.intent == .advanceMissionSuccess)
+        #expect(request?.target.sourceText == "22")
+        #expect(request?.target.point == measuredLootDoubleTwo.center)
+        #expect(request?.requestID == 2)
+        #expect(controller.completedCycles == 1)
+        #expect(controller.actionsIssued == 2)
+    }
+
+    @Test("A classifier-produced zero-OCR loot fallback advances after the EXP page exactly once")
+    func changedResultPageIdentityUsesMeasuredLootFallback() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let firstPage = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "experience-before-zero-ocr-loot",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        _ = controller.consume(firstPage)
+        _ = controller.consume(firstPage)
+
+        let fallbackClassification = measuredLootFallbackClassification()
+        let lootPage = AutoLevelSnapshot(
+            classification: fallbackClassification,
+            runtime: AutoLevelRuntimeMetadata(
+                observedAt: 2,
+                windowIdentity: testWindow,
+                frameFingerprint: "zero-ocr-loot-page"
+            )
+        )
+        let request = requireAction(controller.consume(lootPage))
+        #expect(request?.intent == .advanceMissionSuccess)
+        #expect(
+            request?.target.sourceText
+                == GameStateClassifier.measuredLootTopAdvanceSentinel
+        )
+        #expect(request?.target.rect == GameStateClassifier.measuredLootTopAdvanceRect)
+        #expect(request?.target.point == GameStateClassifier.measuredLootTopAdvanceRect.center)
+        #expect(request?.requestID == 2)
+        #expect(controller.completedCycles == 1)
+        #expect(controller.actionsIssued == 2)
+    }
+
+    @Test("A supplemental measured fallback cannot bypass its classifier action and evidence")
+    func supplementalMeasuredLootFallbackCannotBypassClassifier() {
+        let target = AutoLevelActionTarget(
+            name: GameTargetName.missionCompleteAdvance.rawValue,
+            sourceText: GameStateClassifier.measuredLootTopAdvanceSentinel,
+            rect: GameStateClassifier.measuredLootTopAdvanceRect
+        )
+        let fallbackEvidence = GameStateEvidence(
+            kind: .missionCompleteAdvanceMeasuredFallback,
+            observation: nil,
+            detail: GameStateClassifier.measuredLootTopAdvanceSentinel
+        )
+
+        var noActionController = makeController(policy: policy(actionCooldown: 0))
+        let noClassifierAction = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "supplemental-measured-fallback",
+            evidence: resultPageEvidence(.missionLootPage, text: "獲得拾得物")
+                + [fallbackEvidence],
+            supplemental: [.init(intent: .advanceMissionSuccess, target: target)]
+        )
+        _ = noActionController.consume(noClassifierAction)
+        #expect(noActionController.consume(noClassifierAction) == .wait(.transientState(
+            kind: .ambiguousAction,
+            observationCount: 1
+        )))
+        #expect(noActionController.actionsIssued == 0)
+
+        var expController = makeController(policy: policy(actionCooldown: 0))
+        let expSentinel = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "exp-measured-fallback",
+            evidence: resultPageEvidence(.missionExperiencePage, text: "獲得經驗值")
+                + [fallbackEvidence],
+            actions: [AllowedGameAction(
+                name: .advanceMissionComplete,
+                target: NamedGameTarget(
+                    name: .missionCompleteAdvance,
+                    sourceText: GameStateClassifier.measuredLootTopAdvanceSentinel,
+                    rect: GameStateClassifier.measuredLootTopAdvanceRect,
+                    point: GameStateClassifier.measuredLootTopAdvanceRect.center
+                )
+            )]
+        )
+        _ = expController.consume(expSentinel)
+        #expect(expController.consume(expSentinel) == .wait(.transientState(
+            kind: .ambiguousAction,
+            observationCount: 1
+        )))
+        #expect(expController.actionsIssued == 0)
+    }
+
+    @Test("A synthetic loot-page 22 without matching OCR evidence cannot bypass the controller")
+    func syntheticLootDoubleTwoCannotBypassController() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let measured = NormalizedRect(
+            x: 0.02463,
+            y: 0.2000,
+            width: 0.04433,
+            height: 0.00899
+        )
+        let snapshot = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "synthetic-loot-22",
+            evidence: resultPageEvidence(.missionLootPage, text: "獲得拾得物"),
+            actions: [gameAction(.advanceMissionComplete, rect: measured, sourceText: "22")]
+        )
+
+        #expect(controller.consume(snapshot) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+        #expect(controller.consume(snapshot) == .wait(.transientState(
+            kind: .ambiguousAction,
+            observationCount: 1
+        )))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("A supplemental bottom arrow cannot bypass the result classifier")
+    func supplementalBottomAdvanceCannotBypassClassifier() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let bottom = NormalizedRect(x: 0.02, y: 0.70, width: 0.05, height: 0.02)
+        let snapshot = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "bottom-bypass",
+            actions: [],
+            supplemental: [AutoLevelActionCandidate(
+                intent: .advanceMissionSuccess,
+                target: AutoLevelActionTarget(
+                    name: GameTargetName.missionCompleteAdvance.rawValue,
+                    sourceText: ">>",
+                    rect: bottom
+                )
+            )]
+        )
+
+        #expect(controller.consume(snapshot) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+        #expect(controller.consume(snapshot) == .wait(.transientState(
+            kind: .ambiguousAction,
+            observationCount: 1
+        )))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("A supplemental top arrow cannot bypass missing page identity")
+    func supplementalTopAdvanceCannotBypassMissingPageIdentity() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let top = NormalizedRect(x: 0.02, y: 0.19, width: 0.05, height: 0.02)
+        let snapshot = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "missing-page-identity",
+            evidence: resultPageEvidence(nil),
+            actions: [],
+            supplemental: [AutoLevelActionCandidate(
+                intent: .advanceMissionSuccess,
+                target: AutoLevelActionTarget(
+                    name: GameTargetName.missionCompleteAdvance.rawValue,
+                    sourceText: ">>",
+                    rect: top
+                )
+            )],
+            addDefaultResultPageEvidence: false
+        )
+
+        #expect(controller.consume(snapshot) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+        #expect(controller.consume(snapshot) == .wait(.transientState(
+            kind: .missingAction,
+            observationCount: 1
+        )))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("A loot-to-EXP change cannot replay the shared top arrow")
+    func reverseResultPageIdentityDoesNotReplay() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let top = NormalizedRect(x: 0.02, y: 0.19, width: 0.05, height: 0.02)
+        let loot = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "loot-first",
+            evidence: resultPageEvidence(.missionLootPage, text: "獲得拾得物"),
+            actions: [gameAction(.advanceMissionComplete, rect: top)]
+        )
+        _ = controller.consume(loot)
+        _ = controller.consume(loot)
+
+        let experience = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 2,
+            fingerprint: "experience-second",
+            evidence: resultPageEvidence(.missionExperiencePage, text: "獲得經驗值"),
+            actions: [gameAction(.advanceMissionComplete, rect: top)]
+        )
+        #expect(controller.consume(experience) == .wait(.awaitingStateChange(
+            intent: .advanceMissionSuccess
+        )))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("Successful result counts once, selects repeat, then uses success advance")
+    func successfulCycleSequence() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let result = makeSnapshot(
+            state: .missionComplete,
+            time: 1,
+            fingerprint: "success-result",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+
+        #expect(controller.consume(result) == .completedCycle(.init(count: 1, outcome: .success)))
+        #expect(requireAction(controller.consume(result))?.intent == .selectMissionRepeat)
+
+        let selected = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 2,
+            fingerprint: "success-selected",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        #expect(requireAction(controller.consume(selected))?.intent == .advanceMissionSuccess)
+        #expect(controller.completedCycles == 1)
+    }
+
+    @Test("A selected result cannot regress into the repeat toggle within the same episode")
+    func selectedResultLatchPreventsReverseToggle() {
+        for pair in [
+            (GameState.missionCompleteRepeatSelected, GameState.missionComplete),
+            (.missionCompleteRepeatSelected, .missionFailed),
+            (.missionFailedRepeatSelected, .missionFailed),
+            (.missionFailedRepeatSelected, .missionComplete),
+        ] {
+            var controller = makeController(policy: policy(
+                actionCooldown: 0,
+                uncertainStateGraceDuration: 10,
+                uncertainStateGraceSnapshots: 3
+            ))
+            let selected = makeSnapshot(
+                state: pair.0,
+                time: 1,
+                fingerprint: "selected",
+                actions: [gameAction(.advanceMissionComplete)]
+            )
+            let expectedOutcome: AutoLevelCycleOutcome = pair.0 == .missionCompleteRepeatSelected
+                ? .success
+                : .failure
+            #expect(controller.consume(selected) == .completedCycle(.init(
+                count: 1,
+                outcome: expectedOutcome
+            )))
+
+            let regressed = makeSnapshot(
+                state: pair.1,
+                time: 2,
+                fingerprint: "selected-marker-missed",
+                actions: [gameAction(.selectMissionRepeat)]
+            )
+            #expect(controller.consume(regressed) == .wait(.transientState(
+                kind: .missingAction,
+                observationCount: 1
+            )))
+            #expect(controller.actionsIssued == 0)
+        }
+    }
+
+    @Test("The next battle clears the selected-result latch")
+    func nextBattleClearsSelectedResultLatch() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let selected = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "selected-result",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        #expect(controller.consume(selected) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+
+        let battle = makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "next-battle",
+            battleSessionID: "battle-2",
+            allAutoStatus: .active
+        )
+        #expect(controller.consume(battle) == .wait(.battleInProgress))
+
+        let nextResult = makeSnapshot(
+            state: .missionComplete,
+            time: 3,
+            fingerprint: "next-result",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        #expect(controller.consume(nextResult) == .completedCycle(.init(
+            count: 2,
+            outcome: .success
+        )))
+        #expect(requireAction(controller.consume(nextResult))?.intent == .selectMissionRepeat)
+    }
+
+    @Test("Failed result counts once, selects repeat, then uses failure top advance")
+    func failedCycleSequence() {
+        var controller = makeController(noTalisman: true, policy: policy(actionCooldown: 0))
+        let result = makeSnapshot(
+            state: .missionFailed,
+            time: 1,
+            fingerprint: "failure-result",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+
+        #expect(controller.consume(result) == .completedCycle(.init(count: 1, outcome: .failure)))
+        #expect(requireAction(controller.consume(result))?.intent == .selectMissionRepeat)
+
+        let selected = makeSnapshot(
+            state: .missionFailedRepeatSelected,
+            time: 2,
+            fingerprint: "failure-selected",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        #expect(requireAction(controller.consume(selected))?.intent == .advanceMissionFailure)
+    }
+
+    @Test("An unposted repeat action can be cancelled after its exact forward success transition")
+    func cancelsUnpostedSuccessRepeatAfterForwardTransition() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let result = makeSnapshot(
+            state: .missionComplete,
+            time: 1,
+            fingerprint: "success-before-confirmation",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        _ = controller.consume(result)
+        let staleRequest = requireAction(controller.consume(result))
+        #expect(staleRequest != nil)
+
+        let cancelled = staleRequest.map {
+            controller.cancelUnpostedActionAfterForwardResultTransition(
+                $0,
+                observedState: .missionCompleteRepeatSelected
+            )
+        }
+        #expect(cancelled == true)
+
+        let selected = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 2,
+            // The live race produced different OCR states from the exact same pixels. Explicit
+            // cancellation must bypass pending-action fingerprint debounce before a fresh poll.
+            fingerprint: "success-before-confirmation",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        let nextRequest = requireAction(controller.consume(selected))
+        #expect(nextRequest?.intent == .advanceMissionSuccess)
+        #expect(nextRequest?.requestID == 2)
+        #expect(controller.actionsIssued == 2)
+        #expect(controller.completedCycles == 1)
+    }
+
+    @Test("An unposted repeat action can be cancelled after its exact forward failure transition")
+    func cancelsUnpostedFailureRepeatAfterForwardTransition() {
+        var controller = makeController(
+            noTalisman: true,
+            policy: policy(actionCooldown: 0)
+        )
+        let result = makeSnapshot(
+            state: .missionFailed,
+            time: 1,
+            fingerprint: "failure-before-confirmation",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        _ = controller.consume(result)
+        let staleRequest = requireAction(controller.consume(result))
+        #expect(staleRequest != nil)
+
+        let cancelled = staleRequest.map {
+            controller.cancelUnpostedActionAfterForwardResultTransition(
+                $0,
+                observedState: .missionFailedRepeatSelected
+            )
+        }
+        #expect(cancelled == true)
+
+        let selected = makeSnapshot(
+            state: .missionFailedRepeatSelected,
+            time: 2,
+            fingerprint: "failure-before-confirmation",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        let nextRequest = requireAction(controller.consume(selected))
+        #expect(nextRequest?.intent == .advanceMissionFailure)
+        #expect(nextRequest?.requestID == 2)
+        #expect(controller.actionsIssued == 2)
+        #expect(controller.completedCycles == 1)
+    }
+
+    @Test("A modal appearing during preflight cancels stale coordinates for fresh authorization")
+    func cancelsUnpostedActionForNewGeometryModal() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let staleRequest = requireAction(controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "encounter",
+            actions: [gameAction(.closeBattlePrompt)]
+        )))
+        #expect(staleRequest != nil)
+
+        let cancelled = staleRequest.map {
+            controller.cancelUnpostedActionForObservedModal(
+                $0,
+                observedState: .wideModalOneButton
+            )
+        }
+        #expect(cancelled == true)
+
+        let freshRequest = requireAction(controller.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 2,
+            fingerprint: "new-modal",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))
+        #expect(freshRequest?.intent == .pressWideModalTopButton)
+        #expect(freshRequest?.requestID == 2)
+        #expect(controller.actionsIssued == 2)
+
+        let refused = freshRequest.map {
+            controller.cancelUnpostedActionForObservedModal(
+                $0,
+                observedState: .unknown
+            )
+        }
+        #expect(refused == false)
+    }
+
+    @Test("Unposted action cancellation rejects every non-equivalent transition")
+    func rejectsNonEquivalentUnpostedTransition() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let result = makeSnapshot(
+            state: .missionComplete,
+            time: 1,
+            fingerprint: "success-before-unsafe-transition",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        _ = controller.consume(result)
+        let staleRequest = requireAction(controller.consume(result))
+        #expect(staleRequest != nil)
+
+        let cancelled = staleRequest.map {
+            controller.cancelUnpostedActionAfterForwardResultTransition(
+                $0,
+                observedState: .missionFailedRepeatSelected
+            )
+        }
+        #expect(cancelled == false)
+
+        let unrelated = makeSnapshot(
+            state: .missionFailedRepeatSelected,
+            time: 2,
+            fingerprint: "cross-outcome-transition",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        #expect(controller.consume(unrelated) == .stop(.unexpectedTransition(
+            intent: .selectMissionRepeat,
+            from: .missionComplete,
+            to: .missionFailedRepeatSelected
+        )))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test(
+        "Unposted cancellation rejects its complete negative matrix without clearing pending",
+        arguments: UnpostedCancellationRejectionCase.allCases
+    )
+    func unpostedCancellationNegativeMatrix(
+        testCase: UnpostedCancellationRejectionCase
+    ) {
+        let comment = Comment(rawValue: testCase.rawValue)
+
+        if testCase == .noPending {
+            var controller = makeController(policy: policy(actionCooldown: 0))
+            let action = gameAction(.selectMissionRepeat)
+            let foreignRequest = AutoLevelActionRequest(
+                requestID: 1,
+                intent: .selectMissionRepeat,
+                target: AutoLevelActionTarget(action.target),
+                observedState: .missionComplete,
+                frameFingerprint: "no-pending",
+                completedCycles: 0
+            )
+            #expect(
+                controller.cancelUnpostedActionAfterForwardResultTransition(
+                    foreignRequest,
+                    observedState: .missionCompleteRepeatSelected
+                ) == false,
+                comment
+            )
+
+            let ordinaryResult = makeSnapshot(
+                state: .missionComplete,
+                time: 1,
+                fingerprint: "ordinary-result",
+                actions: [action]
+            )
+            #expect(
+                controller.consume(ordinaryResult)
+                    == .completedCycle(.init(count: 1, outcome: .success)),
+                comment
+            )
+            return
+        }
+
+        if testCase == .nonSelectIntent {
+            var controller = makeController(policy: policy(actionCooldown: 0))
+            let prompt = makeSnapshot(
+                state: .battleEventPrompt,
+                time: 1,
+                fingerprint: "close-pending",
+                actions: [gameAction(.closeBattlePrompt)]
+            )
+            guard let closeRequest = requireAction(controller.consume(prompt)) else {
+                return
+            }
+            #expect(
+                controller.cancelUnpostedActionAfterForwardResultTransition(
+                    closeRequest,
+                    observedState: .missionCompleteRepeatSelected
+                ) == false,
+                comment
+            )
+
+            let samePixels = makeSnapshot(
+                state: .battle,
+                time: 2,
+                fingerprint: "close-pending",
+                battleSessionID: "battle-1",
+                allAutoStatus: .active
+            )
+            #expect(
+                controller.consume(samePixels)
+                    == .wait(.awaitingFrameChange(intent: .closeBattlePrompt)),
+                comment
+            )
+            let freshBattle = makeSnapshot(
+                state: .battle,
+                time: 3,
+                fingerprint: "close-fresh",
+                battleSessionID: "battle-1",
+                allAutoStatus: .active
+            )
+            #expect(controller.consume(freshBattle) == .wait(.battleInProgress), comment)
+            return
+        }
+
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let result = makeSnapshot(
+            state: .missionComplete,
+            time: 1,
+            fingerprint: "repeat-pending",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        _ = controller.consume(result)
+        guard let pendingRequest = requireAction(controller.consume(result)) else {
+            return
+        }
+
+        let presentedRequest: AutoLevelActionRequest
+        let observedState: GameState
+        switch testCase {
+        case .wrongRequestID:
+            presentedRequest = AutoLevelActionRequest(
+                requestID: pendingRequest.requestID + 1,
+                intent: pendingRequest.intent,
+                target: pendingRequest.target,
+                observedState: pendingRequest.observedState,
+                frameFingerprint: pendingRequest.frameFingerprint,
+                completedCycles: pendingRequest.completedCycles
+            )
+            observedState = .missionCompleteRepeatSelected
+
+        case .differentRequest:
+            presentedRequest = AutoLevelActionRequest(
+                requestID: pendingRequest.requestID,
+                intent: pendingRequest.intent,
+                target: pendingRequest.target,
+                observedState: .missionFailed,
+                frameFingerprint: "different-request",
+                completedCycles: pendingRequest.completedCycles
+            )
+            observedState = .missionCompleteRepeatSelected
+
+        case .observedUnknown:
+            presentedRequest = pendingRequest
+            observedState = .unknown
+        case .observedInventoryFull:
+            presentedRequest = pendingRequest
+            observedState = .inventoryFull
+        case .observedBattle:
+            presentedRequest = pendingRequest
+            observedState = .battle
+        case .observedDefeat:
+            presentedRequest = pendingRequest
+            observedState = .defeat
+        case .observedMissionComplete:
+            presentedRequest = pendingRequest
+            observedState = .missionComplete
+        case .observedMissionFailed:
+            presentedRequest = pendingRequest
+            observedState = .missionFailed
+        case .observedSelectedFailure:
+            presentedRequest = pendingRequest
+            observedState = .missionFailedRepeatSelected
+
+        case .noPending, .nonSelectIntent:
+            Issue.record("Case should have returned before the shared pending-action path")
+            return
+        }
+
+        #expect(
+            controller.cancelUnpostedActionAfterForwardResultTransition(
+                presentedRequest,
+                observedState: observedState
+            ) == false,
+            comment
+        )
+
+        let samePixelsSelected = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 2,
+            fingerprint: "repeat-pending",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        #expect(
+            controller.consume(samePixelsSelected)
+                == .wait(.awaitingFrameChange(intent: .selectMissionRepeat)),
+            comment
+        )
+
+        let freshSelected = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 3,
+            fingerprint: "repeat-selected-fresh",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        let nextRequest = requireAction(controller.consume(freshSelected))
+        #expect(nextRequest?.intent == .advanceMissionSuccess, comment)
+        #expect(nextRequest?.requestID == 2, comment)
+    }
+
+    @Test("Result episode is counted once across selected and unselected frames")
+    func resultEpisodeCountsOnce() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let result = makeSnapshot(
+            state: .missionComplete,
+            time: 1,
+            fingerprint: "r1",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        _ = controller.consume(result)
+        _ = controller.consume(result)
+        _ = controller.consume(makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 2,
+            fingerprint: "r2",
+            actions: [gameAction(.advanceMissionComplete)]
+        ))
+
+        #expect(controller.completedCycles == 1)
+    }
+
+    @Test("Loot collection uses yes candidate and never a generic confirmation")
+    func confirmsLootCollection() {
+        var controller = makeController()
+        let decision = controller.consume(makeSnapshot(
+            state: .lootCollectionConfirmation,
+            time: 1,
+            fingerprint: "loot",
+            actions: [gameAction(.confirmLootCollection)]
+        ))
+
+        #expect(requireAction(decision)?.intent == .confirmLootCollection)
+    }
+
+    @Test("Recruitment always selects the explicit top recruit action")
+    func recruitsAdventurer() {
+        var controller = makeController()
+        let decision = controller.consume(makeSnapshot(
+            state: .adventurerRecruitment,
+            time: 1,
+            fingerprint: "recruit",
+            actions: [gameAction(.recruitAdventurer)]
+        ))
+
+        #expect(requireAction(decision)?.intent == .recruitAdventurer)
+    }
+
+    @Test("Result episode survives loot and recruitment until the next battle family")
+    func resultEpisodeSurvivesPostResultModals() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        let result = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 1,
+            fingerprint: "result-before-modals",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+
+        #expect(controller.consume(result) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+        #expect(requireAction(controller.consume(result))?.intent == .advanceMissionSuccess)
+
+        let loot = makeSnapshot(
+            state: .lootCollectionConfirmation,
+            time: 2,
+            fingerprint: "loot-modal",
+            actions: [gameAction(.confirmLootCollection)]
+        )
+        #expect(requireAction(controller.consume(loot))?.intent == .confirmLootCollection)
+        #expect(controller.completedCycles == 1)
+
+        let adventurer = makeSnapshot(
+            state: .adventurerRecruitment,
+            time: 3,
+            fingerprint: "adventurer-modal",
+            actions: [gameAction(.recruitAdventurer)]
+        )
+        #expect(requireAction(controller.consume(adventurer))?.intent == .recruitAdventurer)
+        #expect(controller.completedCycles == 1)
+
+        let sameResult = makeSnapshot(
+            state: .missionCompleteRepeatSelected,
+            time: 4,
+            fingerprint: "same-result-after-recruit",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        #expect(requireAction(controller.consume(sameResult))?.intent == .advanceMissionSuccess)
+        #expect(controller.completedCycles == 1)
+
+        let battle = makeSnapshot(
+            state: .battle,
+            time: 5,
+            fingerprint: "next-battle",
+            battleSessionID: "next-battle",
+            allAutoStatus: .active
+        )
+        #expect(controller.consume(battle) == .wait(.battleInProgress))
+        #expect(controller.completedCycles == 1)
+
+        let nextResult = makeSnapshot(
+            state: .missionComplete,
+            time: 6,
+            fingerprint: "next-result",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        #expect(controller.consume(nextResult) == .completedCycle(.init(
+            count: 2,
+            outcome: .success
+        )))
+    }
+
+    @Test("State and action intent must agree")
+    func refusesCrossStateAction() {
+        var controller = makeController(policy: policy(
+            uncertainStateGraceDuration: 10,
+            uncertainStateGraceSnapshots: 3
+        ))
+        let decision = controller.consume(makeSnapshot(
+            state: .missionComplete,
+            time: 1,
+            fingerprint: "wrong-action",
+            actions: [gameAction(.confirmLootCollection)]
+        ))
+        #expect(decision == .completedCycle(.init(count: 1, outcome: .success)))
+
+        let second = controller.consume(makeSnapshot(
+            state: .missionComplete,
+            time: 1.1,
+            fingerprint: "wrong-action",
+            actions: [gameAction(.confirmLootCollection)]
+        ))
+        #expect(second == .wait(.transientState(kind: .missingAction, observationCount: 1)))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("Action cooldown blocks a second transition click")
+    func appliesActionCooldown() {
+        var controller = makeController(policy: policy(actionCooldown: 2))
+        _ = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "prompt",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+
+        let battle = makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "battle",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "b1",
+            allAutoStatus: .active
+        )
+        #expect(controller.consume(battle) == .wait(.battleInProgress))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("Inactive or unknown all-auto metadata can never request the toggle")
+    func neverRequestsAllAutoToggle() {
+        var inactiveController = makeController(policy: policy(actionCooldown: 0))
+        let inactive = inactiveController.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "inactive",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "battle-1",
+            allAutoStatus: .inactive
+        ))
+        #expect(inactive == .stop(.allAutoBecameInactive(battleSessionID: "battle-1")))
+        #expect(inactiveController.actionsIssued == 0)
+
+        var unknownController = makeController(policy: policy(actionCooldown: 0))
+        let unknown = unknownController.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "unknown",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "battle-1",
+            allAutoStatus: .unknown
+        ))
+        #expect(unknown == .wait(.transientState(
+            kind: .battleMetadataUnknown,
+            observationCount: 1
+        )))
+        #expect(unknownController.actionsIssued == 0)
+    }
+
+    @Test("All-auto may complete the mission before the next poll")
+    func autoCanTransitionDirectlyToMissionComplete() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        _ = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "battle-before-auto",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "battle-1",
+            allAutoStatus: .active
+        ))
+
+        let result = makeSnapshot(
+            state: .missionComplete,
+            time: 2,
+            fingerprint: "instant-success",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        #expect(controller.consume(result) == .completedCycle(.init(
+            count: 1,
+            outcome: .success
+        )))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("All-auto may reach a failed result before the next poll")
+    func autoCanTransitionDirectlyToMissionFailure() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        _ = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "battle-before-auto",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "battle-1",
+            allAutoStatus: .active
+        ))
+
+        let result = makeSnapshot(
+            state: .missionFailed,
+            time: 2,
+            fingerprint: "instant-failure",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        #expect(controller.consume(result) == .completedCycle(.init(
+            count: 1,
+            outcome: .failure
+        )))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("Every new default-on battle session remains click-free")
+    func defaultAutoForNewBattleSession() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        #expect(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "b1-before",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "b1",
+            allAutoStatus: .active
+        )) == .wait(.battleInProgress))
+
+        let decision = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "b2-before",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "b2",
+            allAutoStatus: .active
+        ))
+        #expect(decision == .wait(.battleInProgress))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("A default-on battle never toggles the visible all-auto control")
+    func observesAlreadyActiveAuto() {
+        var controller = makeController()
+        #expect(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "active",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "b1",
+            allAutoStatus: .active
+        )) == .wait(.battleInProgress))
+
+        #expect(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "unknown",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "b1",
+            allAutoStatus: .unknown
+        )) == .wait(.allAutoAlreadyEnabled))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("All-auto becoming inactive after it was latched stops")
+    func autoUnexpectedlyInactiveStops() {
+        var controller = makeController()
+        _ = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "active",
+            battleSessionID: "b1",
+            allAutoStatus: .active
+        ))
+        let decision = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "inactive",
+            actions: [gameAction(.enableAutoBattle)],
+            battleSessionID: "b1",
+            allAutoStatus: .inactive
+        ))
+
+        #expect(decision == .stop(.allAutoBecameInactive(battleSessionID: "b1")))
+    }
+
+    @Test("An OCR-only external retreat confirmation remains unauthorized without geometry")
+    func externalOCRRetreatConfirmationStops() {
+        var controller = makeController(noTalisman: false)
+        let decision = controller.consume(makeSnapshot(
+            state: .retreatConfirmation,
+            time: 1,
+            fingerprint: "retreat-confirm",
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .verifiedNoTalismanRun)]
+        ))
+
+        #expect(decision == .stop(.retreatConfirmationWasNotRequested))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("A no-talisman recovery transaction may confirm the exact gated yes target once")
+    func confirmsRetreatWhenNoTalisman() {
+        var controller = makeController(noTalisman: true, policy: policy(actionCooldown: 0))
+        _ = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        ))
+        let decision = controller.consume(makeSnapshot(
+            state: .retreatConfirmation,
+            time: 2,
+            fingerprint: "retreat-confirm",
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .verifiedNoTalismanRun)]
+        ))
+
+        #expect(requireAction(decision)?.intent == .confirmRetreatWithoutTalisman)
+        #expect(controller.actionsIssued == 2)
+    }
+
+    @Test("Geometry-only modals carry the stalled-defeat recovery through its button sequence")
+    func geometryRetreatRecoveryTransaction() {
+        var controller = makeController(noTalisman: true, policy: policy(actionCooldown: 0))
+        #expect(requireAction(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        )))?.intent == .requestRetreat)
+
+        #expect(requireAction(controller.consume(makeSnapshot(
+            state: .wideModalTwoButtons,
+            time: 2,
+            fingerprint: "retreat-confirm",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))?.intent == .pressWideModalTopButton)
+
+        #expect(requireAction(controller.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 3,
+            fingerprint: "defeat-close",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))?.intent == .pressWideModalTopButton)
+
+        #expect(controller.consume(makeSnapshot(
+            state: .missionFailed,
+            time: 4,
+            fingerprint: "failed-result",
+            actions: [gameAction(.selectMissionRepeat)]
+        )) == .completedCycle(.init(count: 1, outcome: .failure)))
+        #expect(controller.actionsIssued == 3)
+    }
+
+    @Test("Only temporal stalled-defeat metadata can request retreat")
+    func temporalDefeatRequestsRetreat() {
+        var controller = makeController(noTalisman: true)
+        let normal = makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "normal",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleSessionID: "b1",
+            allAutoStatus: .active,
+            battleStatus: .inProgress
+        )
+        #expect(controller.consume(normal) == .wait(.battleInProgress))
+
+        let stalled = makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleSessionID: "b1",
+            allAutoStatus: .active,
+            battleStatus: .stalledAfterDefeat
+        )
+        #expect(requireAction(controller.consume(stalled))?.intent == .requestRetreat)
+    }
+
+    @Test("Stalled defeat is also gated by no-talisman policy")
+    func stalledDefeatWithoutPolicyStops() {
+        var controller = makeController(noTalisman: false)
+        let decision = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        ))
+
+        #expect(decision == .stop(.retreatRequiresNoTalismanConfirmation))
+    }
+
+    @Test("Unknown state gets bounded count grace then stops")
+    func unknownCountGrace() {
+        var controller = makeController(policy: policy(
+            uncertainStateGraceDuration: 100,
+            uncertainStateGraceSnapshots: 2
+        ))
+        #expect(controller.consume(makeSnapshot(
+            state: .unknown, time: 1, fingerprint: "u1"
+        )) == .wait(.transientState(kind: .unknown, observationCount: 1)))
+        #expect(controller.consume(makeSnapshot(
+            state: .unknown, time: 2, fingerprint: "u2"
+        )) == .wait(.transientState(kind: .unknown, observationCount: 2)))
+        #expect(controller.consume(makeSnapshot(
+            state: .unknown, time: 3, fingerprint: "u3"
+        )) == .stop(.uncertainStateExceededGrace(kind: .unknown)))
+    }
+
+    @Test("Classification conflict stops immediately")
+    func conflictStopsImmediately() {
+        var controller = makeController()
+        let conflictEvidence = GameStateEvidence(
+            kind: .conflictingStateMarkers,
+            observation: nil,
+            detail: "conflict"
+        )
+        #expect(controller.consume(makeSnapshot(
+            state: .unknown,
+            time: 1,
+            fingerprint: "c1",
+            evidence: [conflictEvidence]
+        )) == .stop(.classificationConflict))
+    }
+
+    @Test("Inventory full stops immediately and can never sell")
+    func inventoryStopsImmediately() {
+        var controller = makeController()
+        #expect(controller.consume(makeSnapshot(
+            state: .inventoryFull, time: 1, fingerprint: "i1"
+        )) == .stop(.inventoryFull))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("Missing and duplicate action targets fail closed after grace")
+    func missingAndAmbiguousActions() {
+        let shortGrace = policy(
+            uncertainStateGraceDuration: 100,
+            uncertainStateGraceSnapshots: 1
+        )
+        var missing = makeController(policy: shortGrace)
+        let noClose = makeSnapshot(
+            state: .battleEncounterPrompt, time: 1, fingerprint: "m1"
+        )
+        #expect(missing.consume(noClose) == .wait(.transientState(
+            kind: .missingAction,
+            observationCount: 1
+        )))
+        #expect(missing.consume(makeSnapshot(
+            state: .battleEncounterPrompt, time: 2, fingerprint: "m2"
+        )) == .stop(.uncertainStateExceededGrace(kind: .missingAction)))
+
+        var ambiguous = makeController(policy: shortGrace)
+        let duplicate = makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "a1",
+            actions: [gameAction(.closeBattlePrompt)],
+            supplemental: [candidate(.closeBattlePrompt)]
+        )
+        #expect(ambiguous.consume(duplicate) == .wait(.transientState(
+            kind: .ambiguousAction,
+            observationCount: 1
+        )))
+    }
+
+    @Test("Window identity changes stop immediately and permanently")
+    func windowChangeStops() {
+        var controller = makeController()
+        let changedWindow = AutoLevelWindowIdentity(processID: 22, windowID: 33)
+        let decision = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "window",
+            windowIdentity: changedWindow,
+            allAutoStatus: .active
+        ))
+        let reason = AutoLevelStopReason.windowIdentityChanged(
+            expected: testWindow,
+            actual: changedWindow
+        )
+        #expect(decision == .stop(reason))
+        #expect(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "back",
+            allAutoStatus: .active
+        )) == .stop(reason))
+    }
+
+    @Test("Runtime limit is hard and inclusive")
+    func runtimeLimit() {
+        var controller = makeController(policy: policy(maxRuntime: 10))
+        let decision = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 10,
+            fingerprint: "deadline",
+            allAutoStatus: .active
+        ))
+        #expect(decision == .stop(.maximumRuntimeReached(limit: 10)))
+    }
+
+    @Test("Maximum action count stops before another action")
+    func actionLimit() {
+        var controller = makeController(policy: policy(
+            actionCooldown: 0,
+            maxActions: 1
+        ))
+        _ = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "prompt",
+            actions: [gameAction(.closeBattlePrompt)]
+        ))
+        let decision = controller.consume(makeSnapshot(
+            state: .battle,
+            time: 2,
+            fingerprint: "battle",
+            actions: [gameAction(.enableAutoBattle)],
+            allAutoStatus: .inactive
+        ))
+        #expect(decision == .stop(.maximumActionsReached(limit: 1)))
+    }
+
+    @Test("Maximum cycle count reports the last completion before stopping")
+    func cycleLimit() {
+        var controller = makeController(policy: policy(maxCycles: 1))
+        let result = makeSnapshot(
+            state: .missionComplete,
+            time: 1,
+            fingerprint: "result",
+            actions: [gameAction(.selectMissionRepeat)]
+        )
+        #expect(controller.consume(result) == .completedCycle(.init(count: 1, outcome: .success)))
+        #expect(controller.consume(result) == .stop(.maximumCyclesReached(limit: 1)))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("Non-monotonic observations stop")
+    func nonMonotonicTimeStops() {
+        var controller = makeController()
+        _ = controller.consume(makeSnapshot(
+            state: .battle, time: 2, fingerprint: "later", allAutoStatus: .active
+        ))
+        #expect(controller.consume(makeSnapshot(
+            state: .battle, time: 1, fingerprint: "earlier", allAutoStatus: .active
+        )) == .stop(.nonMonotonicTimestamp(previous: 2, current: 1)))
+    }
+
+    @Test("Invalid target never becomes a click")
+    func invalidTargetStopsThroughGrace() {
+        var controller = makeController(policy: policy(
+            uncertainStateGraceDuration: 100,
+            uncertainStateGraceSnapshots: 0
+        ))
+        let invalidTarget = AutoLevelActionTarget(
+            name: "close",
+            sourceText: "關閉",
+            rect: NormalizedRect(x: -0.1, y: 0.5, width: 0.1, height: 0.1)
+        )
+        let decision = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "invalid",
+            supplemental: [.init(intent: .closeBattlePrompt, target: invalidTarget)]
+        ))
+        #expect(decision == .stop(.uncertainStateExceededGrace(kind: .ambiguousAction)))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("An action cannot borrow a differently named target")
+    func mismatchedNamedTargetStops() {
+        var controller = makeController(policy: policy(
+            uncertainStateGraceDuration: 100,
+            uncertainStateGraceSnapshots: 0
+        ))
+        let lootTarget = AutoLevelActionTarget(
+            name: GameTargetName.lootConfirmationYes.rawValue,
+            sourceText: "是",
+            rect: NormalizedRect(x: 0.4, y: 0.4, width: 0.1, height: 0.1)
+        )
+        let decision = controller.consume(makeSnapshot(
+            state: .battleEncounterPrompt,
+            time: 1,
+            fingerprint: "wrong-name",
+            supplemental: [.init(intent: .closeBattlePrompt, target: lootTarget)]
+        ))
+
+        #expect(decision == .stop(.uncertainStateExceededGrace(kind: .ambiguousAction)))
+        #expect(controller.actionsIssued == 0)
+    }
+
+    @Test("Unexpected known post-action state stops")
+    func unexpectedTransitionStops() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        _ = controller.consume(makeSnapshot(
+            state: .lootCollectionConfirmation,
+            time: 1,
+            fingerprint: "loot",
+            actions: [gameAction(.confirmLootCollection)]
+        ))
+        let decision = controller.consume(makeSnapshot(
+            state: .missionFailed,
+            time: 2,
+            fingerprint: "unexpected",
+            actions: [gameAction(.selectMissionRepeat)]
+        ))
+        #expect(decision == .stop(.unexpectedTransition(
+            intent: .confirmLootCollection,
+            from: .lootCollectionConfirmation,
+            to: .missionFailed
+        )))
+    }
+
+    @Test("Invalid policy and session metadata are terminal")
+    func invalidConfigurationStops() {
+        var invalidPolicy = makeController(policy: policy(maxActions: 0))
+        #expect(invalidPolicy.consume(makeSnapshot(
+            state: .battle, time: 1, fingerprint: "x", allAutoStatus: .active
+        )) == .stop(.invalidPolicy))
+
+        var invalidSession = AutoLevelController(session: .init(
+            sessionID: "",
+            startedAt: 0,
+            windowIdentity: testWindow,
+            noTalismanConfirmed: false
+        ))
+        #expect(invalidSession.consume(makeSnapshot(
+            state: .battle, time: 1, fingerprint: "x", allAutoStatus: .active
+        )) == .stop(.invalidSessionMetadata))
+    }
+
+    // MARK: - Fixtures
+
+    private var testWindow: AutoLevelWindowIdentity {
+        AutoLevelWindowIdentity(processID: 11, windowID: 22)
+    }
+
+    private func makeController(
+        noTalisman: Bool = false,
+        policy: AutoLevelPolicy = AutoLevelPolicy()
+    ) -> AutoLevelController {
+        AutoLevelController(
+            session: AutoLevelSessionMetadata(
+                sessionID: "test-session",
+                startedAt: 0,
+                windowIdentity: testWindow,
+                noTalismanConfirmed: noTalisman
+            ),
+            policy: policy
+        )
+    }
+
+    private func policy(
+        actionCooldown: Double = 0.8,
+        postActionTimeout: Double = 8,
+        uncertainStateGraceDuration: Double = 2,
+        uncertainStateGraceSnapshots: Int = 2,
+        maxCycles: Int = 100,
+        maxRuntime: Double = 100,
+        maxActions: Int = 100
+    ) -> AutoLevelPolicy {
+        AutoLevelPolicy(
+            actionCooldown: actionCooldown,
+            postActionTimeout: postActionTimeout,
+            uncertainStateGraceDuration: uncertainStateGraceDuration,
+            uncertainStateGraceSnapshots: uncertainStateGraceSnapshots,
+            maxCycles: maxCycles,
+            maxRuntime: maxRuntime,
+            maxActions: maxActions
+        )
+    }
+
+    private func makeSnapshot(
+        state: GameState,
+        time: Double,
+        fingerprint: String,
+        evidence: [GameStateEvidence] = [],
+        actions: [AllowedGameAction] = [],
+        gatedActions: [PolicyGatedGameAction] = [],
+        supplemental: [AutoLevelActionCandidate] = [],
+        windowIdentity: AutoLevelWindowIdentity? = nil,
+        battleSessionID: String? = nil,
+        allAutoStatus: AutoLevelAllAutoStatus = .unknown,
+        battleStatus: AutoLevelBattleStatus = .inProgress,
+        addDefaultResultPageEvidence: Bool = true
+    ) -> AutoLevelSnapshot {
+        var resolvedEvidence = evidence
+        if state == .missionCompleteRepeatSelected || state == .missionFailedRepeatSelected,
+           !resolvedEvidence.contains(where: { $0.kind == .missionRepeatOption })
+        {
+            resolvedEvidence += resultPageEvidence(nil)
+        }
+        if addDefaultResultPageEvidence,
+           state == .missionCompleteRepeatSelected,
+           !resolvedEvidence.contains(where: {
+               $0.kind == .missionExperiencePage || $0.kind == .missionLootPage
+           })
+        {
+            resolvedEvidence.append(GameStateEvidence(
+                kind: .missionExperiencePage,
+                observation: OCRTextObservation(
+                    text: "獲得經驗值",
+                    rect: NormalizedRect(x: 0.78, y: 0.145, width: 0.19, height: 0.02),
+                    confidence: 1
+                ),
+                detail: "test EXP page"
+            ))
+        }
+        return AutoLevelSnapshot(
+            classification: GameStateClassification(
+                state: state,
+                evidence: resolvedEvidence,
+                allowedActions: actions,
+                policyGatedActions: gatedActions
+            ),
+            runtime: AutoLevelRuntimeMetadata(
+                observedAt: time,
+                windowIdentity: windowIdentity ?? testWindow,
+                frameFingerprint: fingerprint,
+                battleSessionID: battleSessionID,
+                allAutoStatus: allAutoStatus,
+                battleStatus: battleStatus
+            ),
+            supplementalActionCandidates: supplemental
+        )
+    }
+
+    private func gameAction(
+        _ name: GameActionName,
+        rect: NormalizedRect = NormalizedRect(
+            x: 0.02,
+            y: 0.19,
+            width: 0.05,
+            height: 0.02
+        ),
+        sourceText: String? = nil
+    ) -> AllowedGameAction {
+        AllowedGameAction(
+            name: name,
+            target: NamedGameTarget(
+                name: targetName(for: name),
+                sourceText: sourceText
+                    ?? (name == .advanceMissionComplete ? ">>" : name.rawValue),
+                rect: rect,
+                point: rect.center
+            )
+        )
+    }
+
+    private func resultPageEvidence(
+        _ pageKind: GameEvidenceKind?,
+        text: String = ""
+    ) -> [GameStateEvidence] {
+        var evidence = [GameStateEvidence(
+            kind: .missionRepeatOption,
+            observation: OCRTextObservation(
+                text: "重複進行此任務",
+                rect: NormalizedRect(x: 0.025, y: 0.236, width: 0.286, height: 0.020),
+                confidence: 1
+            ),
+            detail: "test repeat option"
+        )]
+        if let pageKind {
+            evidence.append(GameStateEvidence(
+                kind: pageKind,
+                observation: OCRTextObservation(
+                    text: text,
+                    rect: NormalizedRect(x: 0.78, y: 0.146, width: 0.19, height: 0.020),
+                    confidence: 1
+                ),
+                detail: "test result page"
+            ))
+        }
+        return evidence
+    }
+
+    private func measuredLootFallbackClassification() -> GameStateClassification {
+        GameStateClassifier.classify(
+            observations: [
+                OCRTextObservation(
+                    text: "任務完成！",
+                    rect: NormalizedRect(
+                        x: 0.3891067804403232,
+                        y: 0.10550803805301134,
+                        width: 0.21193422589983257,
+                        height: 0.02269178776258829
+                    ),
+                    confidence: 1
+                ),
+                OCRTextObservation(
+                    text: "獲得拾得物",
+                    rect: NormalizedRect(
+                        x: 0.7783251214285715,
+                        y: 0.14606741552808988,
+                        width: 0.1921182266009852,
+                        height: 0.020224719101123556
+                    ),
+                    confidence: 1
+                ),
+                OCRTextObservation(
+                    text: "重複進行此任務",
+                    rect: NormalizedRect(
+                        x: 0.024630543912737477,
+                        y: 0.23595505606741574,
+                        width: 0.2857142857142857,
+                        height: 0.020224719101123556
+                    ),
+                    confidence: 1
+                ),
+                OCRTextObservation(
+                    text: "SELECTED",
+                    rect: NormalizedRect(
+                        x: 0.36982343572043463,
+                        y: 0.2232546383556393,
+                        width: 0.26002105938389963,
+                        height: 0.035046082400204126
+                    ),
+                    confidence: 0.5
+                ),
+            ],
+            permitMeasuredLootTopAdvanceFallback: true
+        )
+    }
+
+    private func measuredLootFallbackSnapshot(
+        time: Double,
+        fingerprint: String,
+        allowedActions: [AllowedGameAction]? = nil
+    ) -> AutoLevelSnapshot {
+        measuredResultFallbackSnapshot(
+            pageKind: .missionLootPage,
+            pageText: "獲得拾得物",
+            time: time,
+            fingerprint: fingerprint,
+            allowedActions: allowedActions
+        )
+    }
+
+    private func measuredResultFallbackSnapshot(
+        pageKind: GameEvidenceKind,
+        pageText: String,
+        time: Double,
+        fingerprint: String,
+        allowedActions: [AllowedGameAction]? = nil
+    ) -> AutoLevelSnapshot {
+        let lootBaseline = measuredLootFallbackClassification()
+        var evidence = lootBaseline.evidence.filter {
+            $0.kind != .missionExperiencePage && $0.kind != .missionLootPage
+        }
+        evidence.append(GameStateEvidence(
+            kind: pageKind,
+            observation: OCRTextObservation(
+                text: pageText,
+                rect: NormalizedRect(
+                    x: 0.7783251214285715,
+                    y: 0.14606741552808988,
+                    width: 0.1921182266009852,
+                    height: 0.020224719101123556
+                ),
+                confidence: 1
+            ),
+            detail: "measured result page"
+        ))
+        let baseline = MissionResultTopActionResolver.resolve(classification:
+            GameStateClassification(
+                state: lootBaseline.state,
+                evidence: evidence,
+                allowedActions: lootBaseline.allowedActions,
+                policyGatedActions: lootBaseline.policyGatedActions
+            )
+        )
+        let classification = GameStateClassification(
+            state: baseline.state,
+            evidence: baseline.evidence,
+            allowedActions: allowedActions ?? baseline.allowedActions,
+            policyGatedActions: baseline.policyGatedActions
+        )
+        return AutoLevelSnapshot(
+            classification: classification,
+            runtime: AutoLevelRuntimeMetadata(
+                observedAt: time,
+                windowIdentity: testWindow,
+                frameFingerprint: fingerprint
+            )
+        )
+    }
+
+    private func gatedAction(
+        _ name: GameActionName,
+        _ requirement: GameActionPolicyRequirement
+    ) -> PolicyGatedGameAction {
+        PolicyGatedGameAction(
+            name: name,
+            target: NamedGameTarget(
+                name: targetName(for: name),
+                sourceText: name.rawValue,
+                rect: NormalizedRect(x: 0.4, y: 0.4, width: 0.1, height: 0.1),
+                point: NormalizedPoint(x: 0.45, y: 0.45)
+            ),
+            requirement: requirement
+        )
+    }
+
+    private func candidate(_ intent: AutoLevelActionIntent) -> AutoLevelActionCandidate {
+        AutoLevelActionCandidate(
+            intent: intent,
+            target: AutoLevelActionTarget(
+                name: intent.rawValue,
+                sourceText: intent.rawValue,
+                rect: NormalizedRect(x: 0.4, y: 0.4, width: 0.1, height: 0.1)
+            )
+        )
+    }
+
+    private func targetName(for action: GameActionName) -> GameTargetName {
+        switch action {
+        case .selectMissionRepeat:
+            return .missionRepeatOption
+        case .advanceMissionComplete:
+            return .missionCompleteAdvance
+        case .recruitAdventurer:
+            return .adventurerRecruit
+        case .leaveAdventurer:
+            return .adventurerLeave
+        case .closeBattlePrompt:
+            return .battlePromptClose
+        case .pressWideModalTopButton:
+            return .wideModalTopButton
+        case .enableAutoBattle:
+            return .battleAuto
+        case .confirmLootCollection:
+            return .lootConfirmationYes
+        case .openBattleRetreatConfirmation:
+            return .battleRetreat
+        case .confirmNoTalismanRetreat:
+            return .retreatConfirmationYes
+        }
+    }
+
+    private func requireAction(
+        _ decision: AutoLevelDecision
+    ) -> AutoLevelActionRequest? {
+        guard case let .requestAction(request) = decision else {
+            Issue.record("Expected action request, got \(decision)")
+            return nil
+        }
+        return request
+    }
+}
