@@ -3,6 +3,59 @@ import Testing
 
 @Suite("Character total boundary evidence resolver")
 struct CharacterTotalBoundaryEvidenceResolverTests {
+    @Test("Small OCR box variation preserves threshold and contamination vetoes")
+    func overlappingFragmentsKeepBoundaryProtection() {
+        let label = OCRTextObservation(
+            text: "total:",
+            rect: NormalizedRect(x: 0.808, y: 0.320, width: 0.103, height: 0.014),
+            confidence: 1
+        )
+        let digitsX = 0.911 - 2.4 / 406
+        for total in [84, 90, 100, 125] {
+            let digits = OCRTextObservation(
+                text: "\(total)",
+                rect: NormalizedRect(x: digitsX, y: 0.320, width: 0.956 - digitsX, height: 0.014),
+                confidence: 1
+            )
+            for minimum in [90, 100] {
+                let rows = [label, digits]
+                let focused = CharacterFocusedTotalResolver.resolveEvidence(observations: rows)
+                let detection = CharacterTotalDigitDetection.digitCount(String(total).count)
+                #expect(CharacterTotalBoundaryEvidenceResolver.resolve(
+                    fullFrame: CharacterFullFrameTotalResolver.resolve(observations: rows),
+                    focused: focused,
+                    renderedDigitDetection: detection,
+                    minimumTotal: minimum
+                ) == (total >= minimum ? .thresholdReached : .belowThreshold))
+
+                for extraText in ["9O", "97", "total: 97"] {
+                    let extra = OCRTextObservation(
+                        text: extraText,
+                        rect: NormalizedRect(x: 0.958, y: 0.320, width: 0.020, height: 0.014),
+                        confidence: 1
+                    )
+                    let contaminatedRows = rows + [extra]
+                    #expect(CharacterTotalBoundaryEvidenceResolver.resolve(
+                        fullFrame: CharacterFullFrameTotalResolver.resolve(
+                            observations: contaminatedRows
+                        ),
+                        focused: focused,
+                        renderedDigitDetection: detection,
+                        minimumTotal: minimum
+                    ) == .boundaryConflict)
+                    #expect(CharacterTotalBoundaryEvidenceResolver.resolve(
+                        fullFrame: CharacterFullFrameTotalResolver.resolve(observations: rows),
+                        focused: CharacterFocusedTotalResolver.resolveEvidence(
+                            observations: contaminatedRows
+                        ),
+                        renderedDigitDetection: detection,
+                        minimumTotal: minimum
+                    ) == .boundaryConflict)
+                }
+            }
+        }
+    }
+
     @Test("Three complete sources distinguish safe low and safe keeper values")
     func completeEvidence() {
         #expect(evidence(full: .exact(read(73)), focused: read(73), raw: 2)

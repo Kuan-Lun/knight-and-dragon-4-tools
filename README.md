@@ -96,6 +96,19 @@ the Launch Services `doctor` check confirmed both permissions still granted for 
 (`logs/character-reroll-fix-0.4.14-{tests.log,build.log,doctor.json}`). Validation used saved-image
 OCR replays and read-only diagnostics; no live reroll was posted for this fix.
 
+Version 0.4.15 handles small variations in the overlapping OCR boxes. The next run stopped at
+roll 49 on a visible `84`: both full-frame fragments had confidence 1.00, but their overlap was
+2.031283 pixels at the 406-pixel reference width, just beyond the previous 2.03-pixel limit.
+Full-frame and focused row assembly now share a 2.5-reference-pixel maximum overlap, allowing
+half a pixel of variation around the measured two-pixel overlap. The limit scales with the
+mirror; excessive overlap, extra fragments, malformed digits, and conflicting totals remain
+unsafe. The failed PNG, full-frame OCR, and an independent focused OCR replay are retained.
+All 429 source tests passed; the 0.4.15 release built, passed signature verification, and passed
+the wrapper's dry run (`logs/character-reroll-fix-0.4.15-{tests.log,build.log}`). The packaged
+Launch Services `doctor` check reported both screen-capture and post-event permissions missing
+after this ad-hoc rebuild (`logs/character-reroll-fix-0.4.15-doctor.json`). Renew both permissions
+for the rebuilt `.build/Mirror Probe.app` before running again. No live reroll was posted.
+
 Useful bounded options are:
 
 ```sh

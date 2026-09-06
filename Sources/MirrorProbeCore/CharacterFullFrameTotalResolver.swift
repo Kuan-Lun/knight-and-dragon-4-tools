@@ -73,8 +73,7 @@ public enum CharacterFullFrameTotalResolver {
         }
         if candidates.count > 1 {
             // Match the measured focused-row geometry while retaining the full-frame confidence
-            // floor. A slight overlap is a measured Vision segmentation artifact, not a gap to
-            // bridge by guessing missing text.
+            // floor. Adjacent boxes may overlap slightly, as measured in the live OCR replays.
             guard candidates.allSatisfy({ splitRowGate.contains($0.rect) }),
                   (0.79...0.85).contains(first.rect.x),
                   (0.93...0.98).contains(last.rect.x + last.rect.width)
@@ -85,8 +84,7 @@ public enum CharacterFullFrameTotalResolver {
             for (left, right) in zip(candidates, candidates.dropFirst()) {
                 let gap = right.rect.x - (left.rect.x + left.rect.width)
                 let centerY = right.rect.y + right.rect.height / 2
-                guard gap >= -0.005,
-                      gap <= 0.03,
+                guard CharacterTotalRowGeometry.allowsAdjacentGap(gap),
                       abs(centerY - firstCenterY) <= 0.01
                 else {
                     return nil

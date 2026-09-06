@@ -3,6 +3,26 @@ import Testing
 
 @Suite("Focused character total resolver")
 struct CharacterFocusedTotalResolverTests {
+    @Test("Focused splits use the same measured overlap allowance for low and keeper totals")
+    func overlappingBoxVariation() {
+        for value in [84, 90, 100, 125] {
+            for overlapPixels in [1.5, 2.0, 2.03, 2.04, 2.4, 2.6, 3.0, 4.0, 12.0] {
+                let digitsX = 0.911 - overlapPixels / 406
+                let resolution = CharacterFocusedTotalResolver.resolveEvidence(observations: [
+                    observation("total:", rect(0.808, 0.320, 0.103, 0.014)),
+                    observation("\(value)", rect(digitsX, 0.320, 0.956 - digitsX, 0.014)),
+                ])
+                if overlapPixels <= 2.4 {
+                    #expect(resolution == .exact(CharacterFocusedTotalRead(
+                        value: value, digitCount: String(value).count
+                    )))
+                } else {
+                    #expect(resolution == .contaminated(credibleReads: []))
+                }
+            }
+        }
+    }
+
     @Test("Merged and adjacent split Vision rows resolve identically")
     func mergedAndSplitRows() {
         let expected = CharacterFocusedTotalRead(value: 60, digitCount: 2)

@@ -50,6 +50,35 @@ struct CharacterFullFrameTotalResolverTests {
         ]) == .exact(CharacterFullFrameTotalRead(value: 100, digitCount: 3)))
     }
 
+    @Test("Subpixel variation around the measured overlap preserves low and keeper digits")
+    func overlappingBoxVariation() {
+        for value in [84, 90, 100, 125] {
+            for overlapPixels in [1.5, 2.0, 2.03, 2.04, 2.4] {
+                let digitsX = 0.911 - overlapPixels / 406
+                let observations = [
+                    observation("total:", rect(0.808, 0.320, 0.103, 0.014), confidence: 0.30),
+                    observation("\(value)", rect(digitsX, 0.320, 0.956 - digitsX, 0.014),
+                                confidence: 0.30),
+                ]
+                #expect(CharacterFullFrameTotalResolver.resolve(observations: observations)
+                    == .exact(CharacterFullFrameTotalRead(
+                        value: value, digitCount: String(value).count
+                    )), Comment(rawValue: "\(value), overlap \(overlapPixels) reference pixels"))
+            }
+        }
+    }
+
+    @Test("Overlap beyond the subpixel allowance remains contaminated")
+    func excessiveOverlapFailsClosed() {
+        for overlapPixels in [2.6, 3.0, 4.0, 12.0] {
+            let digitsX = 0.911 - overlapPixels / 406
+            #expect(CharacterFullFrameTotalResolver.resolve(observations: [
+                observation("total:", rect(0.808, 0.320, 0.103, 0.014)),
+                observation("84", rect(digitsX, 0.320, 0.956 - digitsX, 0.014)),
+            ]) == .contaminated(credibleReads: []))
+        }
+    }
+
     @Test("Every split fragment retains the full-frame confidence floor")
     func splitConfidenceFloor() {
         #expect(CharacterFullFrameTotalResolver.resolve(

@@ -4,27 +4,32 @@ import Testing
 
 @Suite("Character reroll detector")
 struct CharacterRerollDetectorTests {
-    @Test("The stopped total 81 frame resolves split full-frame and focused OCR consistently")
+    @Test("The stopped total 81 and 84 frames resolve split full-frame and focused OCR consistently")
     func splitTotalLiveReplay() throws {
-        let fixture: CharacterRerollSplitTotalFixture = try loadFixture(
-            "character-reroll-split-total-live"
-        )
-        let full = CharacterFullFrameTotalResolver.resolve(observations: fixture.observations)
-        let focused = CharacterFocusedTotalResolver.resolveEvidence(
-            observations: fixture.focusedObservations
-        )
-        #expect(full == .exact(CharacterFullFrameTotalRead(value: 81, digitCount: 2)))
-        #expect(focused == .exact(CharacterFocusedTotalRead(value: 81, digitCount: 2)))
-        #expect(CharacterTotalBoundaryEvidenceResolver.resolve(
-            fullFrame: full,
-            focused: focused,
-            renderedDigitDetection: .digitCount(2),
-            minimumTotal: 90
-        ) == .belowThreshold)
-        #expect(CharacterRerollDetector.detect(
-            observations: fixture.observations,
-            minimumTotal: 90
-        ) == .rerollRequired(roll: CharacterRoll(name: "WARREN", total: 81), target: expectedTarget))
+        for (fixtureName, name, total) in [
+            ("character-reroll-split-total-live", "WARREN", 81),
+            ("character-reroll-split-total-84-live", "KENT", 84),
+        ] {
+            let fixture: CharacterRerollSplitTotalFixture = try loadFixture(fixtureName)
+            let full = CharacterFullFrameTotalResolver.resolve(observations: fixture.observations)
+            let focused = CharacterFocusedTotalResolver.resolveEvidence(
+                observations: fixture.focusedObservations
+            )
+            #expect(full == .exact(CharacterFullFrameTotalRead(value: total, digitCount: 2)))
+            #expect(focused == .exact(CharacterFocusedTotalRead(value: total, digitCount: 2)))
+            #expect(CharacterTotalBoundaryEvidenceResolver.resolve(
+                fullFrame: full,
+                focused: focused,
+                renderedDigitDetection: .digitCount(2),
+                minimumTotal: 90
+            ) == .belowThreshold)
+            #expect(CharacterRerollDetector.detect(
+                observations: fixture.observations,
+                minimumTotal: 90
+            ) == .rerollRequired(
+                roll: CharacterRoll(name: name, total: total), target: expectedTarget
+            ))
+        }
     }
 
     @Test("Split total rows preserve threshold stops and the original target")

@@ -82,8 +82,7 @@ public enum CharacterFocusedTotalResolver {
         for (left, right) in zip(candidates, candidates.dropFirst()) {
             let gap = right.rect.x - (left.rect.x + left.rect.width)
             let centerY = right.rect.y + right.rect.height / 2
-            guard gap >= -0.005,
-                  gap <= 0.03,
+            guard CharacterTotalRowGeometry.allowsAdjacentGap(gap),
                   abs(centerY - firstCenterY) <= 0.01
             else {
                 return nil
