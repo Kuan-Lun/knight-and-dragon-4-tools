@@ -66,12 +66,13 @@ struct CharacterTotalDigitDetectorTests {
         #expect(detect(frame) == .digitCount(2))
     }
 
-    @Test("Durable live 69, 73, 76, and 97 PNGs remain valid two-digit frames")
+    @Test("Durable live 69, 73, 76, 81, and 97 PNGs remain valid two-digit frames")
     func durableLivePNGs() throws {
         for name in [
             "total-69.png",
             "total-73-glyph.png",
             "total-76.png",
+            "total-81-split-full-frame.png",
             "total-97-full-reads-91.png",
         ] {
             let frame = try loadDurableFrame(name)

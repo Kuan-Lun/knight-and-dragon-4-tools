@@ -20,33 +20,80 @@ public enum CharacterFullFrameTotalResolution: Equatable, Sendable {
 }
 
 /// Extracts boundary evidence from the full-frame `total` row independently of the other page
-/// anchors. This lets a credible keeper value remain sticky even when unrelated OCR briefly fails.
+/// anchors. Vision may merge the row or split its adjacent label and digits. This lets a credible
+/// keeper value remain sticky even when unrelated OCR briefly fails.
 public enum CharacterFullFrameTotalResolver {
     public static func resolve(
         observations: [OCRTextObservation]
     ) -> CharacterFullFrameTotalResolution {
-        let candidates = observations.filter {
-            canonicalText($0.text).hasPrefix("TOTAL") && rowGate.contains($0.rect)
+        let candidates = observations.filter { rowGate.contains($0.rect) }
+            .sorted { lhs, rhs in
+                if lhs.rect.x == rhs.rect.x {
+                    return lhs.rect.y < rhs.rect.y
+                }
+                return lhs.rect.x < rhs.rect.x
+            }
+        guard candidates.contains(where: { canonicalText($0.text).hasPrefix("TOTAL") }) else {
+            return .unavailable
         }
-        let credibleReads = candidates.compactMap(credibleRead)
-        guard !candidates.isEmpty else { return .unavailable }
-        guard candidates.count == 1, let read = credibleReads.first else {
-            return .contaminated(credibleReads: credibleReads)
+        if let read = resolveCandidates(candidates) {
+            return .exact(read)
         }
-        return .exact(read)
+
+        // Extra row text must not disappear when a valid split is assembled. Retain any exact
+        // subrow only as veto evidence; the whole contaminated row can never authorize a click.
+        var credibleReads: [CharacterFullFrameTotalRead] = []
+        for start in candidates.indices {
+            let maximumEnd = min(candidates.count, start + 3)
+            for end in (start + 1)...maximumEnd {
+                guard let read = resolveCandidates(Array(candidates[start..<end])),
+                      !credibleReads.contains(read)
+                else {
+                    continue
+                }
+                credibleReads.append(read)
+            }
+        }
+        return .contaminated(credibleReads: credibleReads)
     }
 
-    private static func credibleRead(
-        _ candidate: OCRTextObservation
+    private static func resolveCandidates(
+        _ candidates: [OCRTextObservation]
     ) -> CharacterFullFrameTotalRead? {
-        guard candidate.rect.isValid,
-              candidate.confidence.isFinite,
-              (minimumConfidence...1).contains(candidate.confidence),
-              rowGate.contains(candidate.rect)
+        guard (1...3).contains(candidates.count),
+              candidates.allSatisfy({ candidate in
+                  candidate.rect.isValid
+                      && candidate.confidence.isFinite
+                      && (minimumConfidence...1).contains(candidate.confidence)
+              }),
+              let first = candidates.first,
+              let last = candidates.last
         else {
             return nil
         }
-        let row = canonicalText(candidate.text)
+        if candidates.count > 1 {
+            // Match the measured focused-row geometry while retaining the full-frame confidence
+            // floor. A slight overlap is a measured Vision segmentation artifact, not a gap to
+            // bridge by guessing missing text.
+            guard candidates.allSatisfy({ splitRowGate.contains($0.rect) }),
+                  (0.79...0.85).contains(first.rect.x),
+                  (0.93...0.98).contains(last.rect.x + last.rect.width)
+            else {
+                return nil
+            }
+            let firstCenterY = first.rect.y + first.rect.height / 2
+            for (left, right) in zip(candidates, candidates.dropFirst()) {
+                let gap = right.rect.x - (left.rect.x + left.rect.width)
+                let centerY = right.rect.y + right.rect.height / 2
+                guard gap >= -0.005,
+                      gap <= 0.03,
+                      abs(centerY - firstCenterY) <= 0.01
+                else {
+                    return nil
+                }
+            }
+        }
+        let row = candidates.map { canonicalText($0.text) }.joined()
         let prefix = "TOTAL:"
         guard row.hasPrefix(prefix) else {
             return nil
@@ -65,6 +112,7 @@ public enum CharacterFullFrameTotalResolver {
 
     private static let minimumConfidence = 0.30
     private static let rowGate = RegionGate(x: 0.75...0.98, y: 0.29...0.36)
+    private static let splitRowGate = RegionGate(x: 0.78...0.98, y: 0.305...0.35)
 
     private struct RegionGate {
         let x: ClosedRange<Double>

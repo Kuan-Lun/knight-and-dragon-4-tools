@@ -14,6 +14,15 @@ They are intentionally separate from the repository-root `captures/` runtime-out
   1.00. The raw detector independently counted two glyphs. Both OCR reads are safely on the
   `>= 90` side even though their individual digits differ; the same fixture also proves that the
   value remains on the two-digit side of a 100 boundary.
+- `total-81-split-full-frame.png` is the unchanged terminal image from reroll 165 of
+  `character-reroll-20260906-193447.6CuPgN`. Its adjacent OCR report reproduces the full-frame
+  split into `total：` and `81`, both at confidence 1.00. Their boxes overlap by 0.0049873 of
+  the frame width, within the existing focused-row tolerance of 0.005. The test fixture
+  `character-reroll-split-total-live.json` preserves those full-frame observations and a separate
+  focused Vision revision 3 replay (`en-US`, accurate, language correction off, ROI
+  x=0.72/y=0.64/width=0.27/height=0.08 in Vision coordinates). Focused OCR also reads `81` at
+  confidence 1.00; the rendered pixel detector independently counts two digits. The PNG SHA-256
+  is `443d8c1a3d7eb2a0a4667fe7e2a784ff43091c0c0c2f4b633dc52dbf920d569f`.
 
 Four read-only captures of the `total: 73` page were taken several seconds apart during the
 2026-09-05 calibration. Their PNG SHA-256 values were identical:

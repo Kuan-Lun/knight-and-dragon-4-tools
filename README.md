@@ -84,6 +84,18 @@ higher, and the rendered digit count must also agree. When a two-digit value is 
 threshold, the two OCR values must agree exactly. The `隨機` control and all other measured page
 anchors retain their stricter confidence floors.
 
+Version 0.4.14 also accepts full-frame Vision output that splits `total:` and the number into
+adjacent observations on the same calibrated row. The 2026-09-06 run stopped at roll 165 because
+`total: 81` was split this way and the old parser treated the label alone as malformed. Full-frame
+boundary evidence and the page detector now use the same row resolver. Assembly requires exact
+grammar, confidence, alignment, and bounded spacing; extra, duplicate, malformed, or conflicting
+row evidence still stops the run. Focused OCR, rendered digit counting, and the sticky threshold
+veto remain required. The original PNG and both OCR reads are retained as regression evidence.
+All 425 source tests passed, the packaged release built and passed signature verification, and
+the Launch Services `doctor` check confirmed both permissions still granted for 0.4.14
+(`logs/character-reroll-fix-0.4.14-{tests.log,build.log,doctor.json}`). Validation used saved-image
+OCR replays and read-only diagnostics; no live reroll was posted for this fix.
+
 Useful bounded options are:
 
 ```sh

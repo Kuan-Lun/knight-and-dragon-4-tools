@@ -174,12 +174,20 @@ public enum CharacterRerollDetector {
         guard totalGate.contains(totalObservation.observation.rect) else {
             return .unsafe(reason: .misplacedAnchor)
         }
-        guard let total = parseTotal(totalObservation.canonicalText) else {
+        // Use the same row assembly as boundary evidence: Vision may split `total:` and its
+        // digits into adjacent observations. The preliminary decision must not reject a row
+        // which that resolver has already established as complete, or ignore extra row text.
+        guard case let .exact(totalRead) = CharacterFullFrameTotalResolver.resolve(
+            observations: observations
+        ) else {
+            if let total = parseTotal(totalObservation.canonicalText),
+               !supportedTotalRange.contains(total)
+            {
+                return .unsafe(reason: .totalOutOfRange)
+            }
             return .unsafe(reason: .malformedTotal)
         }
-        guard supportedTotalRange.contains(total) else {
-            return .unsafe(reason: .totalOutOfRange)
-        }
+        let total = totalRead.value
 
         let roll = CharacterRoll(
             name: nameValue,

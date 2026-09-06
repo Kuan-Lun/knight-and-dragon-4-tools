@@ -4,6 +4,63 @@ import Testing
 
 @Suite("Character reroll detector")
 struct CharacterRerollDetectorTests {
+    @Test("The stopped total 81 frame resolves split full-frame and focused OCR consistently")
+    func splitTotalLiveReplay() throws {
+        let fixture: CharacterRerollSplitTotalFixture = try loadFixture(
+            "character-reroll-split-total-live"
+        )
+        let full = CharacterFullFrameTotalResolver.resolve(observations: fixture.observations)
+        let focused = CharacterFocusedTotalResolver.resolveEvidence(
+            observations: fixture.focusedObservations
+        )
+        #expect(full == .exact(CharacterFullFrameTotalRead(value: 81, digitCount: 2)))
+        #expect(focused == .exact(CharacterFocusedTotalRead(value: 81, digitCount: 2)))
+        #expect(CharacterTotalBoundaryEvidenceResolver.resolve(
+            fullFrame: full,
+            focused: focused,
+            renderedDigitDetection: .digitCount(2),
+            minimumTotal: 90
+        ) == .belowThreshold)
+        #expect(CharacterRerollDetector.detect(
+            observations: fixture.observations,
+            minimumTotal: 90
+        ) == .rerollRequired(roll: CharacterRoll(name: "WARREN", total: 81), target: expectedTarget))
+    }
+
+    @Test("Split total rows preserve threshold stops and the original target")
+    func splitTotalsRespectThreshold() {
+        for total in [81, 89, 90, 99, 100, 125] {
+            let split = validObservations(total: total).flatMap { item -> [OCRTextObservation] in
+                guard item.text == "total: \(total)" else { return [item] }
+                return [
+                    observation("total:", rect(0.794, 0.320, 0.103, 0.014)),
+                    observation("\(total)", rect(0.897, 0.320, 0.059, 0.014)),
+                ]
+            }
+            for minimum in [90, 100] {
+                #expect(CharacterRerollDetector.detect(
+                    observations: split,
+                    minimumTotal: minimum
+                ) == CharacterRerollDetector.detect(
+                    observations: validObservations(total: total),
+                    minimumTotal: minimum
+                ))
+            }
+        }
+    }
+
+    @Test("Extra or malformed fragments cannot authorize a provisional roll")
+    func extraTotalFragmentsFailClosed() {
+        for suffix in ["90", "100", "9O", "x"] {
+            var observations = validObservations()
+            observations.append(observation(suffix, rect(0.92, 0.320, 0.04, 0.014)))
+            #expect(isUnsafe(CharacterRerollDetector.detect(
+                observations: observations,
+                minimumTotal: 90
+            )))
+        }
+    }
+
     @Test("Captured 406 by 890 OCR replays as the total 69 roll")
     func capturedLiveOCRReplay() throws {
         let fixture: CharacterRerollLiveFixture = try loadFixture("character-reroll-live")
@@ -423,4 +480,9 @@ private struct CharacterRerollLiveFixture: Decodable {
 private struct CharacterRerollSupplementalLiveFixture: Decodable {
     let primaryObservations: [OCRTextObservation]
     let supplementalObservations: [OCRTextObservation]
+}
+
+private struct CharacterRerollSplitTotalFixture: Decodable {
+    let observations: [OCRTextObservation]
+    let focusedObservations: [OCRTextObservation]
 }
