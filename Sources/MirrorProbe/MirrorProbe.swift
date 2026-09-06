@@ -2280,7 +2280,7 @@ private struct MirrorProbe {
         // The local UI updates immediately in measured runs. Waiting well beyond that transition,
         // then requiring two pixel-quiescent result frames, prevents a staged name/total update
         // from authorizing the next click.
-        let settleNotBefore = postedAt + 1.5
+        let settleNotBefore = postedAt + 0.1
         var changedCandidate: CharacterRerollObservation?
         var latestPostClick: CharacterRerollObservation?
         var lastUnsafeReason: CharacterRerollUnsafeReason?
@@ -4007,7 +4007,7 @@ private struct MirrorProbe {
                                 reportURL: reportURL
                             )
                             throw ProbeError.unsafeWindow(
-                                "iPhone Mirroring lost foreground before input on all "
+                                "iPhone Mirroring could not obtain an unobscured foreground input point on all "
                                     + "\(attempts) attempts; "
                                     + activationFailureDetails.joined(separator: " | ")
                             )
@@ -4266,7 +4266,9 @@ private struct MirrorProbe {
                     runningApplication, options: [.activateAllWindows],
                     expectedCurrentProcessID: expectedFocusSourceProcessID
                 ).accepted
-            if !alreadyFrontmost {
+            // A process can already own focus while its window stacking is still settling.
+            // Obstruction retries must wait too, then obtain entirely fresh page evidence.
+            if !alreadyFrontmost || activationAttempt > 1 {
                 try await Task.sleep(for: .milliseconds(activationSettleDelayMilliseconds))
             }
         } else {
@@ -4404,12 +4406,13 @@ private struct MirrorProbe {
         ) {
             let windows = windowServerWindows() ?? []
             let currentWindow = windows.first { $0.identity.windowID == identity.windowID }
-            let topmostWindow = topmostInputWindow(
+            let inputPointSnapshot = inputPointWindowSnapshot(
                 at: clickPoint,
                 expectedWindowFrame: expectedFrame,
                 expectedProcessID: identity.processID,
                 windows: windows
             )
+            let topmostWindow = inputPointSnapshot.window
             let targetProcessTopmostWindow = windows.first {
                 $0.identity.processID == identity.processID
                     && $0.alpha > 0.01
@@ -4468,7 +4471,8 @@ private struct MirrorProbe {
             case .applicationNotFrontmost:
                 guard AutoLevelForegroundActivationRetryState.permitsRetry(
                     after: rejection,
-                    inputWasPosted: false
+                    inputWasPosted: false,
+                    inputMode: inputMode
                 ) else {
                     throw ProbeError.unsafeWindow(
                         "the final input boundary rejected a non-retryable focus loss"
@@ -4496,10 +4500,36 @@ private struct MirrorProbe {
                 )
                 return false
             case .clickPointObscured:
+                let diagnostic = inputObstructionDetail(
+                    request: request,
+                    inputMode: inputMode,
+                    attempt: activation?.attempt ?? 1,
+                    point: clickPoint,
+                    identity: identity,
+                    frontmostProcessID: frontmostProcessID,
+                    topmostWindow: topmostWindow,
+                    targetProcessTopmostWindow: targetProcessTopmostWindow,
+                    hitProcessID: inputPointSnapshot.hitProcessID,
+                    hitError: inputPointSnapshot.hitError,
+                    windows: windows
+                )
+                // This boundary posts neither event. Only a known external obstruction can
+                // enter the existing bounded retry loop; the next attempt recaptures the page
+                // and must pass this unchanged topmost-window guard before posting anything.
+                if AutoLevelForegroundActivationRetryState.permitsRetry(
+                    after: rejection,
+                    inputWasPosted: false,
+                    inputMode: inputMode,
+                    expectedWindowIdentity: identity,
+                    snapshot: snapshot
+                ) {
+                    boundaryResult = .foregroundActivationContended(detail: diagnostic)
+                    return false
+                }
                 let message = inputMode == .process
                     ? "another iPhone Mirroring window was above the locked mirror at the action point"
                     : "another window was above the confirmed action point immediately before input"
-                throw ProbeError.unsafeWindow(message)
+                throw ProbeError.unsafeWindow(message + "; " + diagnostic)
             }
         }
         guard posted else {
@@ -5243,18 +5273,86 @@ private struct MirrorProbe {
         expectedProcessID: Int32,
         windows: [WindowServerWindow]? = nil
     ) -> WindowServerWindow? {
-        let candidates = windows ?? windowServerWindows() ?? []
-        let hitProcessID = accessibilityHitProcessID(at: point)
-        return candidates.first {
+        inputPointWindowSnapshot(
+            at: point,
+            expectedWindowFrame: expectedWindowFrame,
+            expectedProcessID: expectedProcessID,
+            windows: windows ?? windowServerWindows() ?? []
+        ).window
+    }
+
+    private static func inputPointWindowSnapshot(
+        at point: CGPoint,
+        expectedWindowFrame: CGRect,
+        expectedProcessID: Int32,
+        windows: [WindowServerWindow]
+    ) -> (window: WindowServerWindow?, hitProcessID: Int32?, hitError: Int32) {
+        let hit = accessibilityInputHit(at: point)
+        let window = windows.first {
             $0.alpha > 0.01
                 && $0.frame.contains(point)
                 && !isNonOccludingDockBackdrop(
                     $0,
                     covering: expectedWindowFrame,
-                    hitProcessID: hitProcessID,
+                    hitProcessID: hit.processID,
                     expectedProcessID: expectedProcessID
                 )
         }
+        return (window, hit.processID, hit.error)
+    }
+
+    /// Serialize the exact rejected boundary sample, after input has already been vetoed.
+    /// Do not re-query AX or window stacking here: later observations cannot explain this veto.
+    private static func inputObstructionDetail(
+        request: AutoLevelActionRequest,
+        inputMode: AutoLevelInputMode,
+        attempt: Int,
+        point: CGPoint,
+        identity: AutoLevelWindowIdentity,
+        frontmostProcessID: Int32?,
+        topmostWindow: WindowServerWindow?,
+        targetProcessTopmostWindow: WindowServerWindow?,
+        hitProcessID: Int32?,
+        hitError: Int32,
+        windows: [WindowServerWindow]
+    ) -> String {
+        func metadata(_ window: WindowServerWindow) -> [String: Any] {
+            [
+                "windowID": window.identity.windowID,
+                "processID": window.identity.processID,
+                "bundleIdentifier": window.ownerBundleIdentifier.map { $0 as Any } ?? NSNull(),
+                "layer": window.layer, "alpha": window.alpha,
+                "frame": ["x": window.frame.minX, "y": window.frame.minY,
+                          "width": window.frame.width, "height": window.frame.height]
+            ]
+        }
+        let diagnostic: [String: Any] = [
+            "phase": "finalInputBoundary", "result": "clickPointObscured",
+            "timestamp": ISO8601DateFormatter().string(from: Date()),
+            "requestID": request.requestID, "action": request.intent.rawValue,
+            "inputMode": inputMode.rawValue, "attempt": attempt,
+            "maximumAttempts": AutoLevelForegroundActivationRetryState.maximumAttempts,
+            "noInputPosted": true,
+            "point": ["x": point.x, "y": point.y],
+            "expectedPID": identity.processID, "expectedWindowID": identity.windowID,
+            "frontmostPID": frontmostProcessID.map { $0 as Any } ?? NSNull(),
+            "axHitPID": hitProcessID.map { $0 as Any } ?? NSNull(), "axHitError": hitError,
+            "topmostWindow": topmostWindow.map { metadata($0) as Any } ?? NSNull(),
+            "targetProcessTopmostWindow": targetProcessTopmostWindow.map { metadata($0) as Any } ?? NSNull(),
+            "windowsAtPointFrontToBack": windows.filter {
+                $0.alpha > 0.01 && $0.frame.contains(point)
+            }.prefix(8).map(metadata)
+        ]
+        let detail: String
+        if let data = try? JSONSerialization.data(withJSONObject: diagnostic, options: [.sortedKeys]),
+           let json = String(data: data, encoding: .utf8) {
+            detail = json
+        } else {
+            detail = "phase=finalInputBoundary, result=clickPointObscured, "
+                + "noInputPosted=true, diagnosticsEncodingFailed=true"
+        }
+        FileHandle.standardError.write(Data("inputBoundaryRejected: \(detail)\n".utf8))
+        return detail
     }
 
     /// Dock owns a transparent, full-display management surface above ordinary windows. It is
@@ -5275,24 +5373,25 @@ private struct MirrorProbe {
             && hitProcessID == expectedProcessID
     }
 
-    private static func accessibilityHitProcessID(at point: CGPoint) -> Int32? {
+    private static func accessibilityInputHit(at point: CGPoint) -> (processID: Int32?, error: Int32) {
         let systemWideElement = AXUIElementCreateSystemWide()
+        AXUIElementSetMessagingTimeout(systemWideElement, 0.25)
         var hitElement: AXUIElement?
-        guard AXUIElementCopyElementAtPosition(
+        let hitError = AXUIElementCopyElementAtPosition(
             systemWideElement,
             Float(point.x),
             Float(point.y),
             &hitElement
-        ) == .success,
-            let hitElement
-        else {
-            return nil
+        )
+        guard hitError == .success, let hitElement else {
+            return (nil, hitError == .success ? AXError.noValue.rawValue : hitError.rawValue)
         }
         var processID: pid_t = 0
-        guard AXUIElementGetPid(hitElement, &processID) == .success else {
-            return nil
+        let pidError = AXUIElementGetPid(hitElement, &processID)
+        guard pidError == .success, processID > 0 else {
+            return (nil, pidError == .success ? AXError.noValue.rawValue : pidError.rawValue)
         }
-        return processID
+        return (processID, AXError.success.rawValue)
     }
 
     private static func windowServerWindows() -> [WindowServerWindow]? {

@@ -199,7 +199,7 @@ macOS activation are asynchronous, so a user action concurrent with an already-i
 request is still not an atomic handoff.
 
 Once a run has locked a window, a temporary absence from the eligible capture list pauses input
-and allows at most four queries with 0.5, 1, and 1.5 second backoffs, within a fixed five-second
+and allows at most four queries with 1, 1, and 1.5 second backoffs, within a fixed five-second
 recovery budget. Recovery accepts only the original PID, window ID, and geometry. It does not
 reopen the app, select a replacement window, or treat hidden/minimized windows as click targets.
 STOP and the original session/action deadlines remain effective; post-click capture uses the
@@ -207,7 +207,8 @@ original acknowledgement deadline and cannot resend the click. Every gap discard
 continuity and any pending stall proof, including gaps shorter than the normal sample interval.
 The `windowAvailability` stderr entries record the phase, attempts, mirror candidates before
 filtering, and the matching WindowServer entry. This distinguishes a failed query from proof that
-the user closed the window. Persistent absence still stops the run.
+the user closed the window. Persistent absence still stops the run. A wait may end early at
+an existing deadline, but that stops recovery without issuing another query.
 
 macOS activation is asynchronous and advisory, so this is a best-effort return to the previous
 application, not a guarantee of exact window/control focus or desktop stacking order. A rejected
@@ -233,7 +234,18 @@ in addition to the 60 ms mouse-down/up interval. Because these events use the sh
 and focus, typing or moving the pointer at the same instant can still be interrupted. If another application momentarily
 takes focus before input, the runner makes at most three total activation attempts. Every attempt
 uses a fresh capture and repeats the complete window, state, and target validation; no failed
-attempt posts input. Three consecutive focus failures still stop the run safely.
+attempt posts input. Each failed attempt waits one second before the next attempt's activation
+settling delay and fresh capture. Three consecutive focus failures still stop the run safely.
+
+Version 0.4.13 also spends that same three-attempt budget when a known window from another
+process covers the action point while the mirror remains focused. No event is posted on the
+rejected attempt. Retries wait for stacking to settle even if the mirror is already frontmost,
+then take a fresh capture and repeat state, target, geometry, timing, and topmost-window checks.
+The original action and session deadlines are not extended. Persistent obstruction still stops;
+unknown topmost windows, a competing mirror-process window, and process-mode obstruction remain
+terminal. `inputBoundaryRejected` stderr entries and the report's retry/error details now retain
+the rejected point's window IDs, PIDs, bundle identifiers, layers, frames, and the same AX hit
+result used by the guard. These diagnostics do not include other windows' titles or content.
 
 `--input-mode process` is retained as a safe diagnostic mode. It routes the down/up pair only to
 the locked iPhone Mirroring PID, never moves the global cursor, and never falls back to a global
@@ -369,8 +381,9 @@ respectively, and neither reached dense stability or retreat. The first complete
 cycles. Thus live stalled-battle recovery is still unverified.
 
 Version 0.4.8 treats an unavailable original focus read as an unposted focus failure in the same
-three-attempt budget used for activation contention. It waits 250/500 ms, rechecks STOP and both
-deadlines, then obtains a new original-application identity and performs the full action preflight.
+three-attempt budget used for activation contention. Current builds wait one second after each
+failure, recheck STOP and both deadlines, then obtain a new original-application identity and
+perform the full action preflight.
 It never guesses the original PID or extends authorization; persistent unavailable focus still
 stops after the bounded retries. The 367 tests passed again after this change. Renewed macOS grants
 and a fresh live run are required for the rebuilt app.
@@ -499,6 +512,26 @@ individual focus restorations; no diagnostic persistence error was recorded. Thi
 bounded EXP retry in practice without establishing why the original click was ignored. The full
 source suite, including the two added window-overlap regressions, passes 410 tests. No app rebuild
 or additional macOS permission grant was needed for these test/documentation changes.
+
+The run at 02:27:14 on 2026-09-06
+(`logs/auto-level-20260906-022714.jnEEll/run-report.json`) completed 11 cycles and posted 56
+actions before request 57 was refused at 02:39:27. Window identity, geometry, timing, and the
+foreground PID passed; the topmost-window check at the modal action point failed. The old logs
+do not identify the covering window, and the per-window final image cannot show external
+occlusion. The preceding `accessibilityRequestAccepted` entries are successful fallback requests.
+Version 0.4.13 adds the bounded external-obstruction retry and rejected-boundary diagnostics
+described above. All 416 source tests pass (`logs/obstruction-retry-tests.log`), and the packaged
+release builds and passes signature verification. Its first Launch Services doctor check reported
+both permissions missing after the ad-hoc rebuild (`logs/doctor-0.4.13.json`). After the user
+renewed permission grants, `logs/doctor-0.4.13-authorized.json` confirmed both permissions granted
+and the same mirror process 9823/window 51767. The subsequent read-only preflight
+(`logs/preflight-0.4.13.json`) captured that window and classified `wideModalOneButton`, with zero
+input events. `logs/focus-check-0.4.13.json` then verified activation of the mirror and restoration
+of the previous application, also with zero input events. A bounded one-minute/one-cycle run
+(`logs/obstruction-fix-0.4.13-live/run-report.json`) posted one modal-close action, reached the
+existing mission's result page, and stopped normally at the cycle limit after 2.247 seconds.
+It did not complete a newly started battle or encounter a point obstruction. The new obstruction
+retry branch is covered by automated tests; live obstruction recovery remains unverified.
 
 ## Read-only state analysis
 

@@ -68,8 +68,9 @@ public struct AutoLevelWindowAvailabilityRetry: Equatable, Sendable {
         return nil
     }
 
-    /// Records one unsuccessful query. Delay is clipped to the earliest existing deadline;
-    /// the caller waits that duration and validates again before starting another query.
+    /// Records one unsuccessful query. Retries wait at least one second unless the earliest
+    /// existing deadline clips the wait. A clipped wait only reaches that deadline: the caller
+    /// must validate again, which stops recovery before another query can start.
     public mutating func recordMissing(
         at time: TimeInterval,
         stopRequested: Bool = false
@@ -80,7 +81,7 @@ public struct AutoLevelWindowAvailabilityRetry: Equatable, Sendable {
         guard attempt < Self.maximumAttempts else {
             return .stop(reason: finish(.attemptsExhausted))
         }
-        let requestedDelay = TimeInterval(attempt) * 0.5
+        let requestedDelay = max(1, TimeInterval(attempt) * 0.5)
         let delay = min(requestedDelay, earliestDeadline.time - time)
         attempt += 1
         return .retry(nextAttempt: attempt, delaySeconds: delay)

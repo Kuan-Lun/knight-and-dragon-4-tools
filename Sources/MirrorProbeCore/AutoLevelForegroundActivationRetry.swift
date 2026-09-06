@@ -5,11 +5,13 @@ public enum AutoLevelForegroundActivationRetryDecision: Equatable, Sendable {
     case exhausted(attempts: Int)
 }
 
-/// A bounded retry budget for focus contention detected before any input event is posted.
+/// A bounded retry budget for foreground focus contention or a known external window obscuring
+/// the locked target, detected before any input event is posted.
 ///
 /// The caller must use this state only after it knows that neither mouse-down nor mouse-up was
-/// sent. Window identity, geometry, target, capture, and timing failures remain terminal and must
-/// never enter this retry state.
+/// sent. A retry requires reactivation and fresh observation and authorization; it never authorizes
+/// the rejected event. Window identity, geometry, target, capture, timing, and unknown or same-process
+/// obstruction failures remain terminal and must never enter this retry state.
 public struct AutoLevelForegroundActivationRetryState: Equatable, Sendable {
     public static let maximumAttempts = 3
 
@@ -31,11 +33,32 @@ public struct AutoLevelForegroundActivationRetryState: Equatable, Sendable {
         return frontmostProcessMatches
     }
 
+    /// Allows a new foreground attempt after an unposted rejection. An obscured point is retryable
+    /// only when the locked window remains focused and topmost within its process, and a known
+    /// window from another process covers it. Missing observations fail closed.
     public static func permitsRetry(
         after rejection: AutoLevelInputRejection,
-        inputWasPosted: Bool
+        inputWasPosted: Bool,
+        inputMode: AutoLevelInputMode = .foreground,
+        expectedWindowIdentity: AutoLevelWindowIdentity? = nil,
+        snapshot: AutoLevelInputSnapshot? = nil
     ) -> Bool {
-        !inputWasPosted && rejection == .applicationNotFrontmost
+        guard !inputWasPosted, inputMode == .foreground else { return false }
+        switch rejection {
+        case .applicationNotFrontmost:
+            return true
+        case .clickPointObscured:
+            guard let expectedWindowIdentity,
+                  let snapshot,
+                  snapshot.windowIdentity == expectedWindowIdentity,
+                  snapshot.frontmostProcessID == expectedWindowIdentity.processID,
+                  snapshot.targetProcessTopmostWindowIdentity == expectedWindowIdentity,
+                  let topmostWindowIdentity = snapshot.topmostWindowIdentity
+            else { return false }
+            return topmostWindowIdentity.processID != expectedWindowIdentity.processID
+        default:
+            return false
+        }
     }
 
     public var settleDelayMilliseconds: Int {
@@ -53,12 +76,8 @@ public struct AutoLevelForegroundActivationRetryState: Equatable, Sendable {
             return .exhausted(attempts: currentAttempt)
         }
 
-        let retryDelay: Int
-        switch currentAttempt {
-        case 1: retryDelay = 250
-        default: retryDelay = 500
-        }
         currentAttempt += 1
-        return .retry(nextAttempt: currentAttempt, delayMilliseconds: retryDelay)
+        // Keep the failure backoff separate from the next attempt's activation settling delay.
+        return .retry(nextAttempt: currentAttempt, delayMilliseconds: 1_000)
     }
 }

@@ -9,25 +9,25 @@ struct AutoLevelWindowAvailabilityRetryTests {
         var retry = AutoLevelWindowAvailabilityRetry(startedAt: 100, sessionDeadline: 200)
         #expect(retry.attempt == 1)
         #expect(retry.validateBoundary(at: 100) == nil)
-        #expect(retry.recordMissing(at: 100.2) == .retry(nextAttempt: 2, delaySeconds: 0.5))
-        #expect(retry.validateBoundary(at: 100.7) == nil)
+        #expect(retry.recordMissing(at: 100.2) == .retry(nextAttempt: 2, delaySeconds: 1))
+        #expect(retry.validateBoundary(at: 101.2) == nil)
         // A successful second query still validates its completion before using its result.
-        #expect(retry.validateBoundary(at: 100.9) == nil)
+        #expect(retry.validateBoundary(at: 101.4) == nil)
         #expect(retry.attempt == 2)
         #expect(retry.startedAt == 100)
         #expect(retry.sessionDeadline == 200)
     }
 
-    @Test("Four missing queries exhaust the budget and cannot be revived")
+    @Test("Retries wait at least one second and four missing queries exhaust the budget")
     func attemptLimitAndBackoff() {
         var retry = AutoLevelWindowAvailabilityRetry(startedAt: 100, sessionDeadline: 200)
-        #expect(retry.recordMissing(at: 100) == .retry(nextAttempt: 2, delaySeconds: 0.5))
-        #expect(retry.recordMissing(at: 100.5) == .retry(nextAttempt: 3, delaySeconds: 1))
-        #expect(retry.recordMissing(at: 101.5) == .retry(nextAttempt: 4, delaySeconds: 1.5))
-        #expect(retry.recordMissing(at: 103) == .stop(reason: .attemptsExhausted))
+        #expect(retry.recordMissing(at: 100) == .retry(nextAttempt: 2, delaySeconds: 1))
+        #expect(retry.recordMissing(at: 101) == .retry(nextAttempt: 3, delaySeconds: 1))
+        #expect(retry.recordMissing(at: 102) == .retry(nextAttempt: 4, delaySeconds: 1.5))
+        #expect(retry.recordMissing(at: 103.5) == .stop(reason: .attemptsExhausted))
         #expect(retry.attempt == AutoLevelWindowAvailabilityRetry.maximumAttempts)
-        #expect(retry.validateBoundary(at: 103.1) == .attemptsExhausted)
-        #expect(retry.recordMissing(at: 103.2) == .stop(reason: .attemptsExhausted))
+        #expect(retry.validateBoundary(at: 103.6) == .attemptsExhausted)
+        #expect(retry.recordMissing(at: 103.7) == .stop(reason: .attemptsExhausted))
     }
 
     @Test("STOP is honored before a query, after a query, and after a wait")
@@ -42,15 +42,16 @@ struct AutoLevelWindowAvailabilityRetryTests {
         #expect(afterQuery.attempt == 1)
 
         var afterWait = AutoLevelWindowAvailabilityRetry(startedAt: 100, sessionDeadline: 200)
-        #expect(afterWait.recordMissing(at: 100) == .retry(nextAttempt: 2, delaySeconds: 0.5))
-        #expect(afterWait.validateBoundary(at: 100.5, stopRequested: true) == .stopRequested)
+        #expect(afterWait.recordMissing(at: 100) == .retry(nextAttempt: 2, delaySeconds: 1))
+        #expect(afterWait.validateBoundary(at: 101, stopRequested: true) == .stopRequested)
     }
 
-    @Test("A short session clips waiting and expires only at the actual deadline")
+    @Test("A subsecond session wait reaches the deadline without permitting another query")
     func sessionBoundaryClipsDelay() {
         var retry = AutoLevelWindowAvailabilityRetry(startedAt: 100, sessionDeadline: 100.25)
         #expect(retry.recordMissing(at: 100) == .retry(nextAttempt: 2, delaySeconds: 0.25))
         #expect(retry.validateBoundary(at: 100.125) == nil)
+        // A clipped wait ends recovery at the deadline instead of starting a faster retry.
         #expect(retry.validateBoundary(at: 100.25) == .sessionExpired)
         #expect(retry.recordMissing(at: 100.5) == .stop(reason: .sessionExpired))
         #expect(retry.sessionDeadline == 100.25)
@@ -64,6 +65,7 @@ struct AutoLevelWindowAvailabilityRetryTests {
         #expect(retry.recordMissing(at: 100) == .retry(nextAttempt: 2, delaySeconds: 0.25))
         #expect(retry.validateBoundary(at: 100.125) == nil)
         #expect(retry.validateBoundary(at: 100.25) == .actionExpired)
+        #expect(retry.recordMissing(at: 100.25) == .stop(reason: .actionExpired))
         #expect(retry.actionDeadline == 100.25)
 
         var slowSuccessfulQuery = AutoLevelWindowAvailabilityRetry(
@@ -80,6 +82,7 @@ struct AutoLevelWindowAvailabilityRetryTests {
         #expect(retry.recordMissing(at: 104.75) == .retry(nextAttempt: 2, delaySeconds: 0.25))
         #expect(retry.validateBoundary(at: 104.875) == nil)
         #expect(retry.validateBoundary(at: 105) == .recoveryExpired)
+        #expect(retry.recordMissing(at: 105) == .stop(reason: .recoveryExpired))
 
         var slowSuccessfulQuery = AutoLevelWindowAvailabilityRetry(startedAt: 100, sessionDeadline: 200)
         #expect(slowSuccessfulQuery.validateBoundary(at: 100) == nil)
