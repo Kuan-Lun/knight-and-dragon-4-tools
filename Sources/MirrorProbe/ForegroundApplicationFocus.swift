@@ -14,7 +14,17 @@ struct ForegroundApplicationFocusSnapshot: Codable {
 
     var application: NSRunningApplication? {
         guard let processID, processID > 0 else { return nil }
-        return NSRunningApplication(processIdentifier: processID)
+        let application = NSRunningApplication(processIdentifier: processID)
+        if application == nil {
+            // AX can confirm a PID while AppKit temporarily cannot resolve its application.
+            // Keep this distinct from a failed AX read or an observed foreground switch.
+            FileHandle.standardError.write(Data(
+                "focusApplicationResolution: confirmedPID=\(processID), source=\(source), "
+                    .appending("accessibilityError=\(accessibilityError), outcome=applicationUnavailable\n")
+                    .utf8
+            ))
+        }
+        return application
     }
 }
 
@@ -49,7 +59,7 @@ enum ForegroundApplicationFocus {
         }
 
         // The Core Foundation type check above establishes that this value is an AXUIElement.
-        let focusedApplication = unsafeBitCast(value, to: AXUIElement.self)
+        let focusedApplication = unsafeDowncast(value, to: AXUIElement.self)
         var processID: pid_t = 0
         let processError = AXUIElementGetPid(focusedApplication, &processID)
         guard processError == .success else {
@@ -101,7 +111,7 @@ enum ForegroundApplicationFocus {
         if let value {
             if CFGetTypeID(value) == CFBooleanGetTypeID() {
                 // Do not coerce NSNumber, strings, or other CF values into a truth value.
-                let boolean = unsafeBitCast(value, to: CFBoolean.self)
+                let boolean = unsafeDowncast(value, to: CFBoolean.self)
                 frontmostValue = .boolean(CFBooleanGetValue(boolean))
             } else {
                 frontmostValue = .invalidType

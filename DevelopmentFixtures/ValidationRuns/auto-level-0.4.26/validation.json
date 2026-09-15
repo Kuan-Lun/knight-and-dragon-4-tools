@@ -1,0 +1,138 @@
+{
+  "version": "0.4.26",
+  "build": "49",
+  "validatedAtUTC": "2026-09-12T16:45:38.297330+00:00",
+  "status": "offline-validation-passed; screen-capture-and-accessibility-permission-required-for-live-input",
+  "incidentRun": "logs/auto-level-20260913-000136.Q2CoDs",
+  "scope": "Trim changing top border from Skip/All-auto visual glyph regions; regenerate original templates only",
+  "tests": {
+    "existingSwiftTesting": 564,
+    "existingXCTest": 2,
+    "newSwiftTesting": 5,
+    "swiftTotal": 571,
+    "launcher": 12,
+    "passed": true,
+    "logs": [
+      "swift-tests.log",
+      "footer-tests.log",
+      "launcher-tests.log"
+    ]
+  },
+  "releaseBuildPassed": true,
+  "signatureVerified": true,
+  "launcherDryRunPassed": true,
+  "executableSHA256": "fb64ce892e6abc859fdeb2975204a81273c12f0b947da11857574f18bdf8065c",
+  "packagedOfflineReplays": [
+    {
+      "captureSequence": 1116,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9984045599117002,
+        "allAutoControl": 0.9979689061781947,
+        "pauseControl": 0.9982384553433661,
+        "retreatControl": 0.9980935257115361
+      },
+      "report": "packaged-capture-1116.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 1117,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9984045599117002,
+        "allAutoControl": 0.9979689061781947,
+        "pauseControl": 0.9982384553433661,
+        "retreatControl": 0.9980935257115361
+      },
+      "report": "packaged-capture-1117.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 1118,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9984045599117002,
+        "allAutoControl": 0.9979689061781947,
+        "pauseControl": 0.9982384553433661,
+        "retreatControl": 0.9980935257115361
+      },
+      "report": "packaged-capture-1118.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 1119,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9984045599117002,
+        "allAutoControl": 0.9979689061781947,
+        "pauseControl": 0.9982384553433661,
+        "retreatControl": 0.9980935257115361
+      },
+      "report": "packaged-capture-1119.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 1120,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9984045599117002,
+        "allAutoControl": 0.9979689061781947,
+        "pauseControl": 0.9982384553433661,
+        "retreatControl": 0.9980935257115361
+      },
+      "report": "packaged-capture-1120.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 1121,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9984045599117002,
+        "allAutoControl": 0.9979689061781947,
+        "pauseControl": 0.9982384553433661,
+        "retreatControl": 0.9980935257115361
+      },
+      "report": "packaged-capture-1121.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 1122,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9984045599117002,
+        "allAutoControl": 0.9979689061781947,
+        "pauseControl": 0.9982384553433661,
+        "retreatControl": 0.9980935257115361
+      },
+      "report": "packaged-capture-1122.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 1123,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9984045599117002,
+        "allAutoControl": 0.9979689061781947,
+        "pauseControl": 0.9982384553433661,
+        "retreatControl": 0.9980935257115361
+      },
+      "report": "packaged-capture-1123.json",
+      "inputEventsPosted": 0
+    }
+  ],
+  "permissionCheck": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-12T16:44:47Z",
+    "windows": []
+  },
+  "liveAutoLevelRunStarted": false,
+  "inputEventsPosted": 0,
+  "limitations": [
+    "Validation uses saved native captures; no sustained live run was started.",
+    "Still-image classification does not establish automatic mode or temporal progress.",
+    "Native paused/resume screenshot coverage remains unavailable; missing pause is tested by in-memory occlusion.",
+    "The rebuilt app requires Screen Recording and Accessibility/post-event permission before live execution."
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "version": "0.4.25",
+  "build": "48",
+  "validatedAtUTC": "2026-09-11T01:24:06.404423+00:00",
+  "status": "offline-validation-passed; accessibility-permission-required-for-live-input",
+  "incidentRun": "logs/auto-level-20260911-062312.BBbuKG",
+  "scope": "Narrow NotificationCenter full-display backdrop input-point filtering",
+  "tests": {
+    "swiftTesting": 564,
+    "xctest": 2,
+    "swiftTotal": 566,
+    "newBackdropTests": 10,
+    "launcher": 12,
+    "passed": true
+  },
+  "releaseBuildPassed": true,
+  "signatureVerified": true,
+  "launcherDryRunPassed": true,
+  "executableSHA256": "a8d80fb08e286549c20c5550a9fe12d5d530a2952ea100590695c2718c959c02",
+  "packagedOfflineReplay": {
+    "report": "packaged-final-image.json",
+    "state": "wideModalTwoButtons",
+    "plannedAction": "pressWideModalTopButton",
+    "inputEventsPosted": 0,
+    "passed": true
+  },
+  "permissionCheck": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "granted",
+    "timestamp": "2026-09-11T01:23:10Z",
+    "windows": [
+      {
+        "active": true,
+        "applicationName": "iPhone鏡像輸出",
+        "bundleIdentifier": "com.apple.ScreenContinuity",
+        "height": 890,
+        "onScreen": true,
+        "processID": 91507,
+        "title": "iPhone鏡像輸出",
+        "width": 406,
+        "windowID": 65194,
+        "x": 0,
+        "y": 30
+      }
+    ]
+  },
+  "liveAutoLevelRunStarted": false,
+  "limitations": [
+    "Original incident did not record active display geometry; regression supplies matching display bounds as an explicit scenario.",
+    "The intermittent full-display NotificationCenter surface was not reproduced live.",
+    "Rebuilt app retains screen capture permission but requires renewed Accessibility/post-event permission."
+  ]
+}

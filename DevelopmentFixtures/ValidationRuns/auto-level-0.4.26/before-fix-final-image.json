@@ -1,0 +1,65 @@
+{
+  "classification" : {
+    "allowedActions" : [
+
+    ],
+    "evidence" : [
+      {
+        "detail" : "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.42984, failureTitle=0.35161, experienceHeader=-0.10094, lootHeader=-0.08596, repeatOption=0.15214",
+        "kind" : "lowConfidenceMarker"
+      },
+      {
+        "detail" : "battleVisualRejected: incompleteFooterMarkers, skipControl=0.89873, allAutoControl=0.92211, pauseControl=0.99824, retreatControl=0.99809",
+        "kind" : "lowConfidenceMarker"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "unknown"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.043137254901960784,
+    "luminanceP95" : 0.9372549019607843,
+    "luminanceStandardDeviation" : 0.3581440666613337,
+    "meanLuminance" : 0.40252158885302836,
+    "nearBlackRatio" : 0.000713759440044207,
+    "quantizedColorCount" : 852,
+    "sampledPixels" : 130296
+  },
+  "image" : {
+    "height" : 1780,
+    "orientation" : "up",
+    "pngSHA256" : "06bda2a4592f279166bf0f2a7f07849986a6c987a64a785d2c6ae6dfbd2a4a28",
+    "width" : 812
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260913-000136.Q2CoDs/final.png"
+  },
+  "status" : "unknown",
+  "timestamp" : "2026-09-12T16:39:42Z"
+}

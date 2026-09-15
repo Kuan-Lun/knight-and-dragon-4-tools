@@ -1,0 +1,119 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "selectMissionRepeat",
+        "target" : {
+          "name" : "missionRepeatOption",
+          "point" : {
+            "x" : 0.16699999999999998,
+            "y" : 0.24650000000000002
+          },
+          "rect" : {
+            "height" : 0.025,
+            "width" : 0.29,
+            "x" : 0.022,
+            "y" : 0.234
+          },
+          "sourceText" : "<measured-result-repeat-option>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "source=resultVisualV1, marker=successTitle, similarity=0.9884613502377223, minimumSimilarity=0.94",
+        "kind" : "missionCompleteTitle",
+        "visualMatch" : {
+          "marker" : "successTitle",
+          "region" : {
+            "height" : 0.034,
+            "width" : 0.24,
+            "x" : 0.38,
+            "y" : 0.1
+          },
+          "similarity" : 0.9884613502377223
+        }
+      },
+      {
+        "detail" : "source=resultVisualV1, marker=lootHeader, similarity=0.9707517039431753, minimumSimilarity=0.94",
+        "kind" : "missionLootPage",
+        "visualMatch" : {
+          "marker" : "lootHeader",
+          "region" : {
+            "height" : 0.026,
+            "width" : 0.2,
+            "x" : 0.775,
+            "y" : 0.145
+          },
+          "similarity" : 0.9707517039431753
+        }
+      },
+      {
+        "detail" : "source=resultVisualV1, marker=repeatOption, similarity=0.9738937095860168, minimumSimilarity=0.94",
+        "kind" : "missionRepeatOption",
+        "visualMatch" : {
+          "marker" : "repeatOption",
+          "region" : {
+            "height" : 0.025,
+            "width" : 0.29,
+            "x" : 0.022,
+            "y" : 0.234
+          },
+          "similarity" : 0.9738937095860168
+        }
+      },
+      {
+        "detail" : "<measured-repeat-unselected-empty-stamp>",
+        "kind" : "repeatUnselectedMarker"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "missionComplete"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.3333333333333333,
+    "luminanceP95" : 0.9215686274509803,
+    "luminanceStandardDeviation" : 0.20511111505719173,
+    "meanLuminance" : 0.8080422537353936,
+    "nearBlackRatio" : 0.00029979695569818624,
+    "quantizedColorCount" : 125,
+    "sampledPixels" : 73383
+  },
+  "image" : {
+    "height" : 890,
+    "orientation" : "up",
+    "pngSHA256" : "45ee0776aec4d5e19cf02879a3545a3f360a4e1e7acfec4277539e3073fbfad8",
+    "width" : 406
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/DevelopmentFixtures/ClassifierReplaySources/result-visual-20260911/live-unselected-loot.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-10T22:13:31Z"
+}

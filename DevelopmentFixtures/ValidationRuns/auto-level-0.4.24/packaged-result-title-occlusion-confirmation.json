@@ -1,0 +1,61 @@
+{
+  "classification" : {
+    "allowedActions" : [
+
+    ],
+    "evidence" : [
+      {
+        "detail" : "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.49888, failureTitle=0.35572, experienceHeader=0.97093, lootHeader=0.88584, repeatOption=0.97393",
+        "kind" : "lowConfidenceMarker"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "unknown"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.35294117647058826,
+    "luminanceP95" : 0.9215686274509803,
+    "luminanceStandardDeviation" : 0.17989256989708102,
+    "meanLuminance" : 0.8205513217916768,
+    "nearBlackRatio" : 6.813567174958778e-05,
+    "quantizedColorCount" : 159,
+    "sampledPixels" : 73383
+  },
+  "image" : {
+    "height" : 890,
+    "orientation" : "up",
+    "pngSHA256" : "d155e21745f916a45b1f5e6e07c81a4c425336e82c897ac1fe068bc736b5e156",
+    "width" : 406
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/Tests/MirrorProbeCoreTests/Fixtures/Images/result-title-occlusion-confirmation.png"
+  },
+  "status" : "unknown",
+  "timestamp" : "2026-09-10T22:13:31Z"
+}

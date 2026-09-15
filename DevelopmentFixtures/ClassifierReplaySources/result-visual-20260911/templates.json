@@ -1,0 +1,110 @@
+[
+  {
+    "marker": "successTitle",
+    "region": [
+      0.38,
+      0.1,
+      0.24,
+      0.034
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png",
+    "sourceSHA256": "55ec0601f8d3ecabe4468592e287608c93f8aaed3d9f9b700fc20abad9ab6df2",
+    "sampleSHA256": "0512b7341d7bbd21a94b776281e6b3ba1cd74de9f0dcaf97dd25ae2f5b42b892"
+  },
+  {
+    "marker": "successTitle",
+    "region": [
+      0.38,
+      0.1,
+      0.24,
+      0.034
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-experience.png",
+    "sourceSHA256": "1af0059233c5b2885d1b672591030af86a08e94fa32a763db8924c5e3e614cd4",
+    "sampleSHA256": "d8b1123d3a4051e2ca4203c9423e068c5e3eac78348fc1f171efabfb3653c06d"
+  },
+  {
+    "marker": "failureTitle",
+    "region": [
+      0.38,
+      0.1,
+      0.24,
+      0.034
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/failure-repeat-confirmation-before.png",
+    "sourceSHA256": "a9516cecc2e2f9f7b9e54c92018dda546a0434357489ce81ae11b2bbf9064eeb",
+    "sampleSHA256": "0a798a088fcf2ac42da19196f4e8a8dc0a7419a81e0f7e9a6b39f04dd74de65d"
+  },
+  {
+    "marker": "experienceHeader",
+    "region": [
+      0.775,
+      0.145,
+      0.2,
+      0.026
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png",
+    "sourceSHA256": "55ec0601f8d3ecabe4468592e287608c93f8aaed3d9f9b700fc20abad9ab6df2",
+    "sampleSHA256": "f1200e81607768e12d4b5103cfb6a7f856378acb22a601ec8fa5c5298a75e227"
+  },
+  {
+    "marker": "experienceHeader",
+    "region": [
+      0.775,
+      0.145,
+      0.2,
+      0.026
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-experience.png",
+    "sourceSHA256": "1af0059233c5b2885d1b672591030af86a08e94fa32a763db8924c5e3e614cd4",
+    "sampleSHA256": "a3c1a06bdfcde61c0979da350ebeca8c2f10a864983ffdd7078c1aaabbbcc89b"
+  },
+  {
+    "marker": "lootHeader",
+    "region": [
+      0.775,
+      0.145,
+      0.2,
+      0.026
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-result-no-modal.png",
+    "sourceSHA256": "50c82a52974ac47a085d8a3305f08e012f43a32debf1d7c9dd47816b483da786",
+    "sampleSHA256": "492fb91d0b9b55c674e34528203f2f4a373669b9ed5e37223c8fce077d51b533"
+  },
+  {
+    "marker": "lootHeader",
+    "region": [
+      0.775,
+      0.145,
+      0.2,
+      0.026
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-startup.png",
+    "sourceSHA256": "1a12308ad0e2c1f3b59e73b4e7e152434c322c6d6abe8835dcbfba0d2861abe5",
+    "sampleSHA256": "b90276675b77bad310fc5fe47343fd812430dd8cd7398fd707fe8098db308487"
+  },
+  {
+    "marker": "repeatOption",
+    "region": [
+      0.022,
+      0.234,
+      0.29,
+      0.025
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png",
+    "sourceSHA256": "55ec0601f8d3ecabe4468592e287608c93f8aaed3d9f9b700fc20abad9ab6df2",
+    "sampleSHA256": "090e826796217efc3441c09c633eb13a3e5d0e8e8f984947d6798bf2228100c5"
+  },
+  {
+    "marker": "repeatOption",
+    "region": [
+      0.022,
+      0.234,
+      0.29,
+      0.025
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-experience.png",
+    "sourceSHA256": "1af0059233c5b2885d1b672591030af86a08e94fa32a763db8924c5e3e614cd4",
+    "sampleSHA256": "07e4a6f1a3c45b8b2bcc16e4604a4a0c601564c60e9a237398b3041cd1a172bc"
+  }
+]

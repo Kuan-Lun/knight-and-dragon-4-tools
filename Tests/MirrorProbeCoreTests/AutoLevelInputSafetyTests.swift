@@ -124,6 +124,66 @@ struct AutoLevelInputSafetyTests {
         )
     }
 
+    @Test("An unlimited session authorizes fresh input at any runtime but keeps the action deadline",
+          arguments: [AutoLevelInputMode.foreground, .process])
+    func noSessionDeadlineRetainsActionAuthorization(inputMode: AutoLevelInputMode) {
+        let muchLater: TimeInterval = 1_000_000
+        #expect(rejection(
+            inputMode: inputMode, now: muchLater,
+            actionDeadline: muchLater + 1, sessionDeadline: nil
+        ) == nil)
+        #expect(rejection(
+            inputMode: inputMode, now: muchLater + 1,
+            actionDeadline: muchLater + 1, sessionDeadline: nil
+        ) == .actionAuthorizationExpired)
+        #expect(rejection(
+            inputMode: inputMode, now: muchLater + 2,
+            actionDeadline: muchLater + 1, sessionDeadline: nil
+        ) == .actionAuthorizationExpired)
+    }
+
+    @Test("Omitting the session deadline preserves the live input-boundary checks")
+    func defaultSessionDeadlineStillRequiresMatchingWindow() {
+        let snapshot = AutoLevelInputSnapshot(
+            windowIdentity: identity,
+            windowGeometry: geometry,
+            frontmostProcessID: nil,
+            topmostWindowIdentity: identity
+        )
+        #expect(AutoLevelInputSafety.rejection(
+            expectedWindowIdentity: identity,
+            expectedWindowGeometry: geometry,
+            snapshot: snapshot,
+            now: 100,
+            actionDeadline: 112,
+            stopRequested: false
+        ) == .applicationNotFrontmost)
+        #expect(rejection(
+            windowIdentity: AutoLevelWindowIdentity(processID: 99, windowID: 8),
+            sessionDeadline: nil
+        ) == .windowIdentityChanged)
+        #expect(rejection(
+            windowGeometry: AutoLevelWindowGeometry(x: 41, y: 80, width: 300, height: 650),
+            sessionDeadline: nil
+        ) == .windowGeometryChanged)
+        #expect(rejection(
+            topmostWindowIdentity: AutoLevelWindowIdentity(processID: 98, windowID: 8),
+            sessionDeadline: nil
+        ) == .clickPointObscured)
+    }
+
+    @Test("Unlimited sessions reject invalid timing and honor STOP before expired authorization")
+    func noSessionDeadlineRetainsTimingAndStopGuards() {
+        for invalid in [TimeInterval.nan, .infinity, -.infinity, -1] {
+            #expect(rejection(now: invalid, sessionDeadline: nil) == .invalidTiming)
+            #expect(rejection(actionDeadline: invalid, sessionDeadline: nil) == .invalidTiming)
+            #expect(rejection(sessionDeadline: invalid) == .invalidTiming)
+        }
+        #expect(rejection(
+            now: 500, actionDeadline: 100, sessionDeadline: nil, stopRequested: true
+        ) == .stopRequested)
+    }
+
     private let identity = AutoLevelWindowIdentity(processID: 99, windowID: 7)
     private let geometry = AutoLevelWindowGeometry(x: 40, y: 80, width: 300, height: 650)
 
@@ -136,7 +196,7 @@ struct AutoLevelInputSafetyTests {
         targetProcessTopmostWindowIdentity: AutoLevelWindowIdentity? = nil,
         now: TimeInterval = 100,
         actionDeadline: TimeInterval = 112,
-        sessionDeadline: TimeInterval = 200,
+        sessionDeadline: TimeInterval? = 200,
         stopRequested: Bool = false
     ) -> AutoLevelInputRejection? {
         AutoLevelInputSafety.rejection(

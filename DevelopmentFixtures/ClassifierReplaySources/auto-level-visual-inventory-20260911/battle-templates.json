@@ -1,0 +1,98 @@
+[
+  {
+    "marker": "skipControl",
+    "region": [
+      0.075,
+      0.87,
+      0.09,
+      0.023
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png",
+    "sourceSHA256": "fb7690605db038fa95930cbd03ac965273afee1253731fdf0b16c23b3c0897cc",
+    "sampleSHA256": "323b7aac74e44752ebaa19bc9b72811a41335aab58fc8037e063e9d3e3c854d3"
+  },
+  {
+    "marker": "skipControl",
+    "region": [
+      0.075,
+      0.87,
+      0.09,
+      0.023
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png",
+    "sourceSHA256": "050b00147f867e64c0fd4c442ccd8e7594f7a1eedfe9fd81b0cba8f728676ca4",
+    "sampleSHA256": "8823eb26a6d8ffe3b28cae7f6b485be5fc1b6ddc87d1e3cc72831db33661ecde"
+  },
+  {
+    "marker": "allAutoControl",
+    "region": [
+      0.225,
+      0.87,
+      0.14,
+      0.021
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png",
+    "sourceSHA256": "fb7690605db038fa95930cbd03ac965273afee1253731fdf0b16c23b3c0897cc",
+    "sampleSHA256": "db5d0873546b25a66b6172ec6766e030b601e72c5f3a6eb586daf467fca952e1"
+  },
+  {
+    "marker": "allAutoControl",
+    "region": [
+      0.225,
+      0.87,
+      0.14,
+      0.021
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png",
+    "sourceSHA256": "050b00147f867e64c0fd4c442ccd8e7594f7a1eedfe9fd81b0cba8f728676ca4",
+    "sampleSHA256": "cd1d00bb76dcc4066ecf862984c9e20dbf158651bfde491f830d97ba128412d4"
+  },
+  {
+    "marker": "pauseControl",
+    "region": [
+      0.84,
+      0.626,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png",
+    "sourceSHA256": "fb7690605db038fa95930cbd03ac965273afee1253731fdf0b16c23b3c0897cc",
+    "sampleSHA256": "1997f08265b6b2fa36dc5a4544ad9a6d476d2ac90ae438285aa5f31a3cdf35bf"
+  },
+  {
+    "marker": "pauseControl",
+    "region": [
+      0.84,
+      0.626,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png",
+    "sourceSHA256": "050b00147f867e64c0fd4c442ccd8e7594f7a1eedfe9fd81b0cba8f728676ca4",
+    "sampleSHA256": "3636cec1cf8a9bc8ce0b9ea37a134741c1d2941e02d34fe1db93eb380099df5a"
+  },
+  {
+    "marker": "retreatControl",
+    "region": [
+      0.84,
+      0.655,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png",
+    "sourceSHA256": "fb7690605db038fa95930cbd03ac965273afee1253731fdf0b16c23b3c0897cc",
+    "sampleSHA256": "c95041aa0bf6723adb170b4bc0d9c3edb298e984a23a18bfceccf183ac6ea942"
+  },
+  {
+    "marker": "retreatControl",
+    "region": [
+      0.84,
+      0.655,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png",
+    "sourceSHA256": "050b00147f867e64c0fd4c442ccd8e7594f7a1eedfe9fd81b0cba8f728676ca4",
+    "sampleSHA256": "88b461ec2ba7486cba41fd7ee0a1e06c66cbb5dd0286373897dff3ddbcf01b25"
+  }
+]

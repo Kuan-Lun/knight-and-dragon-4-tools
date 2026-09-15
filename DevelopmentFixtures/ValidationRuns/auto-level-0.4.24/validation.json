@@ -1,0 +1,178 @@
+{
+  "version": "0.4.24",
+  "build": "47",
+  "validatedAtUTC": "2026-09-10T22:16:20.827126+00:00",
+  "status": "passed",
+  "recognitionMode": "visualRegions",
+  "scope": "All auto-level recognition; character reroll unchanged",
+  "battleIdentityMarkers": [
+    "skipControl",
+    "allAutoControl"
+  ],
+  "excludedIdentityRegions": [
+    "skill",
+    "loot counter/header"
+  ],
+  "gameplayRegion": {
+    "x": 0.02,
+    "y": 0.09,
+    "width": 0.96,
+    "height": 0.77
+  },
+  "tests": {
+    "swiftTesting": 554,
+    "xctest": 2,
+    "swiftTotal": 556,
+    "launcher": 12,
+    "passed": true
+  },
+  "nativeCorpora": {
+    "resultCaptures": 21,
+    "battleCaptures": 17,
+    "notes": "Corpora overlap and include template calibration images; regression coverage, not an independent accuracy estimate."
+  },
+  "releaseBuildPassed": true,
+  "signatureVerified": true,
+  "launcherDryRunPassed": true,
+  "executableSHA256": "f1cc1b6818c6c87c272c3585620dd52603fd0bd1754e35fca6419a40fcb16946",
+  "packagedOfflineReplays": [
+    {
+      "name": "experience",
+      "expectedState": "missionCompleteRepeatSelected",
+      "actualState": "missionCompleteRepeatSelected",
+      "ocrEngine": "none",
+      "report": "packaged-experience.json",
+      "passed": true
+    },
+    {
+      "name": "loot-after",
+      "expectedState": "missionCompleteRepeatSelected",
+      "actualState": "missionCompleteRepeatSelected",
+      "ocrEngine": "none",
+      "report": "packaged-loot-after.json",
+      "passed": true
+    },
+    {
+      "name": "loot-final",
+      "expectedState": "missionCompleteRepeatSelected",
+      "actualState": "missionCompleteRepeatSelected",
+      "ocrEngine": "none",
+      "report": "packaged-loot-final.json",
+      "passed": true
+    },
+    {
+      "name": "live-loot",
+      "expectedState": "missionCompleteRepeatSelected",
+      "actualState": "missionCompleteRepeatSelected",
+      "ocrEngine": "none",
+      "report": "packaged-live-loot.json",
+      "passed": true
+    },
+    {
+      "name": "live-unselected-loot",
+      "expectedState": "missionComplete",
+      "actualState": "missionComplete",
+      "ocrEngine": "none",
+      "report": "packaged-live-unselected-loot.json",
+      "passed": true
+    },
+    {
+      "name": "visual-battle-progress-before",
+      "expectedState": "battle",
+      "actualState": "battle",
+      "ocrEngine": "none",
+      "report": "packaged-visual-battle-progress-before.json",
+      "passed": true
+    },
+    {
+      "name": "visual-battle-progress-after",
+      "expectedState": "battle",
+      "actualState": "battle",
+      "ocrEngine": "none",
+      "report": "packaged-visual-battle-progress-after.json",
+      "passed": true
+    },
+    {
+      "name": "visual-battle-native-2x",
+      "expectedState": "battle",
+      "actualState": "battle",
+      "ocrEngine": "none",
+      "report": "packaged-visual-battle-native-2x.json",
+      "passed": true
+    },
+    {
+      "name": "mission-skill-acquired-one-button",
+      "expectedState": "wideModalOneButton",
+      "actualState": "wideModalOneButton",
+      "ocrEngine": "none",
+      "report": "packaged-mission-skill-acquired-one-button.json",
+      "passed": true
+    },
+    {
+      "name": "battle-intro-one-button",
+      "expectedState": "wideModalOneButton",
+      "actualState": "wideModalOneButton",
+      "ocrEngine": "none",
+      "report": "packaged-battle-intro-one-button.json",
+      "passed": true
+    },
+    {
+      "name": "loot-two-buttons",
+      "expectedState": "wideModalTwoButtons",
+      "actualState": "wideModalTwoButtons",
+      "ocrEngine": "none",
+      "report": "packaged-loot-two-buttons.json",
+      "passed": true
+    },
+    {
+      "name": "result-title-occlusion-confirmation",
+      "expectedState": "unknown",
+      "actualState": "unknown",
+      "ocrEngine": "none",
+      "report": "packaged-result-title-occlusion-confirmation.json",
+      "passed": true
+    }
+  ],
+  "permissionCheck": {
+    "postEventPermission": "granted",
+    "screenCapturePermission": "granted",
+    "timestamp": "2026-09-10T22:15:08Z",
+    "windows": [
+      {
+        "active": true,
+        "applicationName": "iPhone鏡像輸出",
+        "bundleIdentifier": "com.apple.ScreenContinuity",
+        "height": 890,
+        "onScreen": true,
+        "processID": 91507,
+        "title": "iPhone鏡像輸出",
+        "width": 406,
+        "windowID": 65194,
+        "x": 0,
+        "y": 33
+      }
+    ]
+  },
+  "liveReadOnly": {
+    "status": "passed",
+    "report": "live-read-only.json",
+    "image": "live-read-only.png",
+    "state": "missionComplete",
+    "page": "loot",
+    "repeatSelected": false,
+    "plannedNextAction": "selectMissionRepeat",
+    "inputEventsPosted": 0,
+    "ocrEngine": "none",
+    "imageDimensions": [
+      812,
+      1780
+    ],
+    "pngSHA256": "d8432b7594661435491b4bf308586e318ad0c1956e80af34c12098c655b8e7f8",
+    "visualScores": {
+      "successTitle": 0.9985139699074074,
+      "lootHeader": 0.9974247225094466,
+      "repeatOption": 0.9974061376347652
+    }
+  },
+  "liveAutoLevelRunStarted": false
+}

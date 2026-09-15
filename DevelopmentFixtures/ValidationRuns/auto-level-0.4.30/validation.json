@@ -1,0 +1,65 @@
+{
+  "version": "0.4.30",
+  "build": "53",
+  "automationReportSchema": 5,
+  "defaultLimits": {
+    "maximumCycles": null,
+    "maximumMinutes": null,
+    "maximumActions": null
+  },
+  "swiftTesting": {
+    "passed": 601,
+    "suites": 52
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "launcherRegressionsPassed": 55,
+  "singleSessionSimulation": {
+    "cycles": 510,
+    "acknowledgedActions": 10710,
+    "elapsedSeconds": 44880,
+    "nextActionPosted": true,
+    "controllerResets": 0
+  },
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "packageBuildUUID": "e80ff90f75f3325ea0166a45059e0554",
+  "packageSHA256": "64ab331d9df5746ad8814763ddfd41e258d0f68ab679411b1ce80b6bf2812fe9",
+  "launcherDryRuns": {
+    "unlimited": "no count/time flags",
+    "timeOnly": "--max-minutes 480; no cycle flag",
+    "cyclesOnly": "--max-cycles 1500; no time flag"
+  },
+  "doctorBeforeBuild": {
+    "postEventPermission": "granted",
+    "screenCapturePermission": "granted",
+    "timestamp": "2026-09-15T03:44:42Z",
+    "windows": [
+      {
+        "active": true,
+        "applicationName": "iPhone鏡像輸出",
+        "bundleIdentifier": "com.apple.ScreenContinuity",
+        "height": 890,
+        "onScreen": true,
+        "processID": 91507,
+        "title": "iPhone鏡像輸出",
+        "width": 406,
+        "windowID": 65194,
+        "x": 0,
+        "y": 30
+      }
+    ]
+  },
+  "doctorAfterBuild": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-15T03:47:31Z",
+    "windows": []
+  },
+  "validationLimits": [
+    "Tests use virtual time and isolated launcher stubs; no live game input was posted.",
+    "No indefinite automation session was started."
+  ]
+}

@@ -25,6 +25,12 @@ public struct RepeatSelectedStampDetection: Equatable, Sendable {
         isValid && redPixelRatio >= RepeatSelectedStampDetector.minimumRedPixelRatio
     }
 
+    /// A retry of the repeat toggle needs affirmative absence, not merely a stamp too faint
+    /// to pass the selected threshold. The tiny allowance is separate from the stamp cutoff.
+    public var isClearlyAbsent: Bool {
+        isValid && redPixelRatio <= RepeatSelectedStampDetector.maximumAbsentRedPixelRatio
+    }
+
     public var isValid: Bool {
         region == RepeatSelectedStampDetector.measuredRegion
             && redPixelCount >= 0
@@ -48,10 +54,16 @@ public enum RepeatSelectedStampDetector {
         x: 0.33,
         y: 0.205,
         width: 0.37,
-        height: 0.065
+        // The stamp ends above 0.260. The first dynamic loot row starts near 0.263;
+        // the old 0.270 lower edge counted its warm-colored text as partial red ink.
+        height: 0.055
     )
     public static let minimumRedPixelRatio = 0.04
+    /// Leave the interval above this small noise allowance and below the selected cutoff
+    /// ambiguous. Brown separator pixels are excluded by hue before this ratio is computed.
+    public static let maximumAbsentRedPixelRatio = 0.001
     public static let evidenceSentinel = "<measured-repeat-selected-red-stamp>"
+    public static let absentEvidenceSentinel = "<measured-repeat-unselected-empty-stamp>"
 
     public static func detectRGBA(
         _ bytes: [UInt8],
@@ -95,6 +107,10 @@ public enum RepeatSelectedStampDetector {
                    red >= 90,
                    red - green >= 18,
                    red - blue >= 10,
+                   // The parchment's brown horizontal rule also has more red than green.
+                   // Real selection ink has a much stronger red-to-green difference than
+                   // green-to-blue difference, including when blended into the background.
+                   red - green >= 2 * (green - blue),
                    green <= 180
                 {
                     redPixelCount += 1

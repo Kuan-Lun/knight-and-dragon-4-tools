@@ -1,0 +1,41 @@
+{
+  "version": "0.4.19",
+  "build": 42,
+  "swiftTesting": {
+    "passed": 473,
+    "suites": 37
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "launcherTests": {
+    "passed": 12,
+    "appLaunched": false
+  },
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "launcherDryRun": "passed",
+  "packagedDoctor": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-09T14:15:48Z",
+    "windows": []
+  },
+  "offlineReplay": {
+    "state": "missionFailed",
+    "pngSHA256": "63573baf63525303a89d364bec336b1099f2d5e6c0bbeacf430b075bc53dda02",
+    "allowedActions": [
+      "selectMissionRepeat"
+    ],
+    "hasUnselectedPixelProof": true,
+    "page": "experience",
+    "safety": {
+      "actionAuthorization": "none",
+      "inputEventsPosted": 0,
+      "readOnly": true
+    }
+  },
+  "liveAutomationRun": false,
+  "recoveryValidation": "Saved final image replay and bounded controller simulations; no live input or long-duration soak."
+}

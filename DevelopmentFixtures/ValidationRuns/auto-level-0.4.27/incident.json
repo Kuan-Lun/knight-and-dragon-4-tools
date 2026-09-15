@@ -1,0 +1,270 @@
+{
+  "sessionID": "20260914-030707-59621fb2",
+  "startedAt": "2026-09-13T19:07:07Z",
+  "endedAt": "2026-09-13T21:40:21Z",
+  "status": "stopped",
+  "completedCycles": 456,
+  "actionsPosted": 1991,
+  "recognitionMode": "visualRegions",
+  "finalReason": "uncertainStateExceededGrace(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown)",
+  "limits": {
+    "maximumActions": 8020,
+    "maximumCycles": 500,
+    "maximumMinutes": 480,
+    "pollIntervalSeconds": 1.5
+  },
+  "sourceRun": "logs/auto-level-20260914-030707.5S7Z3g",
+  "elapsedSeconds": 9193.371531916782,
+  "summary": "After 456 completed cycles and 1,991 posted actions, the run stopped after nine consecutive unknown battle observations. The final eight retained captures preserve matching skip, all-auto, and retreat markers while pauseControl is unconfirmed. The controller reset stall monitoring and exhausted the unknown-state grace period.",
+  "fixtureManifest": "Tests/MirrorProbeCoreTests/Fixtures/battle-pause-occlusion-sequence.json",
+  "retainedCapturePositions": 8,
+  "uniqueNativePNGs": 5,
+  "terminalObservations": [
+    {
+      "action": "advanceMissionFailure",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 1990, intent: MirrorProbeCore.AutoLevelActionIntent.advanceMissionFailure, target: MirrorProbeCore.AutoLevelActionTarget(name: \"missionCompleteAdvance\", sourceText: \"<measured-result-top-advance>\", rect: MirrorProbeCore.NormalizedRect(x: 0.024630541297208562, y: 0.19775280880149815, width: 0.04433497536945812, height: 0.011235955056179803), point: MirrorProbeCore.NormalizedPoint(x: 0.04679802898193762, y: 0.20337078632958805)), observedState: MirrorProbeCore.GameState.missionFailedRepeatSelected, frameFingerprint: \"2c56a12255ece59bd2a9d06e52fd0f5839fd7ee5a68ff0f5a689343e4fc7d099\", completedCycles: 456, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.277152823676287",
+      "elapsedSeconds": 9173.389192166738,
+      "frameFingerprint": "2c56a12255ece59bd2a9d06e52fd0f5839fd7ee5a68ff0f5a689343e4fc7d099",
+      "kind": "actionPosted",
+      "sequence": 6124,
+      "state": "missionFailedRepeatSelected",
+      "target": {
+        "name": "missionCompleteAdvance",
+        "point": {
+          "x": 0.04679802898193762,
+          "y": 0.20337078632958805
+        },
+        "rect": {
+          "height": 0.011235955056179803,
+          "width": 0.04433497536945812,
+          "x": 0.024630541297208562,
+          "y": 0.19775280880149815
+        },
+        "sourceText": "<measured-result-top-advance>"
+      },
+      "timestamp": "2026-09-13T21:40:01Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 1991, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"bb6b17c42f4e765f5b38a9b9ef5ae8e26b11cbacea29d9ee3ef72cc5aa6a2f3b\", completedCycles: 456, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.06234020832926035, recognitionDurationSeconds=0.0013632499612867832, recognitionMode=visualRegions, classificationEvidence=[wideModalGeometry: layout=oneButton, underlyingState=unknown, buttonCount=1]",
+      "elapsedSeconds": 9173.389192166738,
+      "frameFingerprint": "bb6b17c42f4e765f5b38a9b9ef5ae8e26b11cbacea29d9ee3ef72cc5aa6a2f3b",
+      "kind": "observation",
+      "sequence": 6125,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-13T21:40:01Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 1991, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"bb6b17c42f4e765f5b38a9b9ef5ae8e26b11cbacea29d9ee3ef72cc5aa6a2f3b\", completedCycles: 456, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.27176107741301353",
+      "elapsedSeconds": 9175.089423916768,
+      "frameFingerprint": "bb6b17c42f4e765f5b38a9b9ef5ae8e26b11cbacea29d9ee3ef72cc5aa6a2f3b",
+      "kind": "actionPosted",
+      "sequence": 6126,
+      "state": "wideModalOneButton",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.5570224719101123
+        },
+        "rect": {
+          "height": 0.039887640449438204,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5370786516853933
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-13T21:40:03Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.battleInProgress)",
+      "detail": "stallPhase=awaitingProgress, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.06728570838458836, recognitionDurationSeconds=0.0035098749212920666, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9773735295170365, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773800029303097, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=pauseControl, similarity=0.9786926856856129, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778350650780158, minimumSimilarity=0.94]",
+      "elapsedSeconds": 9175.089423916768,
+      "frameFingerprint": "5c55098e1c59202eb8e2c92dcd08a9fba068edc256a532ca00b22bfc734de35c",
+      "kind": "observation",
+      "sequence": 6127,
+      "state": "battle",
+      "timestamp": "2026-09-13T21:40:03Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.battleInProgress)",
+      "detail": "stallPhase=monitoring, armed=true, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.007723916554823518, recognitionDurationSeconds=0.00437929155305028, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9772091131219474, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773700302768964, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=pauseControl, similarity=0.9787285065548315, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778482927141494, minimumSimilarity=0.94]",
+      "elapsedSeconds": 9178.43344195839,
+      "frameFingerprint": "ee896ab9109cf6c0ca3859efcdc9ede1e2640cbe825528230af537b6533399f0",
+      "kind": "observation",
+      "sequence": 6128,
+      "state": "battle",
+      "timestamp": "2026-09-13T21:40:06Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 1))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=paused, captureAgeSeconds=0.006801041541621089, recognitionDurationSeconds=0.003554124850779772, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9772176419950558, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.977420332419093, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778482995224282, minimumSimilarity=0.94; lowConfidenceMarker: battleFooterMatchedButRunningStateUnconfirmed]",
+      "elapsedSeconds": 9180.093199583469,
+      "frameFingerprint": "22a39ce46992395cdaa80dfd03504b345d45ab8082c7e688e98acaae3d2fc5cd",
+      "kind": "observation",
+      "sequence": 6129,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:08Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 2))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.008461666759103537, recognitionDurationSeconds=0.0032617917750030756, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9771687299960272, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773526081151154, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778371045387292, minimumSimilarity=0.94; lowConfidenceMarker: battleFooterMatchedButRunningStateUnconfirmed]",
+      "elapsedSeconds": 9181.733556666644,
+      "frameFingerprint": "d30d44e229f054a0fad1f68de0cb2b4dc666eb46df4920cc75c495d32a0be6e7",
+      "kind": "observation",
+      "sequence": 6130,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:09Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 3))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.0074482501950114965, recognitionDurationSeconds=0.003388791810721159, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9771687299960272, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773526081151154, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778371045387292, minimumSimilarity=0.94; lowConfidenceMarker: battleFooterMatchedButRunningStateUnconfirmed]",
+      "elapsedSeconds": 9183.388146833284,
+      "frameFingerprint": "f64092bd9f13f50a34f07e96bc4676c1a6b63ba7801f2a9816b39da46e16f7ff",
+      "kind": "observation",
+      "sequence": 6131,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:11Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 4))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.006622041808441281, recognitionDurationSeconds=0.003274291753768921, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9771687299960272, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773526081151154, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778371045387292, minimumSimilarity=0.94; lowConfidenceMarker: battleFooterMatchedButRunningStateUnconfirmed]",
+      "elapsedSeconds": 9185.034901499981,
+      "frameFingerprint": "c0115d224ecabfcb61c229e099e746f42bc71a3ac3571310d5c7f23066193b50",
+      "kind": "observation",
+      "sequence": 6132,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:13Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 5))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.006586333271116018, recognitionDurationSeconds=0.0036424584686756134, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9771687299960272, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773526081151154, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778371045387292, minimumSimilarity=0.94; lowConfidenceMarker: battleFooterMatchedButRunningStateUnconfirmed]",
+      "elapsedSeconds": 9186.687691166764,
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "kind": "observation",
+      "sequence": 6133,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:14Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 6))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.006230708444491029, recognitionDurationSeconds=0.0033643331844359636, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9771687299960272, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773526081151154, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778371045387292, minimumSimilarity=0.94; lowConfidenceMarker: battleFooterMatchedButRunningStateUnconfirmed]",
+      "elapsedSeconds": 9188.327285458334,
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "kind": "observation",
+      "sequence": 6134,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:16Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 7))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.0061362083069980145, recognitionDurationSeconds=0.0031716248486191034, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9771687299960272, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773526081151154, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778371045387292, minimumSimilarity=0.94; lowConfidenceMarker: battleFooterMatchedButRunningStateUnconfirmed]",
+      "elapsedSeconds": 9189.930373125011,
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "kind": "observation",
+      "sequence": 6135,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:17Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 8))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.006218333262950182, recognitionDurationSeconds=0.003190375166013837, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9771687299960272, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773526081151154, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778371045387292, minimumSimilarity=0.94; lowConfidenceMarker: battleFooterMatchedButRunningStateUnconfirmed]",
+      "elapsedSeconds": 9191.614641000051,
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "kind": "observation",
+      "sequence": 6136,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:19Z"
+    },
+    {
+      "decision": "stop(MirrorProbeCore.AutoLevelStopReason.uncertainStateExceededGrace(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.006142124999314547, recognitionDurationSeconds=0.0033739584032446146, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9771687299960272, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9773526081151154, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9778371045387292, minimumSimilarity=0.94; lowConfidenceMarker: battleFooterMatchedButRunningStateUnconfirmed]",
+      "elapsedSeconds": 9193.234027666738,
+      "frameFingerprint": "505b816be39a7e73fb1e42da760e589f879f8a12af5d1a669d4738c26f74a189",
+      "kind": "observation",
+      "sequence": 6137,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:21Z"
+    },
+    {
+      "detail": "uncertainStateExceededGrace(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown)",
+      "elapsedSeconds": 9193.371531916782,
+      "frameFingerprint": "505b816be39a7e73fb1e42da760e589f879f8a12af5d1a669d4738c26f74a189",
+      "kind": "sessionEnded",
+      "screenshotPath": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-030707.5S7Z3g/final.png",
+      "sequence": 6138,
+      "state": "unknown",
+      "timestamp": "2026-09-13T21:40:21Z"
+    }
+  ],
+  "diagnosticScreenshots": [
+    {
+      "captureSequence": 7542,
+      "capturedAtElapsedSeconds": 9181.733556666644,
+      "frameFingerprint": "d30d44e229f054a0fad1f68de0cb2b4dc666eb46df4920cc75c495d32a0be6e7",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7542.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 7543,
+      "capturedAtElapsedSeconds": 9183.388146833284,
+      "frameFingerprint": "f64092bd9f13f50a34f07e96bc4676c1a6b63ba7801f2a9816b39da46e16f7ff",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7543.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 7544,
+      "capturedAtElapsedSeconds": 9185.034901499981,
+      "frameFingerprint": "c0115d224ecabfcb61c229e099e746f42bc71a3ac3571310d5c7f23066193b50",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7544.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 7545,
+      "capturedAtElapsedSeconds": 9186.687691166764,
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7545.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 7546,
+      "capturedAtElapsedSeconds": 9188.327285458334,
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7546.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 7547,
+      "capturedAtElapsedSeconds": 9189.930373125011,
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7547.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 7548,
+      "capturedAtElapsedSeconds": 9191.614641000051,
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7548.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 7549,
+      "capturedAtElapsedSeconds": 9193.234027666738,
+      "frameFingerprint": "505b816be39a7e73fb1e42da760e589f879f8a12af5d1a669d4738c26f74a189",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-030707.5S7Z3g/final.png",
+      "role": "final",
+      "state": "unknown"
+    }
+  ]
+}

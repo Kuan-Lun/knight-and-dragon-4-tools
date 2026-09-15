@@ -18,9 +18,10 @@ private let legacyAutoLevelConfirmation = "AUTO_LEVEL_NO_TALISMAN"
 private let characterRerollConfirmation = "CHARACTER_REROLL"
 private let analysisProfileName = "zh-Hant-v1"
 private let analysisSchemaVersion = 2
-private let automationSchemaVersion = 4
+private let automationSchemaVersion = 5
 private let characterRerollSchemaVersion = 3
 private let maximumPNGByteCount = 50 * 1_024 * 1_024
+private let applicationStopRequest = AutomationStopRequest()
 
 private enum ProbeError: LocalizedError {
     case invalidArguments(String)
@@ -162,6 +163,21 @@ private struct CharacterRerollCandidateImageReport: Codable {
     let thresholdReached: Bool
 }
 
+private struct CharacterRerollPixelGuardDiagnostic: Codable {
+    let schemaVersion: Int
+    let timestamp: String
+    let rerollsPosted: Int
+    let inputSurfaceDifference: Double
+    let resultDifference: Double
+    let maximumQuiescentDifference: Double
+    let inputSurfaceRegion: MirrorProbeCore.NormalizedRect
+    let resultRegion: MirrorProbeCore.NormalizedRect
+    let beforeImagePath: String
+    let beforeImageSHA256: String
+    let rejectedImagePath: String
+    let rejectedImageSHA256: String
+}
+
 private struct CharacterRerollObservation {
     let capturedAt: TimeInterval
     let window: SCWindow
@@ -261,6 +277,7 @@ private struct AnalysisSafetyReport: Codable {
 private struct AnalysisReport: Codable {
     let schemaVersion: Int
     let profile: String
+    let recognitionMode: String?
     let command: String
     let status: String
     let timestamp: String
@@ -294,10 +311,23 @@ private struct LoadedPNG {
 }
 
 private struct AutomationLimitsReport: Codable {
-    let maximumCycles: Int
-    let maximumMinutes: Double
-    let maximumActions: Int
+    let maximumCycles: Int?
+    let maximumMinutes: Double?
+    let maximumActions: Int?
     let pollIntervalSeconds: Double
+
+    private enum CodingKeys: String, CodingKey {
+        case maximumCycles, maximumMinutes, maximumActions, pollIntervalSeconds
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        // Explicit null distinguishes an unlimited run from a missing report field.
+        try container.encode(maximumCycles, forKey: .maximumCycles)
+        try container.encode(maximumMinutes, forKey: .maximumMinutes)
+        try container.encode(maximumActions, forKey: .maximumActions)
+        try container.encode(pollIntervalSeconds, forKey: .pollIntervalSeconds)
+    }
 }
 
 private struct AutomationRunEvent: Codable {
@@ -336,6 +366,7 @@ private struct AutomationDiagnosticPersistenceResult {
 
 private struct AutomationRunReport: Codable {
     let schemaVersion: Int
+    let recognitionMode: String?
     let sessionID: String
     var status: String
     let startedAt: String
@@ -355,7 +386,7 @@ private struct AutomationRunReport: Codable {
     var events: [AutomationRunEvent]
 }
 
-/// Capture time precedes OCR so recognition latency never becomes sampled stability.
+/// Capture time precedes recognition so its latency never becomes sampled stability.
 private struct AutomationCapturedFrame {
     let capturedAt: TimeInterval
     let windowContinuityGeneration: UInt64
@@ -367,12 +398,14 @@ private struct AutomationCapturedFrame {
 
 private struct AutomationObservation {
     let capturedAt: TimeInterval
+    let recognitionDurationSeconds: TimeInterval
     let windowContinuityGeneration: UInt64
     let window: SCWindow
     let image: CGImage
     let rgba: RGBAFrame
     let metrics: FrameMetrics
-    let observations: [OCRTextObservation]
+    let stallEvidence: BattleStallFrameEvidence
+    let activityEvidence: BattleActivityFrameEvidence
     let classification: GameStateClassification
     let fingerprint: String
 }
@@ -380,10 +413,10 @@ private struct AutomationObservation {
 /// A missing window invalidates all pixel continuity, even when it returns within one poll.
 private final class AutomationWindowRecoveryContext {
     let stopURL: URL
-    let sessionDeadline: TimeInterval
+    let sessionDeadline: TimeInterval?
     private(set) var generation: UInt64 = 0
 
-    init(stopURL: URL, sessionDeadline: TimeInterval) {
+    init(stopURL: URL, sessionDeadline: TimeInterval?) {
         self.stopURL = stopURL
         self.sessionDeadline = sessionDeadline
     }
@@ -391,10 +424,10 @@ private final class AutomationWindowRecoveryContext {
     func interruptContinuity() { generation &+= 1 }
 
     func checkSessionBoundary() throws {
-        if FileManager.default.fileExists(atPath: stopURL.path) {
+        if applicationStopRequest.isRequested(stopFileURL: stopURL) {
             throw AutomationCaptureInterruption.stopRequested
         }
-        if ProcessInfo.processInfo.systemUptime >= sessionDeadline {
+        if let sessionDeadline, ProcessInfo.processInfo.systemUptime >= sessionDeadline {
             throw AutomationCaptureInterruption.sessionExpired
         }
     }
@@ -406,7 +439,7 @@ private enum AutomationCaptureInterruption: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .stopRequested: "Capture stopped because the STOP file was detected."
+        case .stopRequested: "Capture stopped because an application Quit or STOP file was detected."
         case .sessionExpired: "Capture stopped because the session time limit was reached."
         }
     }
@@ -478,6 +511,9 @@ private struct AutomationForegroundActivationSnapshot {
 }
 
 private enum AutomationActionPreflightResult {
+    // Produced only before activation, capture, or input. No observation is invented for a
+    // missing AppKit handle; the caller retains the pending request and its original deadline.
+    case applicationUnavailable(processIsRunning: Bool, detail: String)
     case confirmed(
         observation: AutomationObservation,
         target: AutoLevelActionTarget,
@@ -509,7 +545,7 @@ private struct AutomationTemporalFrame {
 private enum AutomationVisualConfirmationResult {
     case confirmed(BattleVisualStabilityConfirmation, AutomationObservation, BattleStallAssessment)
     case rejected(AutomationObservation, detail: String)
-    case interrupted
+    case interrupted(AutomationCaptureInterruption)
 }
 
 private struct VerifiedAutomaticBattleProgress {
@@ -591,7 +627,15 @@ private struct MirrorProbe {
             }
         }
         if needsAppKit {
-            NSApplication.shared.run()
+            let application = NSApplication.shared
+            let terminationDelegate = GracefulApplicationTerminationDelegate(
+                stopRequest: applicationStopRequest
+            )
+            application.delegate = terminationDelegate
+            // NSApplication's delegate is weak; keep it alive throughout the event loop.
+            withExtendedLifetime(terminationDelegate) {
+                application.run()
+            }
         } else {
             // Help and offline analysis must not establish a WindowServer connection.
             RunLoop.main.run()
@@ -857,20 +901,12 @@ private struct MirrorProbe {
         source: AnalysisSourceReport
     ) throws -> AnalysisReport {
         let frameMetrics = try metrics(for: image)
-        let recognized: (
-            observations: [OCRTextObservation],
-            classification: GameStateClassification
-        )
+        let classification: GameStateClassification
         if frameMetrics.isBlank {
-            recognized = (
-                observations: [],
-                classification: GameStateClassifier.classify(observations: [])
-            )
+            classification = .init(state: .unknown, evidence: [], allowedActions: [])
         } else {
-            recognized = try recognizeGameState(in: image)
+            classification = try recognizeGameState(in: image)
         }
-        let observations = recognized.observations
-        let classification = recognized.classification
         let status: String
         if frameMetrics.isBlank {
             status = "rejected"
@@ -883,6 +919,7 @@ private struct MirrorProbe {
         return AnalysisReport(
             schemaVersion: analysisSchemaVersion,
             profile: analysisProfileName,
+            recognitionMode: "visualRegions",
             command: command,
             status: status,
             timestamp: ISO8601DateFormatter().string(from: Date()),
@@ -895,13 +932,13 @@ private struct MirrorProbe {
             ),
             frameMetrics: frameMetrics,
             ocr: AnalysisOCRReport(
-                engine: "appleVision",
-                requestRevision: Int(VNRecognizeTextRequestRevision3),
-                recognitionLevel: "accurate",
-                languages: ["zh-Hant", "en-US"],
+                engine: "none",
+                requestRevision: 0,
+                recognitionLevel: "notUsed",
+                languages: [],
                 usesLanguageCorrection: false,
                 coordinateSpace: "normalizedTopLeft",
-                observations: observations
+                observations: []
             ),
             classification: classification,
             safety: AnalysisSafetyReport(
@@ -912,174 +949,16 @@ private struct MirrorProbe {
         )
     }
 
-    /// OCR classifies ordinary states, while calibrated modal geometry independently selects the
-    /// unique/upper row. Repeat-selected results use their fixed upper continuation coordinate.
+    /// Auto-level recognition uses only captured image regions, including battle activity.
+    /// Vision text recognition is reserved for the separate character-reroll workflow below.
     private static func recognizeGameState(
         in image: CGImage,
         rgba suppliedRGBA: RGBAFrame? = nil
-    ) throws -> (
-        observations: [OCRTextObservation],
-        classification: GameStateClassification
-    ) {
+    ) throws -> GameStateClassification {
         let rgba = try suppliedRGBA ?? rgbaFrame(from: image)
-        let modalDetection = try WideModalButtonDetector.detectRGBA(
-            rgba.bytes,
-            width: rgba.width,
-            height: rgba.height,
-            bytesPerRow: rgba.bytesPerRow
+        return try AutoLevelVisualClassifier.classifyRGBA(
+            rgba.bytes, width: rgba.width, height: rgba.height, bytesPerRow: rgba.bytesPerRow
         )
-        let repeatSelectedStampDetection = try RepeatSelectedStampDetector.detectRGBA(
-            rgba.bytes,
-            width: rgba.width,
-            height: rgba.height,
-            bytesPerRow: rgba.bytesPerRow
-        )
-        let geometryModalPresent = isGeometryModalPresent(modalDetection.layout)
-        let observations: [OCRTextObservation]
-        if geometryModalPresent {
-            // Modal handling is intentionally independent of text recognition. Preserve OCR when
-            // Vision succeeds so reports remain useful, but an OCR failure must neither hide a
-            // supported one/two-row modal nor let an unsupported button count reach the background.
-            observations = (try? recognizeText(in: image)) ?? []
-        } else {
-            observations = try recognizeText(in: image)
-        }
-        let classification = GameStateClassifier.classify(
-            observations: observations,
-            repeatSelectedStampDetection: repeatSelectedStampDetection
-        )
-
-        // The calibrated modal skin is the primary signal: one row selects its only button and
-        // two rows select the upper button. The same geometry is captured again before input.
-        if geometryModalPresent || isWideModalActionState(classification.state)
-        {
-            return (
-                observations,
-                WideModalActionResolver.resolve(
-                    classification: classification,
-                    detection: modalDetection
-                )
-            )
-        }
-
-        if classification.state == .missionCompleteRepeatSelected
-            || classification.state == .missionFailedRepeatSelected
-        {
-            return (
-                observations,
-                MissionResultTopActionResolver.resolve(classification: classification)
-            )
-        }
-
-        // A low-confidence `是` or `否` can make the initial OCR classification unknown even
-        // though the modal scaffold is exact. Remove only unique, valid decision observations in
-        // their measured rows, reclassify the still-intact scaffold, and let the two detected
-        // rectangles choose the top row. All other text, including safety conflicts, is retained.
-        if let scaffoldObservations = lootConfirmationScaffoldObservations(from: observations) {
-            let scaffold = GameStateClassifier.classify(
-                observations: scaffoldObservations,
-                repeatSelectedStampDetection: repeatSelectedStampDetection
-            )
-            if isWideModalActionState(scaffold.state) {
-                return (
-                    observations,
-                    WideModalActionResolver.resolve(
-                        classification: scaffold,
-                        detection: modalDetection
-                    )
-                )
-            }
-        }
-
-        // A whole-frame action has already passed every classifier guard, so supplemental OCR
-        // must not replace or reinterpret it.
-        if !classification.allowedActions.isEmpty {
-            return (observations, classification)
-        }
-
-        return (observations, classification)
-    }
-
-    private static func isWideModalActionState(_ state: GameState) -> Bool {
-        switch state {
-        case .battleEncounterPrompt, .battleEventPrompt, .defeatPrompt,
-             .lootCollectionConfirmation, .adventurerRecruitment, .retreatConfirmation:
-            true
-        default:
-            false
-        }
-    }
-
-    private static func isGeometryModalPresent(_ layout: WideModalLayout) -> Bool {
-        switch layout {
-        case .oneButton, .twoButtons, .returnedPartyManualStop, .unsupportedButtonCount:
-            return true
-        case .none:
-            return false
-        }
-    }
-
-    private static func lootConfirmationScaffoldObservations(
-        from observations: [OCRTextObservation]
-    ) -> [OCRTextObservation]? {
-        let yesCandidates = observations.filter {
-            canonicalDecisionText($0.text) == "是"
-        }
-        let noCandidates = observations.filter {
-            canonicalDecisionText($0.text) == "否"
-        }
-        guard yesCandidates.count <= 1,
-              noCandidates.count <= 1,
-              yesCandidates.allSatisfy({ isValidWholeFrameLootDecision($0, expected: "是") }),
-              noCandidates.allSatisfy({ isValidWholeFrameLootDecision($0, expected: "否") })
-        else {
-            return nil
-        }
-
-        return observations.filter {
-            !isExactLootConfirmationDecision($0)
-        }
-    }
-
-    private static func isExactLootConfirmationDecision(
-        _ observation: OCRTextObservation
-    ) -> Bool {
-        let text = canonicalDecisionText(observation.text)
-        return text == "是" || text == "否"
-    }
-
-    private static func isValidWholeFrameLootDecision(
-        _ observation: OCRTextObservation,
-        expected: String
-    ) -> Bool {
-        guard canonicalDecisionText(observation.text) == expected,
-              observation.rect.isValid,
-              observation.confidence.isFinite,
-              (0...1).contains(observation.confidence)
-        else {
-            return false
-        }
-
-        let center = observation.rect.center
-        guard (0.45...0.55).contains(center.x) else {
-            return false
-        }
-        switch expected {
-        case "是":
-            return (0.51...0.55).contains(center.y)
-        case "否":
-            return (0.55...0.60).contains(center.y)
-        default:
-            return false
-        }
-    }
-
-    private static func canonicalDecisionText(_ text: String) -> String {
-        let compatible = text.precomposedStringWithCompatibilityMapping
-        let scalars = compatible.unicodeScalars.filter {
-            !CharacterSet.whitespacesAndNewlines.contains($0)
-        }
-        return String(String.UnicodeScalarView(scalars))
     }
 
     private static func recognizeText(
@@ -1556,7 +1435,7 @@ private struct MirrorProbe {
             switch endReason {
             case .stopRequested:
                 status = "stopped"
-                reportReason = "stopFileDetected"
+                reportReason = applicationStopRequest.reportReason
                 terminalMessage = nil
             case .maximumRuntimeReached:
                 status = "limitReached"
@@ -1596,6 +1475,9 @@ private struct MirrorProbe {
         var terminalReportWasEmitted = false
         var candidateRole = CharacterRerollCandidateRole.lastVerifiedStable
         var keeperOrConflictWasObserved = false
+        // Re-entering either authorization loop must not renew this unposted retry budget.
+        // Only a posted click starts a new budget.
+        var pixelGuardRecovery = CharacterRerollPixelGuardRecovery()
 
         try emitCharacterRerollReport(
             status: "running",
@@ -1615,7 +1497,7 @@ private struct MirrorProbe {
             if characterRerollStopRequested(stopURL) {
                 try emitCharacterRerollReport(
                     status: "stopped",
-                    reason: "stopFileDetected",
+                    reason: applicationStopRequest.reportReason,
                     startedDate: startedDate,
                     window: current.window,
                     limits: limits,
@@ -1623,7 +1505,9 @@ private struct MirrorProbe {
                     finalTotal: characterRerollUnambiguousTotal(current),
                     rerollsPosted: rerollsPosted,
                     reportURL: reportURL,
-                    candidateObservation: current
+                    candidateObservation: current,
+                    candidateRole: candidateRole,
+                    keeperOrConflictWasObserved: keeperOrConflictWasObserved
                 )
                 terminalReportWasEmitted = true
                 return
@@ -1641,7 +1525,9 @@ private struct MirrorProbe {
                     finalTotal: characterRerollUnambiguousTotal(current),
                     rerollsPosted: rerollsPosted,
                     reportURL: reportURL,
-                    candidateObservation: current
+                    candidateObservation: current,
+                    candidateRole: candidateRole,
+                    keeperOrConflictWasObserved: keeperOrConflictWasObserved
                 )
                 terminalReportWasEmitted = true
                 throw ProbeError.unsafeWindow(
@@ -1700,17 +1586,20 @@ private struct MirrorProbe {
             var activationRetry = AutoLevelForegroundActivationRetryState()
 
             activationLoop: while true {
-                guard var focusBorrow = ForegroundFocusBorrow(targetProcessID: identity.processID) else {
+                guard let foregroundProcessID = ForegroundApplicationFocus.currentApplication?
+                    .processIdentifier,
+                    foregroundProcessID > 0
+                else {
                     throw ProbeError.unsafeWindow("the current focused application is unavailable")
                 }
-                defer { focusBorrow.restore() }
-                let alreadyFrontmost = ForegroundApplicationFocus.currentApplication?
-                    .processIdentifier == identity.processID
+                // Reroll sessions keep Mirroring in front between clicks and when the run ends.
+                // With focus maintained, later rounds skip activation and its settling delay.
+                let alreadyFrontmost = foregroundProcessID == identity.processID
                 let activateReturned: Bool? = alreadyFrontmost
                     ? nil
                     : ForegroundApplicationActivation.request(
                         runningApplication, options: [.activateAllWindows],
-                        expectedCurrentProcessID: focusBorrow.previousProcessID
+                        expectedCurrentProcessID: foregroundProcessID
                     ).accepted
                 if !alreadyFrontmost {
                     try await Task.sleep(
@@ -1768,7 +1657,6 @@ private struct MirrorProbe {
                         .processIdentifier == identity.processID
                 )
                 guard focusReady else {
-                    focusBorrow.restore()
                     switch activationRetry.recordUnpostedFocusFailure() {
                     case let .retry(_, delayMilliseconds):
                         try await Task.sleep(for: .milliseconds(delayMilliseconds))
@@ -1838,10 +1726,11 @@ private struct MirrorProbe {
                 let pixelGuardStartedAt = ProcessInfo.processInfo.systemUptime
                 let pixelGuardImage = try await capture(window: finalObservation.window)
                 let pixelGuardFrame = try rgbaFrame(from: pixelGuardImage)
-                guard try characterRerollInputSurfaceFramesAreQuiescent(
+                let pixelDifferences = try characterRerollInputSurfaceDifferences(
                     finalObservation.rgba,
                     pixelGuardFrame
-                ) else {
+                )
+                if !pixelDifferences.inputSurfaceIsQuiescent {
                     current = CharacterRerollObservation(
                         capturedAt: pixelGuardStartedAt,
                         window: finalObservation.window,
@@ -1858,10 +1747,59 @@ private struct MirrorProbe {
                         rgba: pixelGuardFrame
                     )
                     candidateRole = .latestPreClickUnverified
-                    throw CharacterRerollTerminalError(
-                        message: "the final pixel guard saw the page or Random control change; "
-                            + "no input was posted"
+                    try writeCharacterRerollPixelGuardDiagnostic(
+                        before: finalObservation,
+                        rejectedImage: pixelGuardImage,
+                        differences: pixelDifferences,
+                        rerollsPosted: rerollsPosted,
+                        reportURL: reportURL
                     )
+                    // Parse these exact rejected pixels before considering any new capture.
+                    // A keeper, conflict, unknown total, changed roll, or replaced target must
+                    // terminate here; a later low frame cannot erase that evidence.
+                    current = try analyzeCharacterRerollObservation(
+                        image: pixelGuardImage,
+                        rgba: pixelGuardFrame,
+                        window: finalObservation.window,
+                        capturedAt: pixelGuardStartedAt,
+                        minimumTotal: minimumTotal
+                    )
+                    keeperOrConflictWasObserved = keeperOrConflictWasObserved
+                        || current.boundaryEvidence == .thresholdReached
+                        || current.boundaryEvidence == .boundaryConflict
+                    if characterRerollStopRequested(stopURL) {
+                        throw CharacterRerollInterruption.stopRequested
+                    }
+                    if ProcessInfo.processInfo.systemUptime >= sessionDeadline {
+                        throw CharacterRerollInterruption.maximumRuntimeReached
+                    }
+                    switch pixelGuardRecovery.evaluate(
+                        authorized: finalObservation.decision,
+                        observed: current.decision,
+                        boundaryEvidence: current.boundaryEvidence,
+                        differences: pixelDifferences
+                    ) {
+                    case let .retry(attempt):
+                        FileHandle.standardError.write(Data(
+                            "characterPixelGuard: revalidating unchanged low roll, attempt=\(attempt)\n"
+                                .utf8
+                        ))
+                        try await Task.sleep(for: .milliseconds(250))
+                        // This never reaches the old click. Fresh stabilization, OCR, target,
+                        // focus, pixels, and a new capture deadline are all required again.
+                        continue characterLoop
+                    case .exhausted:
+                        throw CharacterRerollTerminalError(
+                            message: "the final input surface kept changing after 3 revalidations; "
+                                + "no input was posted (difference=\(pixelDifferences.inputSurface))"
+                        )
+                    case .unsafe:
+                        throw CharacterRerollTerminalError(
+                            message: "the final input surface changed and the rejected frame was "
+                                + "not the same verified low roll and Random target; no input was "
+                                + "posted (difference=\(pixelDifferences.inputSurface))"
+                        )
+                    }
                 }
 
                 let clickResult = try postCharacterRerollClick(
@@ -1873,13 +1811,11 @@ private struct MirrorProbe {
                     sessionDeadline: sessionDeadline,
                     stopURL: stopURL
                 )
-                // Observe the result in the background; do not hold focus through the
-                // acknowledgement/stabilization wait or report persistence.
-                focusBorrow.restore()
                 switch clickResult {
                 case .posted:
                     let postedAt = ProcessInfo.processInfo.systemUptime
                     rerollsPosted += 1
+                    pixelGuardRecovery = CharacterRerollPixelGuardRecovery()
                     candidateRole = .preClickFallback
                     try emitCharacterRerollReport(
                         status: "running",
@@ -1952,7 +1888,7 @@ private struct MirrorProbe {
         } catch CharacterRerollInterruption.stopRequested {
             try emitCharacterRerollReport(
                 status: "stopped",
-                reason: "stopFileDetected",
+                reason: applicationStopRequest.reportReason,
                 startedDate: startedDate,
                 window: current.window,
                 limits: limits,
@@ -2030,6 +1966,22 @@ private struct MirrorProbe {
         let captureStartedAt = ProcessInfo.processInfo.systemUptime
         let image = try await capture(window: window)
         let rgba = try rgbaFrame(from: image)
+        return try analyzeCharacterRerollObservation(
+            image: image,
+            rgba: rgba,
+            window: window,
+            capturedAt: captureStartedAt,
+            minimumTotal: minimumTotal
+        )
+    }
+
+    private static func analyzeCharacterRerollObservation(
+        image: CGImage,
+        rgba: RGBAFrame,
+        window: SCWindow,
+        capturedAt: TimeInterval,
+        minimumTotal: Int
+    ) throws -> CharacterRerollObservation {
         let frameMetrics = try FrameAnalyzer.analyzeRGBA(
             rgba.bytes,
             width: rgba.width,
@@ -2125,7 +2077,7 @@ private struct MirrorProbe {
             break
         }
         return CharacterRerollObservation(
-            capturedAt: captureStartedAt,
+            capturedAt: capturedAt,
             window: window,
             decision: decision,
             boundaryEvidence: boundaryEvidence,
@@ -2618,24 +2570,11 @@ private struct MirrorProbe {
     }
 
     /// Includes every generated field but excludes the iPhone clock and all tappable controls.
-    private static let characterRerollResultRegion = MirrorProbeCore.NormalizedRect(
-        x: 0.01,
-        y: 0.13,
-        width: 0.98,
-        height: 0.50
-    )
-    /// Covers the page identity, Random control, generated result, and lower action controls while
-    /// excluding the changing iPhone status bar. The final pixel-only guard uses this wider region
-    /// so an in-app overlay cannot replace Random without invalidating authorization.
-    private static let characterRerollInputSurfaceRegion = MirrorProbeCore.NormalizedRect(
-        x: 0.01,
-        y: 0.08,
-        width: 0.98,
-        height: 0.65
-    )
+    private static let characterRerollResultRegion = CharacterRerollPixelGuard.resultRegion
     /// Four static live captures were byte-identical in this region. Keep a small allowance for
     /// capture conversion noise while still requiring the generated result to be visually still.
-    private static let characterRerollMaximumQuiescentDifference = 0.000_1
+    private static let characterRerollMaximumQuiescentDifference =
+        CharacterRerollPixelGuard.maximumQuiescentDifference
     /// Distinct measured rolls differ by roughly 0.006 mean RGB. This conservative floor proves
     /// the click changed the generated result even if name and total happen to repeat.
     private static let characterRerollMinimumChangedDifference = 0.001
@@ -2648,10 +2587,10 @@ private struct MirrorProbe {
             <= characterRerollMaximumQuiescentDifference
     }
 
-    private static func characterRerollInputSurfaceFramesAreQuiescent(
+    private static func characterRerollInputSurfaceDifferences(
         _ lhs: RGBAFrame,
         _ rhs: RGBAFrame
-    ) throws -> Bool {
+    ) throws -> CharacterRerollPixelGuardDifferences {
         guard lhs.width == rhs.width,
               lhs.height == rhs.height,
               lhs.bytesPerRow == rhs.bytesPerRow
@@ -2660,14 +2599,52 @@ private struct MirrorProbe {
                 "the character-reroll capture dimensions changed during the final pixel guard"
             )
         }
-        return try FrameAnalyzer.meanAbsoluteDifferenceRGBA(
+        return try CharacterRerollPixelGuard.differences(
             lhs.bytes,
             rhs.bytes,
             width: lhs.width,
             height: lhs.height,
-            bytesPerRow: lhs.bytesPerRow,
-            region: characterRerollInputSurfaceRegion
-        ) <= characterRerollMaximumQuiescentDifference
+            bytesPerRow: lhs.bytesPerRow
+        )
+    }
+
+    /// Retain only the latest rejected pair per run, so a later stop is diagnosable without
+    /// accumulating captures during a long session. This runs only after cancelling input.
+    private static func writeCharacterRerollPixelGuardDiagnostic(
+        before: CharacterRerollObservation,
+        rejectedImage: CGImage,
+        differences: CharacterRerollPixelGuardDifferences,
+        rerollsPosted: Int,
+        reportURL: URL?
+    ) throws {
+        FileHandle.standardError.write(Data(
+            "characterPixelGuard: inputSurfaceDifference=\(differences.inputSurface), "
+                .appending("resultDifference=\(differences.result), ")
+                .appending("maximum=\(CharacterRerollPixelGuard.maximumQuiescentDifference)\n")
+                .utf8
+        ))
+        guard let directory = reportURL?.deletingLastPathComponent() else { return }
+        let beforeURL = directory.appendingPathComponent("pixel-guard-before.png")
+        let rejectedURL = directory.appendingPathComponent("pixel-guard-rejected.png")
+        let beforeSHA256 = try writePNG(before.image, to: beforeURL)
+        let rejectedSHA256 = try writePNG(rejectedImage, to: rejectedURL)
+        try writeJSON(
+            CharacterRerollPixelGuardDiagnostic(
+                schemaVersion: 1,
+                timestamp: ISO8601DateFormatter().string(from: Date()),
+                rerollsPosted: rerollsPosted,
+                inputSurfaceDifference: differences.inputSurface,
+                resultDifference: differences.result,
+                maximumQuiescentDifference: CharacterRerollPixelGuard.maximumQuiescentDifference,
+                inputSurfaceRegion: CharacterRerollPixelGuard.inputSurfaceRegion,
+                resultRegion: CharacterRerollPixelGuard.resultRegion,
+                beforeImagePath: beforeURL.path,
+                beforeImageSHA256: beforeSHA256,
+                rejectedImagePath: rejectedURL.path,
+                rejectedImageSHA256: rejectedSHA256
+            ),
+            to: directory.appendingPathComponent("pixel-guard.json")
+        )
     }
 
     private static func characterRerollResultDifference(
@@ -2729,8 +2706,7 @@ private struct MirrorProbe {
     }
 
     private static func characterRerollStopRequested(_ stopURL: URL?) -> Bool {
-        guard let stopURL else { return false }
-        return FileManager.default.fileExists(atPath: stopURL.path)
+        applicationStopRequest.isRequested(stopFileURL: stopURL)
     }
 
     private static func isInsideCharacterDecisionOrResetRegion(
@@ -2818,6 +2794,16 @@ private struct MirrorProbe {
         }
     }
 
+    private static func automationInterruptionReason(
+        stoppedByUser: Bool, maximumRuntime: TimeInterval?
+    ) throws -> String {
+        if stoppedByUser { return applicationStopRequest.reportReason }
+        guard let maximumRuntime else {
+            throw ProbeError.unsafeWindow("session expiry was reported without a configured time limit")
+        }
+        return String(describing: AutoLevelStopReason.maximumRuntimeReached(limit: maximumRuntime))
+    }
+
     private static func autoLevelCommand(_ arguments: [String]) async throws {
         try validateOptions(
             arguments,
@@ -2833,7 +2819,7 @@ private struct MirrorProbe {
               [autoLevelConfirmation, legacyAutoLevelConfirmation].contains(confirmation)
         else {
             throw ProbeError.invalidArguments(
-                "run requires --confirm \(autoLevelConfirmation), authorizing bounded automation "
+                "run requires --confirm \(autoLevelConfirmation), authorizing automation "
                     + "including recovery from a confirmed stalled battle. Talisman use is unrestricted."
             )
         }
@@ -2847,19 +2833,17 @@ private struct MirrorProbe {
         guard let captureLevel = AutoLevelCaptureLevel(rawValue: captureLevelText) else {
             throw ProbeError.invalidArguments("--capture-level must be error or info")
         }
-        let maximumCycles = try boundedIntegerOption(
-            "--max-cycles",
-            in: arguments,
-            defaultValue: 20,
-            range: 1...500
-        )
-        let maximumMinutes = try boundedDoubleOption(
-            "--max-minutes",
-            in: arguments,
-            defaultValue: 120,
-            range: 1...480
-        )
-        let maximumActions = min(10_000, max(50, maximumCycles * 16 + 20))
+        let maximumCycles = try option("--max-cycles", in: arguments).map { _ in
+            try boundedIntegerOption("--max-cycles", in: arguments, defaultValue: 1, range: 1...Int.max)
+        }
+        let maximumMinutes = try option("--max-minutes", in: arguments).map { _ in
+            try boundedDoubleOption(
+                "--max-minutes", in: arguments, defaultValue: 1,
+                range: Double.leastNonzeroMagnitude...(Double.greatestFiniteMagnitude / 60)
+            )
+        }
+        let maximumRuntime = maximumMinutes.map { $0 * 60 }
+        let maximumActions: Int? = nil
         let pollInterval = 1.5
         let sessionID = automationSessionID()
         guard let outputDirectoryPath = option("--output-dir", in: arguments),
@@ -2883,7 +2867,19 @@ private struct MirrorProbe {
 
         let startedDate = Date()
         let startedAt = ProcessInfo.processInfo.systemUptime
+        let sessionDeadline = maximumRuntime.map { startedAt + $0 }
+        guard sessionDeadline?.isFinite != false else {
+            throw ProbeError.invalidArguments("--max-minutes exceeds the supported clock range")
+        }
         let captureRecorder = AutomationCaptureRecorder()
+        // This operation was explicitly started by the user. Keep background recognition
+        // out of App Nap until all captures and final report writes finish, while respecting
+        // the user's system-sleep settings. The token is released on every return/error path.
+        let activity = ProcessInfo.processInfo.beginActivity(
+            options: .userInitiatedAllowingIdleSystemSleep,
+            reason: "Complete the user-requested auto-level session and its safety observations"
+        )
+        defer { ProcessInfo.processInfo.endActivity(activity) }
         let initialWindow = try await selectMirrorWindow(requestedID: requestedID)
         guard let initialApplication = initialWindow.owningApplication,
               initialApplication.processID > 0
@@ -2898,7 +2894,7 @@ private struct MirrorProbe {
         defer { windowRunLock.release() }
         let initialFrame = initialWindow.frame
         let windowRecovery = AutomationWindowRecoveryContext(
-            stopURL: stopURL, sessionDeadline: startedAt + maximumMinutes * 60
+            stopURL: stopURL, sessionDeadline: sessionDeadline
         )
         let limits = AutomationLimitsReport(
             maximumCycles: maximumCycles,
@@ -2908,6 +2904,7 @@ private struct MirrorProbe {
         )
         var report = AutomationRunReport(
             schemaVersion: automationSchemaVersion,
+            recognitionMode: "visualRegions",
             sessionID: sessionID,
             status: "running",
             startedAt: ISO8601DateFormatter().string(from: startedDate),
@@ -2953,7 +2950,7 @@ private struct MirrorProbe {
                 action: nil,
                 target: nil,
                 frameFingerprint: initialObservation.fingerprint,
-                detail: "User entered the stage manually; automation acquired and locked the mirror window; inputMode=\(inputMode.rawValue), captureLevel=\(captureLevel.rawValue).",
+                detail: "User entered the stage manually; automation acquired and locked the mirror window; inputMode=\(inputMode.rawValue), captureLevel=\(captureLevel.rawValue), activity=userInitiatedAllowingIdleSystemSleep.",
                 screenshotPath: initialPath,
                 elapsed: initialObservation.capturedAt - startedAt,
                 report: &report,
@@ -2983,8 +2980,9 @@ private struct MirrorProbe {
             let stoppedByUser = interruption == .stopRequested
             try finishAutomationRun(
                 status: "stopped",
-                reason: stoppedByUser ? "stopFileDetected" : String(describing:
-                    AutoLevelStopReason.maximumRuntimeReached(limit: maximumMinutes * 60)),
+                reason: try automationInterruptionReason(
+                    stoppedByUser: stoppedByUser, maximumRuntime: maximumRuntime
+                ),
                 terminationKind: stoppedByUser ? .userStop : .expectedLimit,
                 observation: nil,
                 captureLevel: captureLevel,
@@ -3045,9 +3043,9 @@ private struct MirrorProbe {
         captureRecorder: AutomationCaptureRecorder,
         windowRecovery: AutomationWindowRecoveryContext,
         startedAt: TimeInterval,
-        maximumCycles: Int,
-        maximumMinutes: Double,
-        maximumActions: Int,
+        maximumCycles: Int?,
+        maximumMinutes: Double?,
+        maximumActions: Int?,
         pollInterval: TimeInterval,
         directoryURL: URL,
         reportURL: URL,
@@ -3060,7 +3058,7 @@ private struct MirrorProbe {
             uncertainStateGraceDuration: 15,
             uncertainStateGraceSnapshots: 8,
             maxCycles: maximumCycles,
-            maxRuntime: maximumMinutes * 60,
+            maxRuntime: maximumMinutes.map { $0 * 60 },
             maxActions: maximumActions
         )
         let retainsActionPairs = AutoLevelCaptureRetentionPolicy(level: captureLevel)
@@ -3086,6 +3084,7 @@ private struct MirrorProbe {
         var allAutoProgressValidator = AllAutoProgressValidator()
         var battleActivityProgressDetector = BattleActivityProgressDetector()
         var verifiedAutomaticBattleProgress: VerifiedAutomaticBattleProgress?
+        var startupBattleRecovery: StartupBattleRecovery?
         var inputGeneration: UInt64 = 0
         var previousTemporalFrame: AutomationTemporalFrame?
         var currentObservation: AutomationObservation? = initialObservation
@@ -3094,12 +3093,16 @@ private struct MirrorProbe {
         var lastHeartbeatAt = startedAt
         var handledWindowContinuityGeneration: UInt64 = 0
         var needsProgressAfterWindowRecovery = false
+        var freshnessRecovery = AutoLevelObservationFreshnessRecovery(
+            maximumAgeSeconds: policy.postActionTimeout,
+            maximumRecaptures: 2
+        )
 
         automationLoop: while true {
-            if FileManager.default.fileExists(atPath: stopURL.path) {
+            if applicationStopRequest.isRequested(stopFileURL: stopURL) {
                 try finishAutomationRun(
                     status: "stopped",
-                    reason: "stopFileDetected",
+                    reason: applicationStopRequest.reportReason,
                     terminationKind: .userStop,
                     observation: currentObservation ?? lastObservation,
                     captureLevel: captureLevel,
@@ -3131,6 +3134,7 @@ private struct MirrorProbe {
             let windowContinuityChanged = observation.windowContinuityGeneration
                 != handledWindowContinuityGeneration
             if windowContinuityChanged {
+                startupBattleRecovery = nil
                 handledWindowContinuityGeneration = observation.windowContinuityGeneration
                 needsProgressAfterWindowRecovery = true
                 inputGeneration &+= 1
@@ -3152,6 +3156,98 @@ private struct MirrorProbe {
                 )
             }
             lastObservation = observation
+
+            try windowRecovery.checkSessionBoundary()
+            let observationDecisionAt = ProcessInfo.processInfo.systemUptime
+            let freshness = freshnessRecovery.evaluate(
+                capturedAt: observation.capturedAt, now: observationDecisionAt
+            )
+            if freshness != .fresh {
+                startupBattleRecovery = nil
+                guard freshness != .invalidTiming else {
+                    throw ProbeError.unsafeWindow("the observation freshness timing was invalid")
+                }
+                // A delayed recognition result may still prove that a posted action advanced at capture
+                // time. Preserve that acknowledgement and result counting, but never issue a
+                // new request from expired pixels or carry temporal retreat proof across the gap.
+                inputGeneration &+= 1
+                previousTemporalFrame = nil
+                verifiedAutomaticBattleProgress = nil
+                resumableStallProgressByBattleID.removeAll()
+                stallAssessment = stallDetector.reset()
+                battleActivityProgressDetector.reset()
+                needsProgressAfterWindowRecovery = true
+                let staleSnapshot = AutoLevelSnapshot(
+                    classification: observation.classification,
+                    runtime: AutoLevelRuntimeMetadata(
+                        observedAt: observation.capturedAt,
+                        windowIdentity: identity,
+                        frameFingerprint: observation.fingerprint,
+                        battleSessionID: battleTracker.currentID,
+                        allAutoStatus: observation.classification.state == .battle ? .active : .unknown,
+                        battleStatus: observation.classification.state == .battle ? .inProgress : .unknown
+                    )
+                )
+                let staleDecision = controller.consume(staleSnapshot, allowNewActions: false)
+                report.completedCycles = controller.completedCycles
+                let age = observationDecisionAt - observation.capturedAt
+                let staleDetail = "captureAgeSeconds=\(age), "
+                    + "recognitionDurationSeconds=\(observation.recognitionDurationSeconds), "
+                    + "maximumAgeSeconds=\(policy.postActionTimeout), recovery=\(freshness), "
+                    + "noInputPosted=true, temporalEvidenceDiscarded=true"
+                try appendAutomationEvent(
+                    kind: "staleObservation",
+                    state: observation.classification.state,
+                    decision: String(describing: staleDecision),
+                    action: nil, target: nil,
+                    frameFingerprint: observation.fingerprint,
+                    detail: staleDetail,
+                    screenshotPath: nil,
+                    elapsed: observationDecisionAt - startedAt,
+                    report: &report, reportURL: reportURL
+                )
+                let staleStopReason: AutoLevelStopReason?
+                switch staleDecision {
+                case let .stop(reason):
+                    staleStopReason = reason
+                case .completedCycle:
+                    // The capture already proves the requested final cycle completed. A fresh
+                    // frame is needed only for another input, not to delay successful shutdown.
+                    staleStopReason = policy.maxCycles.flatMap { limit in
+                        controller.completedCycles >= limit ? .maximumCyclesReached(limit: limit) : nil
+                    }
+                default:
+                    staleStopReason = nil
+                }
+                if let reason = staleStopReason {
+                    let completed: Bool
+                    if case .maximumCyclesReached = reason { completed = true } else { completed = false }
+                    try finishAutomationRun(
+                        status: completed ? "completed" : "stopped",
+                        reason: String(describing: reason),
+                        terminationKind: captureTerminationKind(for: reason),
+                        observation: observation, captureLevel: captureLevel,
+                        captureRecorder: captureRecorder, startedAt: startedAt,
+                        directoryURL: directoryURL, reportURL: reportURL, report: &report
+                    )
+                    return
+                }
+                if case .requestAction = staleDecision {
+                    throw ProbeError.unsafeWindow("an expired observation unexpectedly issued a new action")
+                }
+                if freshness == .exhausted {
+                    try finishAutomationRun(
+                        status: "stopped",
+                        reason: "staleObservationExceededRecovery(maximumRecaptures: 2); \(staleDetail)",
+                        terminationKind: .safetyStop,
+                        observation: observation, captureLevel: captureLevel,
+                        captureRecorder: captureRecorder, startedAt: startedAt,
+                        directoryURL: directoryURL, reportURL: reportURL, report: &report
+                    )
+                    return
+                }
+                continue automationLoop
+            }
 
             let battleID = battleTracker.observe(
                 state: observation.classification.state,
@@ -3188,15 +3284,13 @@ private struct MirrorProbe {
                 context: battleContext,
                 inputGeneration: inputGeneration
             )
-            let stallFrameEvidence = BattleStallFrameEvidence.extract(
-                from: observation.observations
-            )
+            let stallFrameEvidence = observation.stallEvidence
             let sample = BattleStallSample(
                 monotonicTime: observation.capturedAt,
                 context: battleContext,
                 battleScreenConfirmed: observation.classification.state == .battle,
                 modalPresent: isAutomationModal(observation.classification.state),
-                paused: automationIsPaused(observation.observations),
+                paused: !VisualBattleEvidence.hasRunningBattleEvidence(in: observation.classification),
                 inputGeneration: inputGeneration,
                 frameEvidence: stallFrameEvidence,
                 battleROIDifferenceFromPrevious: regionDifference
@@ -3250,9 +3344,7 @@ private struct MirrorProbe {
                             battleSessionID: battleID,
                             context: battleContext,
                             inputGeneration: inputGeneration,
-                            evidence: BattleActivityFrameEvidence.extract(
-                                from: observation.observations
-                            ),
+                            evidence: observation.activityEvidence,
                             battleROIDifferenceFromPrevious: regionDifference
                         )
                     )
@@ -3320,6 +3412,24 @@ private struct MirrorProbe {
                 genuineProgressObserved: stallAssessment.isArmed
                     || activityProgressAssessment.didObserveProgress
             )
+            if observation.capturedAt == initialObservation.capturedAt,
+               inputGeneration == 0,
+               let battleID
+            {
+                // Only a battle already visible when this session starts gets this recovery
+                // path. A later battle or a lost capture baseline must prove normal activity.
+                startupBattleRecovery = StartupBattleRecovery(
+                    sample: sample, battleSessionID: battleID,
+                    configuration: stallDetector.configuration,
+                    minimumObservationDuration: allAutoProgressValidator.configuration.timeout
+                )
+            } else {
+                _ = startupBattleRecovery?.observe(
+                    sample, battleSessionID: battleID,
+                    genuineProgressObserved: stallAssessment.isArmed
+                        || activityProgressAssessment.didObserveProgress
+                )
+            }
             if case .validated(.genuineBattleProgress) = allAutoValidation,
                let battleID
             {
@@ -3335,16 +3445,47 @@ private struct MirrorProbe {
                observation.classification.state == .battle,
                !stallAssessment.isArmed
             {
-                // Normal automatic combat was independently proven by a changed HP/log
-                // signature plus moving pixels. From here, use dense five-second visual
-                // stability instead of requiring every HP value to remain OCR-readable.
+                // Normal automatic combat was independently proven by significant changes
+                // in fixed HP/log regions plus moving battle pixels. From here, use dense
+                // five-second visual stability; no HP numbers are inferred.
                 stallAssessment = stallDetector.markVerifiedNormalBattleProgress(
                     at: observation.capturedAt,
                     context: battleContext,
                     inputGeneration: inputGeneration
                 )
             }
+            var startupVisualConfirmation: BattleVisualStabilityConfirmation?
             if case let .timedOut(unresponsiveBattleID) = allAutoValidation {
+                startupVisualConfirmation = startupBattleRecovery?.beginVisualConfirmation(
+                    from: sample, battleSessionID: unresponsiveBattleID
+                )
+                if startupVisualConfirmation != nil {
+                    // Preserve the original, already-expired deadline until retreat is posted.
+                    // If the burst or preflight is cancelled, the next observation must prove
+                    // real progress/forward transition or stop; it cannot retry startup recovery
+                    // or silently continue without a validator.
+                    _ = allAutoProgressValidator.automaticBattleExpected(
+                        at: initialObservation.capturedAt,
+                        battleSessionID: unresponsiveBattleID
+                    )
+                    try appendAutomationEvent(
+                        kind: "startupBattleRecoveryStarted",
+                        state: observation.classification.state,
+                        decision: "confirmFrozenStartupBattle",
+                        action: nil, target: nil,
+                        frameFingerprint: observation.fingerprint,
+                        detail: "battleSessionID=\(unresponsiveBattleID), "
+                            + "noProgressSeconds=\(observation.capturedAt - initialObservation.capturedAt), "
+                            + "minimumStableSeconds=5, genuineProgressObserved=false, noInputPosted=true",
+                        screenshotPath: nil,
+                        elapsed: observation.capturedAt - startedAt,
+                        report: &report, reportURL: reportURL
+                    )
+                }
+            }
+            if case let .timedOut(unresponsiveBattleID) = allAutoValidation,
+               startupVisualConfirmation == nil
+            {
                 try finishAutomationRun(
                     status: "stopped",
                     reason: "allAutoDidNotProduceProgress(battleSessionID: \(unresponsiveBattleID), timeout: 30.0)",
@@ -3361,23 +3502,27 @@ private struct MirrorProbe {
             }
             var retreatVisualConfirmation: BattleVisualStabilityConfirmation?
             let retreatVisualAnchor = observation.rgba
-            if stallAssessment.isArmed,
+            var visualConfirmationCandidate = startupVisualConfirmation
+            if visualConfirmationCandidate == nil,
+               stallAssessment.isArmed,
                verifiedAutomaticBattleProgress?.matches(
                    battleSessionID: battleID,
                    inputGeneration: inputGeneration
                ) == true,
                allAutoStatus == .active,
                let regionDifference,
-               regionDifference <= stallDetector.configuration.maximumStableROIDifference,
-               let confirmation = stallDetector.beginVisualConfirmation(from: sample)
+               regionDifference <= stallDetector.configuration.maximumStableROIDifference
             {
+                visualConfirmationCandidate = stallDetector.beginVisualConfirmation(from: sample)
+            }
+            if let confirmation = visualConfirmationCandidate {
                 let result = try await confirmAutomationVisualStability(
                     confirmation,
                     anchor: observation,
                     identity: identity,
                     expectedFrame: initialFrame,
                     inputGeneration: inputGeneration,
-                    sessionDeadline: startedAt + policy.maxRuntime,
+                    sessionDeadline: windowRecovery.sessionDeadline,
                     stopURL: stopURL,
                     captureRecorder: captureRecorder,
                     windowRecovery: windowRecovery
@@ -3396,11 +3541,12 @@ private struct MirrorProbe {
                     try appendAutomationEvent(
                         kind: "battleVisualStabilityConfirmed",
                         state: final.classification.state,
-                        decision: "freshBattleOCRConfirmed",
+                        decision: "freshBattleVisualConfirmed",
                         action: nil,
                         target: nil,
                         frameFingerprint: final.fingerprint,
-                        detail: automationStallDetail(assessment) + ", fixedAnchorCompared=true",
+                        detail: automationStallDetail(assessment) + ", fixedAnchorCompared=true, "
+                            + "recoveryBasis=\(startupVisualConfirmation != nil ? "frozenAtStartup" : "verifiedBattleProgress")",
                         screenshotPath: nil,
                         elapsed: final.capturedAt - startedAt,
                         report: &report,
@@ -3423,12 +3569,15 @@ private struct MirrorProbe {
                         reportURL: reportURL
                     )
                     continue automationLoop
-                case .interrupted:
-                    let stoppedByUser = FileManager.default.fileExists(atPath: stopURL.path)
+                case let .interrupted(interruption):
+                    // Preserve the observed cause even if the STOP file is removed before
+                    // this caller runs; an unlimited session cannot expire its runtime.
+                    let stoppedByUser = interruption == .stopRequested
                     try finishAutomationRun(
                         status: "stopped",
-                        reason: stoppedByUser ? "stopFileDetected" : String(describing:
-                            AutoLevelStopReason.maximumRuntimeReached(limit: policy.maxRuntime)),
+                        reason: try automationInterruptionReason(
+                            stoppedByUser: stoppedByUser, maximumRuntime: policy.maxRuntime
+                        ),
                         terminationKind: stoppedByUser ? .userStop : .expectedLimit,
                         observation: lastObservation,
                         captureLevel: captureLevel,
@@ -3445,15 +3594,14 @@ private struct MirrorProbe {
             if stallAssessment.isConfirmedEvidence,
                retreatVisualConfirmation != nil,
                stallAssessment.isArmed,
-               verifiedAutomaticBattleProgress?.matches(
+               (startupVisualConfirmation != nil || verifiedAutomaticBattleProgress?.matches(
                    battleSessionID: battleID,
                    inputGeneration: inputGeneration
-               ) == true,
+               ) == true),
                allAutoStatus == .active
             {
-                // BattleStallDetector confirmation already requires pixel-corroborated progress
-                // in its current context/input generation. The explicit verified identity also
-                // prevents an assumed-default status from authorizing retreat by itself.
+                // Both recovery paths require the same dense pixel confirmation and fresh
+                // preflight. The startup exception never manufactures normal-combat progress.
                 battleStatus = .stalledAfterDefeat
             } else if observation.classification.state == .battle {
                 battleStatus = .inProgress
@@ -3480,6 +3628,14 @@ private struct MirrorProbe {
             let shouldLog = signature != lastLoggedSignature
                 || observation.capturedAt - lastHeartbeatAt >= 30
             if shouldLog {
+                var detail = automationStallDetail(stallAssessment)
+                    + ", captureAgeSeconds=\(ProcessInfo.processInfo.systemUptime - observation.capturedAt)"
+                    + ", recognitionDurationSeconds=\(observation.recognitionDurationSeconds)"
+                    + ", startupRecoveryEligible=\(startupBattleRecovery?.isEligible == true)"
+                let evidence = observation.classification.evidence.map { item in
+                    "\(item.kind.rawValue): \(item.detail)"
+                }.joined(separator: "; ")
+                detail += ", recognitionMode=visualRegions, classificationEvidence=[\(evidence)]"
                 try appendAutomationEvent(
                     kind: "observation",
                     state: observation.classification.state,
@@ -3487,7 +3643,7 @@ private struct MirrorProbe {
                     action: nil,
                     target: nil,
                     frameFingerprint: observation.fingerprint,
-                    detail: automationStallDetail(stallAssessment),
+                    detail: detail,
                     screenshotPath: nil,
                     elapsed: observation.capturedAt - startedAt,
                     report: &report,
@@ -3518,14 +3674,17 @@ private struct MirrorProbe {
                 )
                 // The controller intentionally reports the new cycle before choosing the result
                 // page action. Reuse this exact, already trusted observation immediately instead
-                // of taking another OCR sample which may lose the low-contrast SELECTED stamp.
+                // of taking another sample after the already-confirmed visual state.
                 // Action preflight still performs a fresh capture and full target validation.
                 currentObservation = observation
                 continue
 
             case let .requestAction(request):
                 let actionDeadline = observation.capturedAt + policy.postActionTimeout
-                let sessionDeadline = startedAt + policy.maxRuntime
+                let sessionDeadline = windowRecovery.sessionDeadline
+                let expectedResultPage = MissionSuccessPageIdentity.resolve(
+                    in: observation.classification
+                )
                 let actionStem = String(format: "action-%04llu-%@", request.requestID, request.intent.rawValue)
                 let beforeURL: URL?
                 let afterURL: URL?
@@ -3542,15 +3701,17 @@ private struct MirrorProbe {
                 }
                 var activationRetry = AutoLevelForegroundActivationRetryState()
                 var activationFailureDetails: [String] = []
+                var applicationResolutionFailures = 0
+                var resultObservationFailures = 0
                 var postedPreflight: AutomationObservation?
                 var postedAfter: AutomationObservation?
                 var postedActionTime: TimeInterval?
 
                 activationAttemptLoop: while true {
-                    if FileManager.default.fileExists(atPath: stopURL.path) {
+                    if applicationStopRequest.isRequested(stopFileURL: stopURL) {
                         try finishAutomationRun(
                             status: "stopped",
-                            reason: "stopFileDetected",
+                            reason: applicationStopRequest.reportReason,
                             terminationKind: .userStop,
                             observation: lastObservation,
                             captureLevel: captureLevel,
@@ -3566,15 +3727,16 @@ private struct MirrorProbe {
                     guard retryBoundaryNow.isFinite,
                           retryBoundaryNow >= 0,
                           actionDeadline.isFinite,
-                          sessionDeadline.isFinite
+                          sessionDeadline?.isFinite != false
                     else {
                         throw ProbeError.unsafeWindow(
-                            "the foreground activation retry timing was invalid"
+                            "the action confirmation retry timing was invalid"
                         )
                     }
-                    if retryBoundaryNow >= sessionDeadline {
+                    if let sessionDeadline, let maximumRuntime = policy.maxRuntime,
+                       retryBoundaryNow >= sessionDeadline {
                         let reason = AutoLevelStopReason.maximumRuntimeReached(
-                            limit: policy.maxRuntime
+                            limit: maximumRuntime
                         )
                         try finishAutomationRun(
                             status: "stopped",
@@ -3591,8 +3753,16 @@ private struct MirrorProbe {
                         return
                     }
                     guard retryBoundaryNow < actionDeadline else {
+                        let phase = activationRetry.currentAttempt == 1
+                            ? "before the first foreground activation attempt"
+                            : "during an action confirmation retry"
                         throw ProbeError.unsafeWindow(
-                            "the action authorization expired while retrying foreground activation"
+                            "the action authorization expired \(phase); "
+                                + "attempt=\(activationRetry.currentAttempt), "
+                                + "resultObservationFailures=\(resultObservationFailures), "
+                                + "captureAgeSeconds=\(retryBoundaryNow - observation.capturedAt), "
+                                + "recognitionDurationSeconds=\(observation.recognitionDurationSeconds), "
+                                + "authorizationSeconds=\(policy.postActionTimeout), noInputPosted=true"
                         )
                     }
 
@@ -3662,26 +3832,157 @@ private struct MirrorProbe {
                         captureRecorder: captureRecorder,
                         windowRecovery: windowRecovery,
                         actionDeadline: actionDeadline,
-                        expectedSuccessPage: MissionSuccessPageIdentity.resolve(
-                            in: observation.classification
-                        )
+                        expectedResultPage: expectedResultPage
                     )
                     let preflight: AutomationObservation
                     let confirmedTarget: AutoLevelActionTarget
                     let activation: AutomationForegroundActivationSnapshot?
                     switch preflightResult {
+                    case let .applicationUnavailable(processIsRunning, resolutionDetail):
+                        // Restore/cancel this borrow before waiting. A retry starts a new borrow
+                        // and a complete preflight of this same unposted action, never a new run.
+                        focusBorrow?.restore()
+                        applicationResolutionFailures += 1
+                        let failedAttempt = activationRetry.currentAttempt
+                        let failureDetail = "phase=applicationResolution, requestID=\(request.requestID), "
+                            + "attempt=\(failedAttempt)/\(AutoLevelForegroundActivationRetryState.maximumAttempts), "
+                            + resolutionDetail + ", noInputPosted=true"
+                        activationFailureDetails.append(failureDetail)
+                        let retryDecision = activationRetry.recordUnpostedApplicationResolutionFailure(
+                            processIsRunning: processIsRunning,
+                            inputWasPosted: false
+                        )
+                        let kind: String
+                        let detail: String
+                        switch retryDecision {
+                        case let .retry(_, delayMilliseconds):
+                            kind = "applicationResolutionRetry"
+                            detail = failureDetail + ", nextDelayMilliseconds=\(delayMilliseconds)"
+                        case .exhausted:
+                            kind = "applicationResolutionRetryExhausted"
+                            detail = failureDetail
+                        case nil:
+                            kind = "applicationResolutionRetryRefused"
+                            detail = failureDetail + ", reason=processNotConfirmedRunning"
+                        }
+                        try appendAutomationEvent(
+                            kind: kind,
+                            state: observation.classification.state,
+                            decision: String(describing: decision),
+                            action: request.intent,
+                            target: request.target,
+                            frameFingerprint: observation.fingerprint,
+                            detail: detail,
+                            screenshotPath: nil,
+                            elapsed: ProcessInfo.processInfo.systemUptime - startedAt,
+                            report: &report,
+                            reportURL: reportURL
+                        )
+                        switch retryDecision {
+                        case let .retry(_, delayMilliseconds):
+                            try await Task.sleep(for: .milliseconds(delayMilliseconds))
+                            continue activationAttemptLoop
+                        case let .exhausted(attempts):
+                            throw ProbeError.unsafeWindow(
+                                "could not resolve the iPhone Mirroring application within "
+                                    + "\(attempts) shared action attempts; "
+                                    + activationFailureDetails.joined(separator: " | ")
+                            )
+                        case nil:
+                            throw ProbeError.unsafeWindow(
+                                "could not resolve the iPhone Mirroring application; " + detail
+                            )
+                        }
+
                     case let .confirmed(observation, target, activationSnapshot):
                         preflight = observation
                         confirmedTarget = target
                         activation = activationSnapshot
+                        if applicationResolutionFailures > 0 {
+                            try appendAutomationEvent(
+                                kind: "applicationResolutionRecovered",
+                                state: observation.classification.state,
+                                decision: "freshPreflightConfirmed",
+                                action: request.intent,
+                                target: target,
+                                frameFingerprint: observation.fingerprint,
+                                detail: "requestID=\(request.requestID), expectedPID=\(identity.processID), "
+                                    + "expectedWindowID=\(identity.windowID), "
+                                    + "attempt=\(activationRetry.currentAttempt), "
+                                    + "applicationResolutionFailures=\(applicationResolutionFailures), "
+                                    + "sameProcessAndWindowVerified=true, noInputPosted=true",
+                                screenshotPath: nil,
+                                elapsed: observation.capturedAt - startedAt,
+                                report: &report,
+                                reportURL: reportURL
+                            )
+                        }
 
                     case let .stateChanged(observation, activationSnapshot):
                         focusBorrow?.restore()
+                        let confirmationEvidence = observation.classification.evidence.map {
+                            "\($0.kind.rawValue): \($0.detail)"
+                        }.joined(separator: " | ")
+                        // A brief overlay can hide the result title. Keep this same unposted
+                        // request and its original deadline/page/target; never feed the unknown
+                        // frame back into the controller to mint a fresh authorization. Every
+                        // retry goes through complete activation, capture and input validation.
+                        let failedAttempt = activationRetry.currentAttempt
+                        if let retryDecision = activationRetry.recordUnpostedResultObservationFailure(
+                            intent: request.intent,
+                            classification: observation.classification,
+                            inputWasPosted: false
+                        ) {
+                            lastObservation = observation
+                            resultObservationFailures += 1
+                            let confirmationNow = ProcessInfo.processInfo.systemUptime
+                            let failureDetail = "requestID=\(request.requestID), "
+                                + "attempt=\(failedAttempt)/\(AutoLevelForegroundActivationRetryState.maximumAttempts), "
+                                + "expectedPage=\(String(describing: expectedResultPage)), "
+                                + "captureAgeSeconds=\(confirmationNow - observation.capturedAt), "
+                                + "authorizationRemainingSeconds=\(actionDeadline - confirmationNow), "
+                                + "resultObservationFailures=\(resultObservationFailures), noInputPosted=true, "
+                                + "evidence=\(confirmationEvidence)"
+                            let kind: String
+                            let detail: String
+                            switch retryDecision {
+                            case let .retry(_, delayMilliseconds):
+                                kind = "resultConfirmationRetry"
+                                detail = failureDetail + ", nextDelayMilliseconds=\(delayMilliseconds)"
+                            case .exhausted:
+                                kind = "resultConfirmationRetryExhausted"
+                                detail = failureDetail
+                            }
+                            try appendAutomationEvent(
+                                kind: kind,
+                                state: observation.classification.state,
+                                decision: String(describing: decision),
+                                action: request.intent,
+                                target: request.target,
+                                frameFingerprint: observation.fingerprint,
+                                detail: detail,
+                                screenshotPath: nil,
+                                elapsed: confirmationNow - startedAt,
+                                report: &report,
+                                reportURL: reportURL
+                            )
+                            switch retryDecision {
+                            case let .retry(_, delayMilliseconds):
+                                try await Task.sleep(for: .milliseconds(delayMilliseconds))
+                                continue activationAttemptLoop
+                            case let .exhausted(attempts):
+                                throw ProbeError.unsafeWindow(
+                                    "the result page remained unknown after \(attempts) "
+                                        + "action confirmation attempts; " + failureDetail
+                                )
+                            }
+                        }
                         if activationRetry.currentAttempt > 1,
                            let activationSnapshot
                         {
                             try appendAutomationEvent(
-                                kind: "activationRecovered",
+                                kind: resultObservationFailures > 0
+                                    ? "confirmationRecovered" : "activationRecovered",
                                 state: observation.classification.state,
                                 decision: String(describing: decision),
                                 action: request.intent,
@@ -3719,7 +4020,8 @@ private struct MirrorProbe {
                         } else {
                             throw ProbeError.unsafeWindow(
                                 "the game state changed from \(request.observedState.rawValue) to "
-                                    + "\(observation.classification.state.rawValue), or its result page changed, during action confirmation"
+                                    + "\(observation.classification.state.rawValue), or its result page changed, during action confirmation; "
+                                    + "evidence=\(confirmationEvidence)"
                             )
                         }
                         currentObservation = observation
@@ -3834,11 +4136,9 @@ private struct MirrorProbe {
                             context: preflightContext,
                             battleScreenConfirmed: preflight.classification.state == .battle,
                             modalPresent: isAutomationModal(preflight.classification.state),
-                            paused: automationIsPaused(preflight.observations),
+                            paused: !VisualBattleEvidence.hasRunningBattleEvidence(in: preflight.classification),
                             inputGeneration: inputGeneration,
-                            frameEvidence: BattleStallFrameEvidence.extract(
-                                from: preflight.observations
-                            ),
+                            frameEvidence: preflight.stallEvidence,
                             battleROIDifferenceFromPrevious: preflightDifference
                         )
                         let preflightAssessment = retreatVisualConfirmation?.validate(
@@ -3897,20 +4197,28 @@ private struct MirrorProbe {
                             )
                         }
                         report.actionsPosted += 1
+                        if request.intent == .requestRetreat, startupVisualConfirmation != nil {
+                            allAutoProgressValidator.reset()
+                        }
                         postedPreflight = preflight
                         postedActionTime = postedAt
                         // CGEvent.post queues the mouse-up; it is not a delivery acknowledgement.
                         // Keep the successful borrow alive through the existing first after-frame,
                         // including the loop's defer. Do not repost a toggle if it has not changed.
-                        let remainingRuntime = max(0, sessionDeadline - ProcessInfo.processInfo.systemUptime)
-                        try await Task.sleep(for: .seconds(min(1, remainingRuntime)))
-                        let stoppedByUser = FileManager.default.fileExists(atPath: stopURL.path)
-                        if stoppedByUser || ProcessInfo.processInfo.systemUptime >= sessionDeadline {
+                        let remainingRuntime = sessionDeadline.map {
+                            max(0, $0 - ProcessInfo.processInfo.systemUptime)
+                        }
+                        try await Task.sleep(for: .seconds(min(1, remainingRuntime ?? 1)))
+                        let stoppedByUser = applicationStopRequest.isRequested(stopFileURL: stopURL)
+                        if stoppedByUser || sessionDeadline.map({
+                            ProcessInfo.processInfo.systemUptime >= $0
+                        }) == true {
                             focusBorrow?.restore()
                             try finishAutomationRun(
                                 status: "stopped",
-                                reason: stoppedByUser ? "stopFileDetected" : String(describing:
-                                    AutoLevelStopReason.maximumRuntimeReached(limit: policy.maxRuntime)),
+                                reason: try automationInterruptionReason(
+                                    stoppedByUser: stoppedByUser, maximumRuntime: policy.maxRuntime
+                                ),
                                 terminationKind: stoppedByUser ? .userStop : .expectedLimit,
                                 observation: preflight,
                                 captureLevel: captureLevel,
@@ -3938,7 +4246,7 @@ private struct MirrorProbe {
                         focusBorrow?.restore()
                         try finishAutomationRun(
                             status: "stopped",
-                            reason: "stopFileDetected",
+                            reason: applicationStopRequest.reportReason,
                             terminationKind: .userStop,
                             observation: preflight,
                             captureLevel: captureLevel,
@@ -3952,12 +4260,12 @@ private struct MirrorProbe {
 
                     case .maximumRuntimeReached:
                         focusBorrow?.restore()
-                        let reason = AutoLevelStopReason.maximumRuntimeReached(
-                            limit: policy.maxRuntime
+                        let reason = try automationInterruptionReason(
+                            stoppedByUser: false, maximumRuntime: policy.maxRuntime
                         )
                         try finishAutomationRun(
                             status: "stopped",
-                            reason: String(describing: reason),
+                            reason: reason,
                             terminationKind: .expectedLimit,
                             observation: preflight,
                             captureLevel: captureLevel,
@@ -4098,7 +4406,8 @@ private struct MirrorProbe {
                     target: request.target,
                     frameFingerprint: preflight.fingerprint,
                     detail: "inputMode=\(inputMode.rawValue), captureLevel=\(captureLevel.rawValue), "
-                        + "activationAttempts=\(activationRetry.currentAttempt), \(captureDetail), "
+                        + "activationAttempts=\(activationRetry.currentAttempt), "
+                        + "resultObservationFailures=\(resultObservationFailures), \(captureDetail), "
                         + "focusRestorationAfterPostCapture=\(inputMode == .foreground), "
                         + "meanAbsoluteDifference=\(frameDifference)",
                     screenshotPath: beforeURL?.path,
@@ -4208,18 +4517,24 @@ private struct MirrorProbe {
         _ frame: AutomationCapturedFrame,
         captureRecorder: AutomationCaptureRecorder
     ) throws -> AutomationObservation {
-        let recognized = try recognizeGameState(in: frame.image, rgba: frame.rgba)
-        let observations = recognized.observations
-        let classification = recognized.classification
+        let recognitionStartedAt = ProcessInfo.processInfo.systemUptime
+        let classification = try recognizeGameState(in: frame.image, rgba: frame.rgba)
+        let stallEvidence = BattleStallFrameEvidence.extractVisual(from: classification)
+        let activityEvidence = try BattleActivityFrameEvidence.extractVisual(
+            frame.rgba.bytes, width: frame.rgba.width, height: frame.rgba.height,
+            bytesPerRow: frame.rgba.bytesPerRow, classification: classification
+        )
         let fingerprint = sha256Hex(of: Data(frame.rgba.bytes))
         let observation = AutomationObservation(
             capturedAt: frame.capturedAt,
+            recognitionDurationSeconds: ProcessInfo.processInfo.systemUptime - recognitionStartedAt,
             windowContinuityGeneration: frame.windowContinuityGeneration,
             window: frame.window,
             image: frame.image,
             rgba: frame.rgba,
             metrics: frame.metrics,
-            observations: observations,
+            stallEvidence: stallEvidence,
+            activityEvidence: activityEvidence,
             classification: classification,
             fingerprint: fingerprint
         )
@@ -4241,7 +4556,7 @@ private struct MirrorProbe {
         captureRecorder: AutomationCaptureRecorder,
         windowRecovery: AutomationWindowRecoveryContext,
         actionDeadline: TimeInterval,
-        expectedSuccessPage: MissionSuccessPageIdentity?
+        expectedResultPage: MissionSuccessPageIdentity?
     ) async throws -> AutomationActionPreflightResult {
         guard request.intent != .enableAllAuto else {
             throw ProbeError.unsafeWindow(
@@ -4251,7 +4566,27 @@ private struct MirrorProbe {
         guard let runningApplication = NSRunningApplication(
             processIdentifier: identity.processID
         ) else {
-            throw ProbeError.unsafeWindow("could not resolve the iPhone Mirroring application")
+            // Signal zero checks only existence/permission and never signals or launches the
+            // process. ESRCH or an unknown error is terminal; a live PID permits another full
+            // preflight, not input. Window ID, geometry and page are revalidated after recovery.
+            let processCheck = kill(identity.processID, 0)
+            let processError = processCheck == 0 ? 0 : errno
+            let processIsRunning = processCheck == 0 || processError == EPERM
+            let processStatus = processIsRunning ? "running"
+                : (processError == ESRCH ? "notFound" : "unavailable")
+            let detail = "expectedPID=\(identity.processID), expectedWindowID=\(identity.windowID), "
+                + "appKitResolved=false, processStatus=\(processStatus), processCheckErrno=\(processError)"
+            FileHandle.standardError.write(Data("applicationResolution: \(detail)\n".utf8))
+            return .applicationUnavailable(processIsRunning: processIsRunning, detail: detail)
+        }
+        guard !runningApplication.isTerminated,
+              runningApplication.processIdentifier == identity.processID,
+              runningApplication.bundleIdentifier == mirrorBundleIdentifier
+        else {
+            throw ProbeError.unsafeWindow(
+                "the resolved iPhone Mirroring application terminated or its identity changed; "
+                    + "expectedPID=\(identity.processID), expectedWindowID=\(identity.windowID)"
+            )
         }
         let activateReturned: Bool?
         if inputMode == .foreground {
@@ -4322,15 +4657,14 @@ private struct MirrorProbe {
         guard preflight.classification.state == request.observedState else {
             return .stateChanged(observation: preflight, activation: activation)
         }
-        if request.intent == .advanceMissionSuccess {
-            // EXP and loot share both state and coordinates. A delayed first click may have
-            // advanced the page after a retry was requested; cancel that stale request instead
-            // of treating the same arrow as proof that its original page is still visible.
-            guard let expectedSuccessPage,
-                  MissionSuccessPageIdentity.resolve(in: preflight.classification) == expectedSuccessPage
-            else {
-                return .stateChanged(observation: preflight, activation: activation)
-            }
+        // Result pages can share state and coordinates. Every fresh confirmation, including
+        // recovery from unknown, must preserve the original content identity when established.
+        guard AutoLevelForegroundActivationRetryState.resultPageMatchesOriginal(
+            intent: request.intent,
+            expectedPage: expectedResultPage,
+            classification: preflight.classification
+        ) else {
+            return .stateChanged(observation: preflight, activation: activation)
         }
         let runtime = AutoLevelRuntimeMetadata(
             observedAt: preflight.capturedAt,
@@ -4352,6 +4686,18 @@ private struct MirrorProbe {
                 "the named action target was missing, ambiguous, or moved during confirmation"
             )
         }
+        if let retryPage = request.repeatSelectionRetryPage {
+            guard request.intent == .selectMissionRepeat,
+                  confirmed.target == request.target,
+                  MissionRepeatSelectionProof.page(
+                      in: preflight.classification, matching: confirmed.target
+                  ) == retryPage
+            else {
+                throw ProbeError.unsafeWindow(
+                    "the repeat-selection retry no longer has an empty stamp on its original result page"
+                )
+            }
+        }
         return .confirmed(
             observation: preflight,
             target: confirmed.target,
@@ -4368,7 +4714,7 @@ private struct MirrorProbe {
         expectedFrame: CGRect,
         inputMode: AutoLevelInputMode,
         actionDeadline: TimeInterval,
-        sessionDeadline: TimeInterval,
+        sessionDeadline: TimeInterval?,
         stopURL: URL
     ) throws -> AutomationClickResult {
         guard request.intent != .enableAllAuto else {
@@ -4429,7 +4775,7 @@ private struct MirrorProbe {
                 targetProcessTopmostWindowIdentity: targetProcessTopmostWindow?.identity
             )
             let now = ProcessInfo.processInfo.systemUptime
-            let stopRequested = FileManager.default.fileExists(atPath: stopURL.path)
+            let stopRequested = applicationStopRequest.isRequested(stopFileURL: stopURL)
             guard let rejection = AutoLevelInputSafety.rejection(
                 expectedWindowIdentity: identity,
                 expectedWindowGeometry: expectedGeometry,
@@ -4511,6 +4857,7 @@ private struct MirrorProbe {
                     targetProcessTopmostWindow: targetProcessTopmostWindow,
                     hitProcessID: inputPointSnapshot.hitProcessID,
                     hitError: inputPointSnapshot.hitError,
+                    displayFrames: inputPointSnapshot.displayFrames,
                     windows: windows
                 )
                 // This boundary posts neither event. Only a known external obstruction can
@@ -4635,15 +4982,15 @@ private struct MirrorProbe {
         )
     }
 
-    /// A bounded capture-only burst. OCR runs at the two boundaries; fast frames provide only
-    /// visual continuity, never a fabricated battle classification. No focus or input is used.
+    /// A bounded capture-only burst. Visual classification runs at the two boundaries;
+    /// fast frames establish pixel continuity. No focus or input is used.
     private static func confirmAutomationVisualStability(
         _ initialConfirmation: BattleVisualStabilityConfirmation,
         anchor: AutomationObservation,
         identity: AutoLevelWindowIdentity,
         expectedFrame: CGRect,
         inputGeneration: UInt64,
-        sessionDeadline: TimeInterval,
+        sessionDeadline: TimeInterval?,
         stopURL: URL,
         captureRecorder: AutomationCaptureRecorder,
         windowRecovery: AutomationWindowRecoveryContext
@@ -4651,14 +4998,17 @@ private struct MirrorProbe {
         var confirmation = initialConfirmation
         var previous = anchor.rgba
         let burstDeadline = ProcessInfo.processInfo.systemUptime + 7
-        func interrupted() -> Bool {
-            FileManager.default.fileExists(atPath: stopURL.path)
-                || ProcessInfo.processInfo.systemUptime >= sessionDeadline
+        func interruption() -> AutomationCaptureInterruption? {
+            if applicationStopRequest.isRequested(stopFileURL: stopURL) { return .stopRequested }
+            if let sessionDeadline, ProcessInfo.processInfo.systemUptime >= sessionDeadline {
+                return .sessionExpired
+            }
+            return nil
         }
         while !confirmation.isComplete {
-            if interrupted() { return .interrupted }
+            if let reason = interruption() { return .interrupted(reason) }
             try await Task.sleep(for: .milliseconds(400))
-            if interrupted() { return .interrupted }
+            if let reason = interruption() { return .interrupted(reason) }
             let frame = try await captureAutomationFrame(
                 requestedID: identity.windowID,
                 expectedIdentity: identity,
@@ -4666,7 +5016,7 @@ private struct MirrorProbe {
                 recovery: windowRecovery,
                 phase: "densePixels"
             )
-            if interrupted() { return .interrupted }
+            if let reason = interruption() { return .interrupted(reason) }
             if frame.windowContinuityGeneration != anchor.windowContinuityGeneration {
                 let fresh = try recognizeAutomationFrame(frame, captureRecorder: captureRecorder)
                 return .rejected(fresh, detail: "windowAvailabilityInterruptedPixelContinuity")
@@ -4689,16 +5039,16 @@ private struct MirrorProbe {
             }
             previous = frame.rgba
         }
-        if interrupted() { return .interrupted }
+        if let reason = interruption() { return .interrupted(reason) }
         let final = try await captureAutomationObservation(
             requestedID: identity.windowID,
             expectedIdentity: identity,
             expectedFrame: expectedFrame,
             captureRecorder: captureRecorder,
             recovery: windowRecovery,
-            phase: "denseFinalOCR"
+            phase: "denseFinalVisual"
         )
-        if interrupted() { return .interrupted }
+        if let reason = interruption() { return .interrupted(reason) }
         guard final.windowContinuityGeneration == anchor.windowContinuityGeneration else {
             return .rejected(final, detail: "windowAvailabilityInterruptedFinalContinuity")
         }
@@ -4707,9 +5057,9 @@ private struct MirrorProbe {
             context: automationBattleContext(for: final, identity: identity),
             battleScreenConfirmed: final.classification.state == .battle,
             modalPresent: isAutomationModal(final.classification.state),
-            paused: automationIsPaused(final.observations),
+            paused: !VisualBattleEvidence.hasRunningBattleEvidence(in: final.classification),
             inputGeneration: inputGeneration,
-            frameEvidence: BattleStallFrameEvidence.extract(from: final.observations),
+            frameEvidence: final.stallEvidence,
             battleROIDifferenceFromPrevious: try automationBattlePixelDifference(previous, final.rgba)
         )
         guard let assessment = confirmation.validate(
@@ -4735,26 +5085,13 @@ private struct MirrorProbe {
         }
     }
 
-    private static func automationIsPaused(_ observations: [OCRTextObservation]) -> Bool {
-        observations.contains { observation in
-            let text = observation.text
-                .precomposedStringWithCompatibilityMapping
-                .uppercased()
-                .filter { !$0.isWhitespace }
-            return text == "繼續" || text == "恢復" || text == "RESUME"
-        }
-    }
-
     private static func automationStallDetail(
         _ assessment: BattleStallAssessment
     ) -> String {
-        let enemy = assessment.enemyHP.map {
-            "\($0.current)/\($0.maximum)"
-        } ?? "none"
         let reset = assessment.resetReason?.rawValue ?? "none"
         return "stallPhase=\(assessment.phase.rawValue), armed=\(assessment.isArmed), "
             + "stableSeconds=\(assessment.stableDuration), samples=\(assessment.stableSampleCount), "
-            + "zeroParty=\(assessment.zeroPartyMembers), enemyHP=\(enemy), reset=\(reset)"
+            + "strictBattleBackground=\(assessment.strictBattleBackground), reset=\(reset)"
     }
 
     private static func appendAutomationEvent(
@@ -4985,7 +5322,7 @@ private struct MirrorProbe {
             if var budget = retry {
                 if let reason = budget.validateBoundary(
                     at: ProcessInfo.processInfo.systemUptime,
-                    stopRequested: FileManager.default.fileExists(atPath: recovery.stopURL.path)
+                    stopRequested: applicationStopRequest.isRequested(stopFileURL: recovery.stopURL)
                 ) {
                     try throwWindowRecoveryStop(reason, windowID: requestedID, phase: phase)
                 }
@@ -5032,7 +5369,7 @@ private struct MirrorProbe {
             )
             let decision = budget.recordMissing(
                 at: ProcessInfo.processInfo.systemUptime,
-                stopRequested: FileManager.default.fileExists(atPath: recovery.stopURL.path)
+                stopRequested: applicationStopRequest.isRequested(stopFileURL: recovery.stopURL)
             )
             retry = budget
             switch decision {
@@ -5286,19 +5623,33 @@ private struct MirrorProbe {
         expectedWindowFrame: CGRect,
         expectedProcessID: Int32,
         windows: [WindowServerWindow]
-    ) -> (window: WindowServerWindow?, hitProcessID: Int32?, hitError: Int32) {
+    ) -> (
+        window: WindowServerWindow?, hitProcessID: Int32?, hitError: Int32,
+        displayFrames: [AutoLevelWindowGeometry]
+    ) {
+        // A full-display NotificationCenter surface can appear above ordinary windows while
+        // AX still hits the mirror. Require actual display bounds, not just a large rectangle.
+        let displayFrames = windows.contains {
+            $0.ownerBundleIdentifier == "com.apple.notificationcenterui"
+                && $0.layer == 21 && $0.alpha > 0.01 && $0.frame.contains(point)
+        } ? activeDisplayFrames() : []
         let hit = accessibilityInputHit(at: point)
         let window = windows.first {
             $0.alpha > 0.01
                 && $0.frame.contains(point)
-                && !isNonOccludingDockBackdrop(
-                    $0,
-                    covering: expectedWindowFrame,
+                && !AutoLevelSystemBackdrop.isNonOccluding(
+                    ownerBundleIdentifier: $0.ownerBundleIdentifier,
+                    layer: $0.layer,
+                    name: $0.name,
+                    frame: automationWindowGeometry($0.frame),
+                    expectedWindowFrame: automationWindowGeometry(expectedWindowFrame),
+                    displayFrames: displayFrames,
                     hitProcessID: hit.processID,
+                    hitError: hit.error,
                     expectedProcessID: expectedProcessID
                 )
         }
-        return (window, hit.processID, hit.error)
+        return (window, hit.processID, hit.error, displayFrames)
     }
 
     /// Serialize the exact rejected boundary sample, after input has already been vetoed.
@@ -5314,10 +5665,11 @@ private struct MirrorProbe {
         targetProcessTopmostWindow: WindowServerWindow?,
         hitProcessID: Int32?,
         hitError: Int32,
+        displayFrames: [AutoLevelWindowGeometry],
         windows: [WindowServerWindow]
     ) -> String {
         func metadata(_ window: WindowServerWindow) -> [String: Any] {
-            [
+            var result: [String: Any] = [
                 "windowID": window.identity.windowID,
                 "processID": window.identity.processID,
                 "bundleIdentifier": window.ownerBundleIdentifier.map { $0 as Any } ?? NSNull(),
@@ -5325,6 +5677,13 @@ private struct MirrorProbe {
                 "frame": ["x": window.frame.minX, "y": window.frame.minY,
                           "width": window.frame.width, "height": window.frame.height]
             ]
+            // Keep system-surface names without collecting other applications' window titles.
+            if ["com.apple.dock", "com.apple.notificationcenterui"].contains(
+                window.ownerBundleIdentifier ?? ""
+            ) {
+                result["systemSurfaceName"] = window.name.map { $0 as Any } ?? NSNull()
+            }
+            return result
         }
         let diagnostic: [String: Any] = [
             "phase": "finalInputBoundary", "result": "clickPointObscured",
@@ -5337,6 +5696,9 @@ private struct MirrorProbe {
             "expectedPID": identity.processID, "expectedWindowID": identity.windowID,
             "frontmostPID": frontmostProcessID.map { $0 as Any } ?? NSNull(),
             "axHitPID": hitProcessID.map { $0 as Any } ?? NSNull(), "axHitError": hitError,
+            "activeDisplayFrames": displayFrames.map {
+                ["x": $0.x, "y": $0.y, "width": $0.width, "height": $0.height]
+            },
             "topmostWindow": topmostWindow.map { metadata($0) as Any } ?? NSNull(),
             "targetProcessTopmostWindow": targetProcessTopmostWindow.map { metadata($0) as Any } ?? NSNull(),
             "windowsAtPointFrontToBack": windows.filter {
@@ -5355,22 +5717,19 @@ private struct MirrorProbe {
         return detail
     }
 
-    /// Dock owns a transparent, full-display management surface above ordinary windows. It is
-    /// present in the front-to-back WindowServer list but does not receive the click. Ignore only
-    /// the observed Dock/layer signature and only when Accessibility hit-testing independently
-    /// proves that input at this point belongs to the expected process. The visible Dock and
-    /// interactive Dock-owned surfaces therefore remain occluders.
-    private static func isNonOccludingDockBackdrop(
-        _ window: WindowServerWindow,
-        covering expectedWindowFrame: CGRect,
-        hitProcessID: Int32?,
-        expectedProcessID: Int32
-    ) -> Bool {
-        window.ownerBundleIdentifier == "com.apple.dock"
-            && window.layer == 20
-            && window.name == "Dock"
-            && window.frame.contains(expectedWindowFrame)
-            && hitProcessID == expectedProcessID
+    /// Use the same global coordinate system as CGWindowListCopyWindowInfo. Missing data or
+    /// inconsistent display counts disable the NotificationCenter backdrop exception.
+    private static func activeDisplayFrames() -> [AutoLevelWindowGeometry] {
+        var count: UInt32 = 0
+        guard CGGetActiveDisplayList(0, nil, &count) == .success,
+              count > 0, count <= 32
+        else { return [] }
+        var displays = [CGDirectDisplayID](repeating: 0, count: Int(count))
+        var actualCount: UInt32 = 0
+        guard CGGetActiveDisplayList(count, &displays, &actualCount) == .success,
+              actualCount == count
+        else { return [] }
+        return displays.map { automationWindowGeometry(CGDisplayBounds($0)) }
     }
 
     private static func accessibilityInputHit(at point: CGPoint) -> (processID: Int32?, error: Int32) {
@@ -5605,7 +5964,7 @@ private struct MirrorProbe {
     private static func printUsage() {
         print(
             """
-            mirror-probe — bounded iPhone Mirroring game automation and diagnostics
+            mirror-probe — iPhone Mirroring game automation and diagnostics
 
             Usage:
               mirror-probe doctor [--request-permissions] [--output report.json]
@@ -5625,7 +5984,7 @@ private struct MirrorProbe {
                 [--stop-file /absolute/path/to/STOP] [--report REPORT.json]
               mirror-probe run [--window-id ID] --confirm \(autoLevelConfirmation)
                 [--input-mode foreground|process]
-                [--max-cycles 20] [--max-minutes 120]
+                [--max-cycles N] [--max-minutes N]
                 [--capture-level error|info]
                 --output-dir /absolute/path/to/auto-level-RUN_ID
 
@@ -5643,7 +6002,9 @@ private struct MirrorProbe {
               establish that total is below the selected 90...100 threshold. After a click it
               waits at least 1.5 seconds and
               requires the generated-result pixels to be changed and stable in two snapshots
-              before another click. run assumes the user has already entered a stage and
+              before another click. run has no default cycle, runtime or action-count limits;
+              --max-cycles and --max-minutes apply only when supplied. A STOP file or Ctrl-C
+              in the launcher's --wait mode stops the run. run assumes the user has already entered a stage and
               enabled the game's persistent/default 全部自動 setting. It never presses that
               toggle, and each new battle must show verified progress within 30 seconds. Other
               input uses only state-specific named targets. Process input routes only to the locked

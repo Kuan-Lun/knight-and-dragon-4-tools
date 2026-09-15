@@ -17,14 +17,14 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.4.15</string>
+    <string>0.4.31</string>
     <key>CFBundleVersion</key>
-    <string>38</string>
+    <string>54</string>
     <key>LSMinimumSystemVersion</key>
 	<string>15.0</string>
     <key>NSAccessibilityUsageDescription</key>
     <string>Mirror Probe sends user-authorized clicks only to recognized controls in the selected iPhone Mirroring game window.</string>
     <key>NSScreenCaptureUsageDescription</key>
-    <string>Mirror Probe captures the selected iPhone Mirroring window to recognize game states during a bounded automation run.</string>
+    <string>Mirror Probe captures the selected iPhone Mirroring window to recognize game states during user-started automation.</string>
 </dict>
 </plist>

@@ -13,8 +13,19 @@ public enum MissionSuccessPageIdentity: String, Codable, Equatable, Sendable {
             $0.kind == .missionExperiencePage || $0.kind == .missionLootPage
         }
         guard markers.count == 1,
-              let marker = markers.first,
-              let observation = marker.observation,
+              let marker = markers.first
+        else { return nil }
+        if VisualResultEvidence.hasVisualMatches(in: classification) {
+            guard VisualResultEvidence.hasConsistentVisualEvidence(in: classification),
+                  let match = VisualResultEvidence.validatedMatch(marker)
+            else { return nil }
+            switch match.marker {
+            case .experienceHeader: return .experience
+            case .lootHeader: return .loot
+            default: return nil
+            }
+        }
+        guard let observation = marker.observation,
               observation.confidence.isFinite,
               (GameStateClassifier.minimumMarkerConfidence...1).contains(observation.confidence),
               observation.rect.isValid,

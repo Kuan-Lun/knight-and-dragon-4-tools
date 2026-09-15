@@ -1,0 +1,83 @@
+{
+  "startedAt": "2026-09-08T20:33:07Z",
+  "endedAt": "2026-09-08T20:53:41Z",
+  "status": "error",
+  "finalReason": "Safety check refused the action: the action authorization expired while retrying foreground activation",
+  "completedCycles": 53,
+  "actionsPosted": 261,
+  "limits": {
+    "maximumActions": 8020,
+    "maximumCycles": 500,
+    "maximumMinutes": 480,
+    "pollIntervalSeconds": 1.5
+  },
+  "sourceReport": "logs/auto-level-20260909-043306.LgKS8M/run-report.json",
+  "activationRetryEventCount": 0,
+  "events": [
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 261, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5561797752808989, width: 0.783, height: 0.04044943820224719), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5764044943820225)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"9b45c2487444f45647dc4b331e828be2322cf9e4498c79522c9c6a5fe7e33246\", completedCycles: 53))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none",
+      "elapsedSeconds": 1122.4446043332573,
+      "frameFingerprint": "9b45c2487444f45647dc4b331e828be2322cf9e4498c79522c9c6a5fe7e33246",
+      "kind": "observation",
+      "sequence": 736,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-08T20:51:50Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 261, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5561797752808989, width: 0.783, height: 0.04044943820224719), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5764044943820225)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"9b45c2487444f45647dc4b331e828be2322cf9e4498c79522c9c6a5fe7e33246\", completedCycles: 53))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.2641831512406073",
+      "elapsedSeconds": 1129.9734212083276,
+      "frameFingerprint": "9b45c2487444f45647dc4b331e828be2322cf9e4498c79522c9c6a5fe7e33246",
+      "kind": "actionPosted",
+      "sequence": 737,
+      "state": "wideModalOneButton",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.5764044943820225
+        },
+        "rect": {
+          "height": 0.04044943820224719,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5561797752808989
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-08T20:52:33Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.battleInProgress)",
+      "detail": "stallPhase=awaitingProgress, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none",
+      "elapsedSeconds": 1129.9734212083276,
+      "frameFingerprint": "426779838a68655f48cd508c30f01ad48c034c7cf1cfb8ee9bcb636cfe5eb6cc",
+      "kind": "observation",
+      "sequence": 738,
+      "state": "battle",
+      "timestamp": "2026-09-08T20:52:33Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 262, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"ddb6d43523452eb7c8d58cdba6c40f43bb9b2db2bde24da3d1c1f1f5c95f3ec8\", completedCycles: 53))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=modalObserved",
+      "elapsedSeconds": 1173.050503458362,
+      "frameFingerprint": "ddb6d43523452eb7c8d58cdba6c40f43bb9b2db2bde24da3d1c1f1f5c95f3ec8",
+      "kind": "observation",
+      "sequence": 739,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-08T20:53:35Z"
+    },
+    {
+      "detail": "Safety check refused the action: the action authorization expired while retrying foreground activation",
+      "elapsedSeconds": 1234.364613916725,
+      "frameFingerprint": "ddb6d43523452eb7c8d58cdba6c40f43bb9b2db2bde24da3d1c1f1f5c95f3ec8",
+      "kind": "sessionError",
+      "screenshotPath": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260909-043306.LgKS8M/final.png",
+      "sequence": 740,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-08T20:53:41Z"
+    }
+  ]
+}

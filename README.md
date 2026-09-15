@@ -12,10 +12,11 @@ The implemented loop can:
 - handle the game's calibrated central modal skin without reading its labels: one detected row
   presses its only button, while two rows press the upper button;
 - rely on the game's configured default `全部自動` mode and deliberately never press its
-  toggle; each new battle must show independently verified combat progress within 30 seconds;
+  toggle; each new battle must show independently verified combat progress within 30 seconds,
+  with a separate recovery path for a battle already frozen when the runner starts;
 - collect loot and handle adventurer, battle, defeat, skill, and returned-party notifications
   through that same button-count rule;
-- select `重複進行此任務`, then use the fixed upper advance control on both success and failure results without depending on OCR of `>>`; a positively observed selection is latched for the active result episode so a later OCR miss can never toggle it back off;
+- select `重複進行此任務`, then use the fixed upper advance control on both success and failure results without depending on OCR of `>>`; a positively observed selection is latched for the active result episode so a later missed visual stamp can never toggle it back off;
 - recover a naturally stalled defeat after a dense five-second visual-stability confirmation; and
 - stop on inventory-full, conflicting/unknown non-modal UI, changed window identity or geometry,
   an explicit stop file, or configured cycle/time/action limits.
@@ -29,7 +30,7 @@ The original feasibility checks established that:
 It uses only public APIs:
 
 - ScreenCaptureKit for one-window screenshots.
-- Apple Vision for Traditional Chinese and English OCR.
+- Fixed image-region matching for all auto-level recognition; Apple Vision OCR remains only for character-reroll numbers.
 - Core Graphics for a single mouse-down/up pair.
 - AppKit activation with an Accessibility `AXFrontmost` fallback for borrowing and restoring focus.
 - A conservative image-health check that rejects transparent, uniform, and nearly black frames.
@@ -77,6 +78,27 @@ page identity, Random control, generated result, and lower controls to remain id
 authorization expires 0.5 seconds after
 that capture began; macOS does not expose an atomic compare-and-click API. Foreground input still
 shares the Mac's keyboard focus and pointer during preflight and the click.
+
+Version 0.4.21 corrects the final pixel guard's status-bar overlap. Its previous region began at
+normalized y=0.08 (row 71 at 406 × 890), including the bottom of the phone status indicators.
+The guard now starts at y=0.095, above the game header, and still covers Random and the lower
+controls. The difference tolerance remains 0.0001. When that guard rejects a frame, the runner
+analyzes the exact rejected pixels with the existing full-frame OCR, focused OCR, and digit checks.
+Only an unchanged, independently verified below-threshold roll with the same Random target and
+unchanged result pixels may restart the complete preflight, at most three times before a posted
+click. High, conflicting, unavailable, changed-result, or changed-target evidence still stops input.
+The cancelled click's authorization and 0.5-second deadline are never reused.
+
+The September 10 run stopped before click 34 with visible `total: 67`. Its sole terminal image
+cannot prove which pixels changed; the original comparison frame and difference were not logged.
+Future rejected guards retain the latest `pixel-guard-before.png`, `pixel-guard-rejected.png`, and
+`pixel-guard.json` beside the run report, including both region differences and image hashes.
+The terminal candidate now includes OCR from the rejected image when recognition succeeds.
+Validation passed all 490 source tests, the release build, signature verification, and the
+launcher's original 60-minute/5,000-reroll dry run. Evidence is under
+`logs/character-reroll-fix-0.4.21/`. The rebuilt app's Launch Services `doctor` reports screen
+capture and post-event permissions missing; renew both grants for `.build/Mirror Probe.app`
+before another run. Validation used saved-image OCR and read-only diagnostics without live clicks.
 
 Vision sometimes reports an otherwise exact full-frame `total` row at confidence 0.30. That one
 reading is only provisional: the independently cropped OCR must still have confidence 0.50 or
@@ -129,12 +151,12 @@ conflicting boundary evidence appeared earlier during stabilization, even if the
 frame is a later low or unavailable OCR sample. No character-reroll images are written to the root `captures/`
 directory. The launcher prints the exact
 `touch .../STOP` command, and Ctrl-C creates that same stop file before exiting. Foreground input
-activates iPhone Mirroring only when it is not already frontmost. Immediately after the click,
-the runner requests a return to the previously active application before waiting for the generated
-result. A cancelled or failed preflight also releases borrowed focus. If a different application
-is already frontmost at cleanup, it is left alone. This reduces focus occupation but cannot prevent
-simultaneous typing or pointer movement from being interrupted. Do not move or resize the mirror
-window during a run.
+activates iPhone Mirroring only when it is not already frontmost. The character-reroll runner leaves
+the mirror in front after clicking and does not restore the previously active application, including
+after a cancelled or failed preflight. Keep the mirror frontmost throughout the run and do not switch
+applications. When the mirror is already frontmost, subsequent rounds skip activation and its
+350 ms settling delay. Do not move or resize the mirror window during a run; foreground input still
+shares keyboard focus and pointer control.
 
 ## Auto-level usage
 
@@ -143,7 +165,7 @@ window during a run.
    default is already active would disable automatic combat.
 2. Open iPhone Mirroring and manually enter the stage you want to repeat. Leave the game on its
    battle-introduction prompt or active battle screen.
-3. Keep exactly one iPhone Mirroring window open, then start a bounded run with the launcher:
+3. Keep exactly one iPhone Mirroring window open, then start the run with the launcher:
 
 ```sh
 ./auto-level.zsh
@@ -169,12 +191,15 @@ The launcher's common optional limits are:
 ```
 
 - `--max-cycles N` limits the number of completed missions, including the stage already in
-  progress when the launcher starts. Accepted values are 1–500.
-- `--max-minutes N` is a wall-clock runtime limit. Accepted values are 1–480.
-- With neither option, the defaults are 20 cycles and 120 minutes; whichever is reached first
-  stops the run. With only one option, the omitted limit is raised to its safety ceiling (500
-  cycles or 480 minutes), so its ordinary default cannot unexpectedly stop the requested limit.
-  With both options, whichever is reached first stops the run; both do not need to be reached.
+  progress when the launcher starts. Supply a positive integer; there is no 500-cycle ceiling.
+- `--max-minutes N` is an optional wall-clock runtime limit. Supply a positive integer to the
+  launcher; there is no 480-minute ceiling.
+- By default there is no cycle, runtime or action-count limit. An omitted limit remains absent
+  even when another limit is supplied. With both options, whichever is reached first stops the
+  run. Without either option, the run continues until STOP, Ctrl-C in `--wait` mode, or an
+  unrecoverable error/safety stop. Per-action deadlines and bounded recovery attempts still apply.
+- To run without default limits while preventing sleep, use `caffeinate -di ./auto-level.zsh --wait`.
+  Supplying `--max-minutes 480` still explicitly requests an eight-hour limit.
 - `--window-id ID` selects one window when multiple iPhone Mirroring windows are open.
 - `--output-dir PATH` atomically creates that new, previously nonexistent directory instead of
   generating the default `logs/auto-level-*` path. An existing path is rejected so concurrent
@@ -262,6 +287,90 @@ uses a fresh capture and repeats the complete window, state, and target validati
 attempt posts input. Each failed attempt waits one second before the next attempt's activation
 settling delay and fresh capture. Three consecutive focus failures still stop the run safely.
 
+Version 0.4.28 includes transient AppKit application-resolution failures in that same
+three-attempt action budget. The September 14 10:52 run stopped after 13 cycles and 68
+posted actions when `NSRunningApplication(processIdentifier:)` returned nil for PID 91507;
+the mirror process was still alive. A failed lookup now checks that the original PID still
+exists using signal zero (no signal is delivered). Only a confirmed live process may retry,
+with the existing one-second backoff. An exited process or unavailable existence check stops
+the run. A recovered application must retain the original PID and mirror bundle identifier
+and must not be terminated; fresh preflight then verifies the original window ID, geometry,
+page, target, focus and input boundary. No cached handle or replacement process authorizes input.
+
+Application resolution, focus contention, obstruction and retryable result recognition share
+one action budget, so combinations cannot multiply the number of attempts. STOP, the pending
+request, original action/session deadlines, and posted-action/cycle counts remain in force.
+The report records `applicationResolutionRetry`, `applicationResolutionRetryExhausted`,
+`applicationResolutionRetryRefused` and `applicationResolutionRecovered`; stderr records the
+target PID/window ID, process status and errno. `focusApplicationResolution` separately reports
+when AX verified a foreground PID but AppKit could not resolve its application, which can also
+cause focus restoration to be cancelled during setup.
+
+Recovery stays inside the current session and pending action. The launcher and outer command
+do not restart the whole run after an arbitrary error: reconstructing the controller would
+lose pending click acknowledgements, repeat-selection protection, single-use confirmations,
+and accumulated limits. A retryable error before input restarts the complete action preflight;
+recovery after input only observes the outcome under the original acknowledgement deadline.
+Unknown errors, exhausted budgets, changed identities, permission failures and unsafe targets
+remain terminal. Validation evidence is under `DevelopmentFixtures/ValidationRuns/auto-level-0.4.28/`.
+
+Version 0.4.29 handles a posted retreat followed directly by the failure result page.
+The September 14 19:12 run stopped after 9 cycles and 45 posted actions because its final
+`撤退` click was followed by `任務失敗`, without an observed confirmation or defeat prompt.
+The retained images establish the before/after states; they do not establish whether an
+intermediate prompt was skipped or the battle ended independently between captures.
+
+A pending, posted retreat from battle may now acknowledge `missionFailed` or
+`missionFailedRepeatSelected` within its original acknowledgement deadline. The controller
+clears that pending action, leaves retreat-confirmation authorization off, counts the failure
+once, and resumes the existing repeat-selection/advance flow. Unposted retreat requests,
+unchanged fingerprints, expired acknowledgements, changed windows and unrelated transitions
+retain their existing rejection or wait behavior. No retry or whole-session restart is added.
+The original native preflight/result images and controller boundary tests cover this transition;
+incident and validation records are in `DevelopmentFixtures/ValidationRuns/auto-level-0.4.29/`.
+
+Version 0.4.30 removes all default auto-level session limits at the user's request.
+The launcher and native runner omit cycle and runtime limits unless explicitly supplied;
+the former cycle-derived action cap is also removed. Optional positive limits no longer have
+the old 500-cycle or 480-minute ceilings. Reports use schema 5 and write JSON `null` for each
+absent limit. The controller and every native session boundary preserve that absence through
+capture recovery, visual confirmation, input preflight, action posting and post-click capture.
+No `Int.max` or infinite deadline substitutes for an unlimited session.
+
+The command for continuous operation is `caffeinate -di ./auto-level.zsh --wait`.
+Ctrl-C in wait mode or the printed STOP command ends it. Existing error stops, fixed recovery
+budgets and per-action deadlines remain effective; character-reroll limits are unchanged.
+Validation includes a single controller session continuing beyond 500 cycles, 8,020 posted
+actions and eight hours of simulated time, explicit limit/STOP/deadline tests and launcher
+argument checks. Evidence is under `DevelopmentFixtures/ValidationRuns/auto-level-0.4.30/`.
+
+Version 0.4.31 recovers a battle that is already frozen when the runner starts.
+The September 15 13:20 run stopped after 30 seconds with zero actions because no combat
+progress had been observed, so the ordinary stall detector could not arm. The user confirmed
+that battle was already stopped before launch and requested retreat followed by repeat.
+
+Only the battle visible in the first session capture is eligible. After 30 seconds without
+verified HP/log activity, a stable pair can start the existing dense five-second pixel
+confirmation. It must retain the same battle, window, geometry and input generation through
+consecutive recognized battle frames; a prompt, missing required control, capture gap,
+stale observation or genuine progress permanently removes startup eligibility. The dense
+burst and fresh retreat preflight still compare both consecutive frames and a fixed anchor.
+This observation never counts as proof that automatic combat ran. After retreat is posted,
+the normal confirmation, failure result and repeat flow resumes; later battles retain the
+original progress requirement.
+
+Startup recovery can be attempted once per session. If confirmation or preflight cancels,
+the original progress deadline remains expired: subsequent observation must prove real
+progress or a forward transition, or stop. No extra timeout, auto-toggle or session restart
+is added. Reports record `startupBattleRecoveryStarted` and the confirmation's
+`recoveryBasis=frozenAtStartup`. Incident evidence and validation are under
+`DevelopmentFixtures/ValidationRuns/auto-level-0.4.31/`.
+Validation passed 612 Swift Testing tests, two XCTest cases, the release build,
+signature verification and both distinct incident-image replays. The rebuilt app's
+Launch Services `doctor` reports Screen Recording and Accessibility/post-event
+permissions missing; reauthorize `.build/Mirror Probe.app` before running it.
+Recovery was tested with saved images and a modeled continuation, without live game input.
+
 Version 0.4.13 also spends that same three-attempt budget when a known window from another
 process covers the action point while the mirror remains focused. No event is posted on the
 rejected attempt. Retries wait for stacking to settle even if the mirror is already frontmost,
@@ -271,6 +380,58 @@ unknown topmost windows, a competing mirror-process window, and process-mode obs
 terminal. `inputBoundaryRejected` stderr entries and the report's retry/error details now retain
 the rejected point's window IDs, PIDs, bundle identifiers, layers, frames, and the same AX hit
 result used by the guard. These diagnostics do not include other windows' titles or content.
+
+Version 0.4.25 handles the full-display NotificationCenter surface observed in the September 11
+06:23 run. It stopped at 08:00:07 after 294 cycles and 1,494 posted actions: all three attempts
+to press the loot dialog's upper button found NotificationCenter layer 21 above the mirror,
+although the same-point AX hit and live foreground PID both identified the mirror. The earlier
+06:25 interruption had the same signature and recovered on its second attempt. The captured game
+image excludes external windows, so it cannot establish the desktop surface's transparency.
+
+The input resolver now excludes that NotificationCenter signature only when its bounds exactly
+match an active display, contain the entire locked mirror, and a successful AX hit identifies
+the expected process. The existing named Dock/layer-20 exception is retained. Partial panels,
+other layers or applications, missing display data, and failed/mismatched AX hits still block.
+After excluding a system backdrop, the first remaining window must still be the exact locked
+mirror; another window from either the mirror process or another application cannot be skipped.
+The original foreground, geometry, deadline, STOP, and three-attempt guards remain required.
+Obstruction diagnostics also record the sampled display bounds and names of Dock/NotificationCenter
+surfaces; other application titles are omitted. Incident evidence and validation are retained in
+`DevelopmentFixtures/ValidationRuns/auto-level-0.4.25/`.
+Validation passed 566 Swift tests, 12 launcher regressions, the release build/signature check,
+and a packaged replay of the terminal image. The rebuilt app retains Screen Recording but its
+Launch Services `doctor` reports Accessibility/post-event permission missing; renew that grant
+for `.build/Mirror Probe.app` before another run. No live game input was posted during validation.
+
+Version 0.4.26 fixes the September 13 run that stopped after 60 cycles and 296 actions
+with `uncertainStateExceededGrace(unknown)`. The battle footer's image regions included
+three changing border rows above the Skip and All-auto glyphs. Those pixels lowered
+the matches to 0.899/0.922 even though the buttons were intact. The regions now begin
+below that border, including the existing registration tolerance, and templates are
+regenerated from the original sources. The 0.94 threshold, required glyphs, modal and
+pause checks, and temporal retreat policy remain unchanged. All eight retained incident
+captures now classify as battle. Original captures, regression tests, and validation
+are recorded in `DevelopmentFixtures/ValidationRuns/auto-level-0.4.26/`.
+
+Version 0.4.27 fixes the September 14 run that stopped after 456 cycles and 1,991 actions.
+A combat effect covered the Pause glyph while the battle footer and Retreat glyph still
+matched at about 0.977. As requested, auto-level now checks the footer and Retreat control
+before monitoring battle activity; Pause is diagnostic only. All eight retained incident
+captures now classify as battle. No template, similarity threshold, click target, or timeout
+was changed. Missing or dimmed Retreat still prevents battle monitoring and input.
+
+Ordinary retreat recovery still requires independently observed battle progress followed by
+the dense five-second freeze confirmation and fresh preflight. Version 0.4.31 adds the bounded
+startup exception described above, using the same confirmation and preflight. A still image
+alone cannot authorize retreat.
+Pause/Resume is no longer interpreted: manually pausing after verified progress may therefore
+enter freeze recovery if Retreat remains visible. Use the run's STOP file to stop automation.
+Native incident captures and validation are retained in
+`DevelopmentFixtures/ValidationRuns/auto-level-0.4.27/`.
+Validation passed 575 Swift tests, 12 launcher cases, release/signature checks, and
+all eight packaged incident replays. The rebuilt app's Launch Services `doctor`
+reports both Screen Recording and Accessibility/post-event permission missing;
+renew both grants for `.build/Mirror Probe.app` before another run.
 
 `--input-mode process` is retained as a safe diagnostic mode. It routes the down/up pair only to
 the locked iPhone Mirroring PID, never moves the global cursor, and never falls back to a global
@@ -560,6 +721,103 @@ retry branch is covered by automated tests; live obstruction recovery remains un
 
 ## Read-only state analysis
 
+Version 0.4.17 handles slow background observation processing before an input request is issued.
+Run `auto-level-20260909-043306.LgKS8M` completed 53 cycles and posted 261 actions. Its final
+frame was captured around 04:52:40, but the observation was logged at 04:53:35; no foreground
+activation retries occurred. The 12-second capture-based action deadline had already expired
+before the first activation attempt. The previous error incorrectly described this as retrying
+foreground activation. System logs also show App Nap active for this process; that may have
+contributed, but does not establish the sole cause of the sudden processing slowdown.
+
+The auto-level command now retains a scoped `userInitiatedAllowingIdleSystemSleep` activity
+through final report persistence. This is Apple's documented mechanism for keeping lengthy
+user-requested work out of App Nap while respecting idle system sleep:
+[Prioritize Work at the App Level](https://developer-rno.apple.com/library/archive/documentation/Performance/Conceptual/power_efficiency_guidelines_osx/PrioritizeWorkAtTheAppLevel.html).
+Observations already 12 seconds old require fresh capture and classification, with at most two
+consecutive recaptures before `staleObservationExceededRecovery`. Old frames can still prove a
+previous post advanced at capture time and preserve result counting; they cannot allocate a new
+action or spend a result retry. Original posted deadlines, retry caps, session limits, and the
+final input checks remain in force. Pixel/stall proofs are discarded across the processing gap.
+Reports now include capture age and recognition duration, and distinguish first-attempt expiry
+from expiry during an actual foreground retry. Compact evidence is retained in
+`DevelopmentFixtures/ValidationRuns/auto-level-0.4.17/`.
+Validation passed 450 Swift tests (including the recorded delayed battle/modal timing sequence),
+12 isolated launcher cases, release build/signature checks, and the launcher dry run. The failed
+PNG replay classified `wideModalOneButton` in about 0.325 seconds under current conditions with
+zero input events; this does not reproduce the earlier background slowdown. The final packaged
+doctor check found both permissions missing after the ad-hoc rebuild, so renew Screen Recording
+and Accessibility for this build before restarting. No live automation soak was performed.
+
+Version 0.4.16 fixes two stops observed on September 8–9. The September 8 run received a normal
+macOS Quit AppleEvent while its report was still `running`; AppKit exited before the async
+runner could finalize it. Normal Quit now requests the same safe stop checkpoints as `STOP`
+and waits for the final report (`status: stopped`, `finalReason: applicationQuitRequested`).
+Forced termination can still leave a checkpoint; `auto-level.zsh --wait` now reports that as an
+unfinished run with its last counters and stderr, instead of a misleading missing-finalReason
+error. A nonzero `open` exit also remains an error regardless of the report's contents.
+
+The September 9 run's last seven captures were valid battle screens whose `全部自動` OCR
+confidence dropped to 0.5. A five-anchor, measured-grid fallback now accepts that confidence
+for battle classification, while keeping the 0.6 auto-click threshold and independent retreat
+authorization. The original image and OCR evidence are retained in
+`DevelopmentFixtures/ClassifierReplaySources/active-battle-low-auto-20260909/`.
+Unknown observations now include their classifier evidence and OCR confidence in the report.
+Validation passed 436 Swift tests, 12 isolated launcher tests, release build/signature checks,
+and offline replay of all eight retained frames using the packaged executable. An isolated
+external Quit AppleEvent test also confirmed that the worker resumes and saves its final report
+before exiting. The first packaged `doctor` check found both permissions missing after the ad-hoc
+rebuild. After the user renewed the grants, `logs/doctor-0.4.16-authorized.json` confirmed both
+granted; a live read-only preflight classified `missionCompleteRepeatSelected` with zero input
+events (`logs/preflight-0.4.16.json`).
+Compact evidence is in `DevelopmentFixtures/ValidationRuns/auto-level-0.4.16/`.
+No live automation or eight-hour soak was run for this fix.
+
+Version 0.4.19 addresses the ignored repeat-selection input in
+`logs/auto-level-20260909-220516.3scIWq`. The run stopped after 67.429 seconds,
+three result cycles, and eleven posted inputs. The last repeat click produced no
+immediate pixel change, and the final failure-result screenshot still had no selected
+stamp. The click target matches the visible row; these records do not establish why
+macOS/iPhone Mirroring or the game failed to apply the input.
+
+A posted repeat-selection input may now be retried after its twelve-second acknowledgement
+timeout, up to three total posted attempts. This requires the original and current frames
+to establish the same result family, content page, exact repeat target, and an explicitly
+empty stamp region. The absence threshold allows at most 0.1% red noise (the captured frame
+has 4 of 8,968 sampled pixels), compared with the 4% threshold for a selected stamp.
+Missing OCR, uncertain pixels, a changed page or target, and unposted requests cannot
+authorize a retry. A fresh preflight must prove absence again; a delayed selected stamp
+cancels the retry without another click. The existing selected-state latch, STOP, freshness,
+focus checks, runtime/action limits, and cycle accounting remain in force.
+
+Validation passed 473 Swift Testing cases plus two XCTest cases, 12 isolated launcher
+tests, release build/signature verification, the original command's dry run, and offline
+analysis with the packaged binary. Evidence is retained under
+`DevelopmentFixtures/ValidationRuns/auto-level-0.4.19/`. The rebuilt app's Launch Services
+doctor reports Screen Recording and Accessibility permissions missing; renew both grants
+before restarting. No live game input or eight-hour soak was performed.
+
+Version 0.4.20 fixes a false unknown result introduced by 0.4.19's strict stamp-absence
+test. In `logs/auto-level-20260910-003956.qxapyQ`, repeat request 214 was never posted:
+its confirmation image had nine brown separator pixels instead of seven, just over
+the 0.1% absence cutoff, despite the same fully readable failure result. The detector
+now excludes brown hues before counting red stamp pixels. The original absence and
+selection thresholds remain unchanged; all 70 saved frames in the color audit preserve
+their selected/unselected distinction.
+
+Unposted repeat-selection and failure-advance requests now share the existing bounded
+unknown-confirmation recovery with success advances. The same request is observed again
+within its original deadline, at most three total preflight attempts including focus
+failures. Unknown frames never authorize clicks. A restored frame must match the original
+state, target and any established content page; a delayed selected stamp cancels a pending
+repeat click. Rejection diagnostics include the classification evidence. Incident evidence
+and validation are retained under `DevelopmentFixtures/ValidationRuns/auto-level-0.4.20/`.
+
+Validation passed 480 Swift Testing cases plus two XCTest cases, 12 launcher cases,
+release build/signature verification and launcher dry run. The packaged binary now classifies
+both incident images as `missionFailed` with explicit unselected proof. Its Launch Services
+doctor reports Screen Recording and Accessibility missing after the rebuild; renew both grants
+before running again. No live game input or long-duration soak was performed.
+
 Analyze an existing PNG without requesting macOS privacy permissions or initializing the iPhone Mirroring connection:
 
 ```sh
@@ -578,7 +836,7 @@ open -W -n ".build/Mirror Probe.app" --args analyze \
   --report "$PWD/captures/analysis-report.json"
 ```
 
-The fixed `zh-Hant-v1` profile uses Vision revision 3 with accurate `zh-Hant` and `en-US` recognition. Analysis schema version 2 records the SHA-256 of the exact encoded PNG bytes as `image.pngSHA256`, so a report can be checked against its source image rather than accidentally reused with a newer PNG at the same path. Every report also records OCR confidence and normalized top-left rectangles, plus `readOnly: true`, `inputEventsPosted: 0`, and `actionAuthorization: none`; `allowedActions` and `policyGatedActions` are planning evidence, never permission by themselves to click.
+Auto-level analysis retains the `zh-Hant-v1` layout-profile argument for compatibility but does not invoke OCR. Reports record `recognitionMode: visualRegions`, `ocr.engine: none`, and empty `ocr.observations`; the remaining OCR fields are marked unused. Analysis schema version 2 records the SHA-256 of the exact encoded PNG bytes as `image.pngSHA256`, so a report can be checked against its source image rather than accidentally reused with a newer PNG at the same path. Actual template scores are recorded in `classification.evidence[].visualMatch` for results and `battleVisualMatch` for battle controls. Reports also include `readOnly: true`, `inputEventsPosted: 0`, and `actionAuthorization: none`; `allowedActions` and `policyGatedActions` are planning evidence, never permission by themselves to click.
 
 `analyze-file` opens its input exactly once with `O_RDONLY | O_CLOEXEC | O_NOFOLLOW` plus `O_NONBLOCK`; the last flag lets it reject a FIFO without waiting for a writer. A final-component symbolic link is also rejected. It uses `fstat` on that same descriptor to require a regular file whose advertised size is at most 50 MiB, then performs a bounded read of at most 50 MiB plus one byte. The resulting in-memory bytes are both hashed and supplied to ImageIO. ImageIO-reported width, height, and the 25-megapixel limit are validated before decoding.
 
@@ -607,7 +865,82 @@ If an unposted EXP request now sees a verified loot page, it is cancelled and th
 processed before a new action is authorized. Other existing modal/retreat cancellation rules still
 apply; an unsupported state or content-page change stops instead of reusing stale coordinates.
 
-The battle detector requires multiple independent, layout-constrained anchors, such as `第…場戰鬥`, `戰利品…`, and controls such as `暫停`, `撤退`, or `全部自動`. The unique `全部自動` target may still be located as classification evidence and for supervised diagnostics, but the auto-level runner never executes it: the control is a toggle and the run requires the game's default automatic mode to be on. `撤退` is merely located as a policy-gated target until the temporal detector confirms a stalled defeat. OCR remains diagnostic for modal contents, but complete calibrated modal geometry takes priority over OCR conflicts or missing text. Without such geometry, empty OCR, low-confidence uncorroborated markers, conflicting states, invalid geometry, inventory-full, and unknown screens produce no ordinary executable action.
+Version 0.4.18 also tolerates a briefly obscured successful-result title during confirmation: an
+unknown frame with no actions or adverse evidence may trigger another full preflight of the same
+unposted success-advance request. These retries share the foreground activation budget of three
+total attempts with a one-second backoff. They retain the original 12-second action deadline,
+expected EXP/loot page, exact target, and posted-attempt count. The obscured frame authorizes no
+input; the title and page must be recognized again and all ordinary input checks must pass before
+posting. Persistent unknown, invalid/conflicting evidence, and unsupported transitions still stop.
+Reports distinguish `resultConfirmationRetry` from foreground activation failures and record
+`resultObservationFailures` on the eventual posted action or exhausted confirmation.
+
+Version 0.4.22 addressed intact successful-result titles that whole-frame Vision reads at 0.5
+confidence on dense loot pages. Only a unique, complete title in its measured header region,
+a trusted repeat row and EXP/loot header, and a rendered selection stamp qualify for one focused
+OCR pass on the same image. The focused pass must read the same title in the same position at the
+unchanged 0.6 threshold; every other original OCR observation is retained for full reclassification.
+Missing or obscured titles, ambiguous reads, weak page evidence, and conflicting markers still fail
+closed. Reports retain original whole-frame OCR and record the actual focused title observation
+with `source=focusedResultTitle` and its original confidence in classification evidence.
+
+This fixes both an initial unknown-result stop and an EXP-to-loot click whose successful page
+transition could not be acknowledged because loot was classified unknown. It does not change
+click coordinates, posting retries, acknowledgement deadlines, or foreground safety checks.
+The two 2026-09-11 source runs, offline replays, and validation are recorded under
+`DevelopmentFixtures/ValidationRuns/auto-level-0.4.22/`.
+
+Version 0.4.23 replaces result-page OCR decisions with fixed visual-region matching. It matches
+the completion/failure banner, EXP/loot header, and repeat label independently, then combines
+those matches with the selected/empty red-stamp detector. Its lower edge is now 0.260 instead
+of 0.270: the original rectangle included the first loot row, causing item text to appear as
+a partial selection stamp. The red-ink and selected/empty thresholds remain unchanged.
+Recognized result pages and
+measured wide modals do not run OCR. Other screens, including battle progress, keep their existing
+recognition. OCR cannot supply a missing result marker or authorize a result-page fallback.
+
+Each region uses captured 1x/2x reference samples with at most one logical pixel of alignment
+tolerance. A match requires both correlation and absolute luminance agreement at 0.94 or above;
+brightness-invariant similarity alone would accept the dimmed result behind a modal. Modal
+geometry has priority. All three regions must agree, and an ambiguous selection stamp or a
+missing/occluded marker yields no result action. Dynamic item/EXP rows and the phone status bar
+are excluded. Click preflight still recaptures the exact window and revalidates the visual state,
+page identity, target, foreground, obstruction, and original deadlines.
+
+Visual classification evidence omits the OCR `observation` and includes a structured
+`visualMatch` containing the marker, fixed region, and measured similarity. These scores are not
+OCR confidence. Successful and failed unselected results use the measured repeat-label center;
+selected results retain the existing fixed upper continuation point. Original OCR-based fixtures
+remain readable for historical regression tests, but do not govern live result actions.
+
+Reference-source hashes and the native positive/negative image corpus are retained under
+`DevelopmentFixtures/ClassifierReplaySources/result-visual-20260911/`. Regenerate the embedded
+samples with `python3 scripts/generate-result-visual-templates.py` (NumPy/OpenCV are development-only
+dependencies; runtime matching is Swift). Calibration images are identified in `templates.json`;
+the corpus is regression coverage, not a claim of universal recognition accuracy.
+
+Version 0.4.24 completes the removal of OCR from auto-level, including normal observations,
+action preflight, and the final capture of a stall-confirmation burst. Battle-page identity uses only the fixed `跳過` and `全部自動` image regions. The
+adjacent `技能` control is excluded because it changes brightness during combat. Loot counts
+and their shifting label are also excluded. The original 0.4.24 normal-pause requirement was
+replaced in 0.4.27 by the retreat-control requirement described above. The ordinary auto-level
+flow creates no auto-toggle action: it relies on the game’s configured automatic mode and
+verifies activity within 30 seconds, with the 0.4.31 exception for an initially frozen battle.
+An occluded required footer/retreat marker or unfamiliar
+layout cannot establish a monitorable battle.
+
+Battle activity compares captured HP/log image regions and requires significant pixel change
+there as well as change in the overall gameplay region. It does not parse HP numbers, read log
+text, or treat the phone clock or enemy animation alone as progress. The same battle ID, window,
+input generation, and sample-gap limits remain mandatory. Frozen-screen recovery retains its
+existing dense five-second visual confirmation and final preflight; a single battle screenshot
+only locates `撤退` as a policy-gated target.
+
+Result pages retain the visual matching introduced in 0.4.23. Central modals retain the existing
+measured one-row/two-row upper-button rule. Unsupported screens remain `unknown` with no action;
+there is no OCR fallback. Character-reroll number recognition is a separate workflow and keeps
+its existing OCR and pixel checks. Validation and the read-only live result are recorded under
+`DevelopmentFixtures/ValidationRuns/auto-level-0.4.24/`.
 
 ### Live-observed failure flow and policy boundary
 
@@ -616,20 +949,23 @@ A natural battle failure was observed to stop on an apparently stable battle fra
 That stalled-defeat condition is temporal, not a safe single-frame state. At the start of every
 new battle, the runner assumes the configured default `全部自動` mode is already on, posts no
 input, and arms a bounded validator. The battle must then produce genuine, pixel-corroborated
-HP/log progress within 30 seconds or the run stops. An encounter, event, or defeat prompt is not
+HP/log progress within 30 seconds or the run stops, except that the battle present in the first
+session capture may enter the one-time startup recovery described in 0.4.31. An encounter,
+event, or defeat prompt is not
 accepted as progress; after closing a prompt within the same battle, the runner starts fresh
 30-second activity and stall baselines bound to the new input generation. Only after that normal
-activity has been independently verified can the stalled-defeat detector begin its visual check.
-It then requires the unique battle-layout anchors and at least five dense, consecutive samples
+activity has been independently verified can the ordinary stalled-defeat detector begin its
+visual check; startup recovery uses its separate 30-second observation requirement.
+Both paths require the unique battle-layout anchors and at least five dense, consecutive samples
 whose gameplay ROI remains nearly unchanged for at least five seconds; samples may be no more than
 three seconds apart. A stable pair starts a capture-only burst with a 400 ms pause between captures
 and a seven-second time bound; actual capture overhead adds to that interval. Both the previous
 image and the fixed starting image must remain close, so gradual accumulated changes also cancel
-confirmation. Only the boundaries run OCR; intermediate images establish visual continuity and
+confirmation. The boundaries recheck the battle image regions; intermediate images establish visual continuity and
 are never represented as newly recognized battle states. The burst honors STOP and the session
-deadline without borrowing focus. HP values are diagnostic only and are not required for this frozen-screen
-decision. A moving frame, unknown/non-battle state, prompt, pause, window change, input, or sampling
-gap immediately clears the candidate. The changing phone status bar is outside the ROI, and the
+deadline without borrowing focus. No HP numbers are inferred or required for this frozen-screen
+decision. A moving frame, unknown/non-battle state, prompt, missing retreat, window change, input, or sampling
+gap immediately clears the candidate. The changing phone status bar and bottom control/skill tray are outside the gameplay ROI, and the
 same conditions are checked again immediately before `撤退`. A single screenshot never authorizes
 `撤退` or its confirmation.
 
@@ -666,7 +1002,7 @@ open -W -n ".build/Mirror Probe.app" --args click \
 Launch Services does not reliably relay the app's standard output to the shell, so `--report` persists the JSON result. The click command captures `before.png` and `after.png`, refuses blank frames or changed window geometry, requires the exact mirror window to be active and topmost at the point, and sends exactly one mouse-down/up pair. Do not select a point that can purchase, delete, sell, overwrite, or otherwise make an irreversible choice.
 
 The `click` subcommand remains a supervised feasibility probe. The separate `run` command is the
-bounded automation path: it recognizes explicit states, uses only state-specific target regions,
+automation path: it recognizes explicit states, uses only state-specific target regions,
 performs a fresh preflight classification before every input, and stops when those guarantees no
 longer hold.
 

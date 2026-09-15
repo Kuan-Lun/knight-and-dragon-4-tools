@@ -1,0 +1,53 @@
+{
+  "version": "0.4.18",
+  "build": 41,
+  "swiftTesting": {
+    "passed": 459,
+    "suites": 36
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "launcherTests": {
+    "passed": 12,
+    "appLaunched": false
+  },
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "launcherDryRun": "passed",
+  "packagedDoctor": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-09T10:33:51Z",
+    "windows": []
+  },
+  "offlineReplay": [
+    {
+      "fixture": "before",
+      "state": "missionCompleteRepeatSelected",
+      "pngSHA256": "c59bb0ded4c3c511b876a4e06843fbbe262dd48897e0dc22faaa1db502712e3a",
+      "allowedActions": [
+        "advanceMissionComplete"
+      ],
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    },
+    {
+      "fixture": "confirmation",
+      "state": "unknown",
+      "pngSHA256": "d155e21745f916a45b1f5e6e07c81a4c425336e82c897ac1fe068bc736b5e156",
+      "allowedActions": [],
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    }
+  ],
+  "liveAutomationRun": false,
+  "recoveryValidation": "fixture-based simulated restoration plus bounded retry/controller tests; no live overlay recovery run"
+}

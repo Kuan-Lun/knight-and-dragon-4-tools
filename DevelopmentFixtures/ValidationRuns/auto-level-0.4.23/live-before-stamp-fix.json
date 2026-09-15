@@ -1,0 +1,74 @@
+{
+  "classification" : {
+    "allowedActions" : [
+
+    ],
+    "evidence" : [
+      {
+        "detail" : "resultVisualRejected: ambiguousSelectionStamp, successTitle=0.98846, failureTitle=0.46371, experienceHeader=0.88508, lootHeader=0.97075, repeatOption=0.97389",
+        "kind" : "lowConfidenceMarker"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "unknown"
+  },
+  "command" : "analyze",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.3333333333333333,
+    "luminanceP95" : 0.9215686274509803,
+    "luminanceStandardDeviation" : 0.20511111505719173,
+    "meanLuminance" : 0.8080422537353936,
+    "nearBlackRatio" : 0.00029979695569818624,
+    "quantizedColorCount" : 125,
+    "sampledPixels" : 73383
+  },
+  "image" : {
+    "height" : 890,
+    "orientation" : "up",
+    "pngSHA256" : "45ee0776aec4d5e19cf02879a3545a3f360a4e1e7acfec4277539e3073fbfad8",
+    "width" : 406
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "appleVision",
+    "languages" : [
+      "zh-Hant",
+      "en-US"
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "accurate",
+    "requestRevision" : 3,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "capturedImagePath" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/result-visual-0.4.23-live.png",
+    "kind" : "mirrorCapture",
+    "window" : {
+      "active" : true,
+      "applicationName" : "iPhone鏡像輸出",
+      "bundleIdentifier" : "com.apple.ScreenContinuity",
+      "height" : 890,
+      "onScreen" : true,
+      "processID" : 91507,
+      "title" : "iPhone鏡像輸出",
+      "width" : 406,
+      "windowID" : 65194,
+      "x" : 0,
+      "y" : 30
+    }
+  },
+  "status" : "unknown",
+  "timestamp" : "2026-09-10T21:47:22Z"
+}

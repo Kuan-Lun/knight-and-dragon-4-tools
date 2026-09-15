@@ -1,0 +1,104 @@
+{
+  "sourceRun": "logs/auto-level-20260915-132057.KbWxRU",
+  "sessionID": "20260915-132057-aa66e9ec",
+  "battleSessionID": "20260915-132057-aa66e9ec-battle-1",
+  "originalSessionStartedAtElapsedSeconds": 0.1561047916766256,
+  "originalFinalReason": "allAutoDidNotProduceProgress(battleSessionID: 20260915-132057-aa66e9ec-battle-1, timeout: 30.0)",
+  "originalActionsPosted": 0,
+  "originalCompletedCycles": 0,
+  "window": {
+    "active": true,
+    "applicationName": "iPhone鏡像輸出",
+    "bundleIdentifier": "com.apple.ScreenContinuity",
+    "height": 890,
+    "onScreen": true,
+    "processID": 91507,
+    "title": "iPhone鏡像輸出",
+    "width": 406,
+    "windowID": 65194,
+    "x": 0,
+    "y": 30
+  },
+  "frames": [
+    {
+      "captureSequence": 13,
+      "capturedAtElapsedSeconds": 19.475316416705027,
+      "frameFingerprint": "d6f959fb2ffc0b88d776c2210ea0faeef99369ee04ed5acf88410b4b3eadc701",
+      "sourcePath": "logs/auto-level-20260915-132057.KbWxRU/diagnostics/capture-0013.png",
+      "role": "recent",
+      "state": "battle",
+      "fixture": "startup-frozen-battle-before",
+      "pngSHA256": "440accf322dabc66a233efd70a6267f4dae4faf95f8402a62dc4071bf13c6830"
+    },
+    {
+      "captureSequence": 14,
+      "capturedAtElapsedSeconds": 21.127471999963745,
+      "frameFingerprint": "d6f959fb2ffc0b88d776c2210ea0faeef99369ee04ed5acf88410b4b3eadc701",
+      "sourcePath": "logs/auto-level-20260915-132057.KbWxRU/diagnostics/capture-0014.png",
+      "role": "recent",
+      "state": "battle",
+      "fixture": "startup-frozen-battle-before",
+      "pngSHA256": "440accf322dabc66a233efd70a6267f4dae4faf95f8402a62dc4071bf13c6830"
+    },
+    {
+      "captureSequence": 15,
+      "capturedAtElapsedSeconds": 22.729020499857143,
+      "frameFingerprint": "d6f959fb2ffc0b88d776c2210ea0faeef99369ee04ed5acf88410b4b3eadc701",
+      "sourcePath": "logs/auto-level-20260915-132057.KbWxRU/diagnostics/capture-0015.png",
+      "role": "recent",
+      "state": "battle",
+      "fixture": "startup-frozen-battle-before",
+      "pngSHA256": "440accf322dabc66a233efd70a6267f4dae4faf95f8402a62dc4071bf13c6830"
+    },
+    {
+      "captureSequence": 16,
+      "capturedAtElapsedSeconds": 24.319465708220378,
+      "frameFingerprint": "d6f959fb2ffc0b88d776c2210ea0faeef99369ee04ed5acf88410b4b3eadc701",
+      "sourcePath": "logs/auto-level-20260915-132057.KbWxRU/diagnostics/capture-0016.png",
+      "role": "recent",
+      "state": "battle",
+      "fixture": "startup-frozen-battle-before",
+      "pngSHA256": "440accf322dabc66a233efd70a6267f4dae4faf95f8402a62dc4071bf13c6830"
+    },
+    {
+      "captureSequence": 17,
+      "capturedAtElapsedSeconds": 25.922745124902576,
+      "frameFingerprint": "d6f959fb2ffc0b88d776c2210ea0faeef99369ee04ed5acf88410b4b3eadc701",
+      "sourcePath": "logs/auto-level-20260915-132057.KbWxRU/diagnostics/capture-0017.png",
+      "role": "recent",
+      "state": "battle",
+      "fixture": "startup-frozen-battle-before",
+      "pngSHA256": "440accf322dabc66a233efd70a6267f4dae4faf95f8402a62dc4071bf13c6830"
+    },
+    {
+      "captureSequence": 18,
+      "capturedAtElapsedSeconds": 27.47702341666445,
+      "frameFingerprint": "2f334bb070a2d037335228a28fa8bb07be2fd2fd0eff5da8e129276ac0416f2e",
+      "sourcePath": "logs/auto-level-20260915-132057.KbWxRU/diagnostics/capture-0018.png",
+      "role": "recent",
+      "state": "battle",
+      "fixture": "startup-frozen-battle-after",
+      "pngSHA256": "e75f446ea8392825237970ea6d23dba440cc32441208230348edb6e934ada217"
+    },
+    {
+      "captureSequence": 19,
+      "capturedAtElapsedSeconds": 29.132848291657865,
+      "frameFingerprint": "2f334bb070a2d037335228a28fa8bb07be2fd2fd0eff5da8e129276ac0416f2e",
+      "sourcePath": "logs/auto-level-20260915-132057.KbWxRU/diagnostics/capture-0019.png",
+      "role": "recent",
+      "state": "battle",
+      "fixture": "startup-frozen-battle-after",
+      "pngSHA256": "e75f446ea8392825237970ea6d23dba440cc32441208230348edb6e934ada217"
+    },
+    {
+      "captureSequence": 20,
+      "capturedAtElapsedSeconds": 30.725790791679174,
+      "frameFingerprint": "2f334bb070a2d037335228a28fa8bb07be2fd2fd0eff5da8e129276ac0416f2e",
+      "sourcePath": "logs/auto-level-20260915-132057.KbWxRU/final.png",
+      "role": "final",
+      "state": "battle",
+      "fixture": "startup-frozen-battle-after",
+      "pngSHA256": "e75f446ea8392825237970ea6d23dba440cc32441208230348edb6e934ada217"
+    }
+  ]
+}

@@ -60,6 +60,7 @@ public enum AutoLevelInputRejection: Equatable, Sendable {
 }
 
 /// Pure, fail-closed validation for the final boundary between observation and input.
+/// Unlimited sessions omit their deadline; every input still requires an unexpired action.
 public enum AutoLevelInputSafety {
     public static func rejection(
         expectedWindowIdentity: AutoLevelWindowIdentity,
@@ -68,7 +69,7 @@ public enum AutoLevelInputSafety {
         snapshot: AutoLevelInputSnapshot,
         now: TimeInterval,
         actionDeadline: TimeInterval,
-        sessionDeadline: TimeInterval,
+        sessionDeadline: TimeInterval? = nil,
         stopRequested: Bool
     ) -> AutoLevelInputRejection? {
         guard !stopRequested else {
@@ -76,14 +77,14 @@ public enum AutoLevelInputSafety {
         }
         guard now.isFinite,
               actionDeadline.isFinite,
-              sessionDeadline.isFinite,
+              sessionDeadline?.isFinite != false,
               now >= 0,
               actionDeadline >= 0,
-              sessionDeadline >= 0
+              sessionDeadline.map({ $0 >= 0 }) != false
         else {
             return .invalidTiming
         }
-        guard now < sessionDeadline else {
+        if let sessionDeadline, now >= sessionDeadline {
             return .sessionRuntimeExpired
         }
         guard now < actionDeadline else {

@@ -1,0 +1,11 @@
+[0/1] Planning build
+Building for production...
+[0/4] Write sources
+[2/4] Write swift-version--58304C5D6DBC2206.txt
+[4/5] Compiling MirrorProbeCore AllAutoProgressValidator.swift
+[5/7] Compiling MirrorProbe AutomationInputMarker.swift
+[5/7] Write Objects.LinkFileList
+[6/7] Linking mirror-probe
+Build complete! (17.14s)
+/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/.build/Mirror Probe.app: replacing existing signature
+/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/.build/Mirror Probe.app

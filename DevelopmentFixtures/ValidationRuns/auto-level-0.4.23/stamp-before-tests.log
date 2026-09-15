@@ -1,0 +1,40 @@
+[0/1] Planning build
+Building for debugging...
+[0/8] Copying visual-result-live-unselected-loot.png
+[0/7] Write sources
+[2/7] Copying visual-result-corpus.json
+[3/7] Write swift-version--58304C5D6DBC2206.txt
+[5/8] Emitting module MirrorProbeCore
+[6/12] Emitting module MirrorProbe
+[7/10] Emitting module MirrorProbeCoreTests
+[8/10] Compiling MirrorProbeCoreTests VisualResultDetectorTests.swift
+[9/10] Compiling MirrorProbeCoreTests RepeatSelectedStampDetectorTests.swift
+[9/11] Write Objects.LinkFileList
+[10/11] Linking KnightDragonMirrorProbePackageTests
+Build complete! (3.23s)
+Test Suite 'Selected tests' started at 2026-09-11 05:49:56.132.
+Test Suite 'KnightDragonMirrorProbePackageTests.xctest' started at 2026-09-11 05:49:56.133.
+Test Suite 'KnightDragonMirrorProbePackageTests.xctest' passed at 2026-09-11 05:49:56.133.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-11 05:49:56.133.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "Repeat-selected stamp detector" started.
+◇ Test "Red dynamic item rows below the repeat control cannot count as selection ink" started.
+◇ Test "The live unselected loot page excludes the first item row from stamp evidence" started.
+◇ Test case passing 1 argument scale → 2 to "Red dynamic item rows below the repeat control cannot count as selection ink" started.
+◇ Test case passing 1 argument scale → 1 to "Red dynamic item rows below the repeat control cannot count as selection ink" started.
+✘ Test "Red dynamic item rows below the repeat control cannot count as selection ink" recorded an issue with 1 argument scale → 1 at RepeatSelectedStampDetectorTests.swift:49:9: Expectation failed: (detection.redPixelCount → 1368) == 0
+✘ Test "Red dynamic item rows below the repeat control cannot count as selection ink" recorded an issue with 1 argument scale → 1 at RepeatSelectedStampDetectorTests.swift:50:9: Expectation failed: (detection → RepeatSelectedStampDetection(region: MirrorProbeCore.NormalizedRect(x: 0.33, y: 0.205, width: 0.37, height: 0.065), redPixelCount: 1368, sampledPixelCount: 8968)).isClearlyAbsent → false
+✘ Test "Red dynamic item rows below the repeat control cannot count as selection ink" recorded an issue with 1 argument scale → 1 at RepeatSelectedStampDetectorTests.swift:51:9: Expectation failed: !((detection → RepeatSelectedStampDetection(region: MirrorProbeCore.NormalizedRect(x: 0.33, y: 0.205, width: 0.37, height: 0.065), redPixelCount: 1368, sampledPixelCount: 8968)).isPresent → true → true)
+✘ Test "Red dynamic item rows below the repeat control cannot count as selection ink" recorded an issue with 1 argument scale → 2 at RepeatSelectedStampDetectorTests.swift:49:9: Expectation failed: (detection.redPixelCount → 5436) == 0
+✘ Test "Red dynamic item rows below the repeat control cannot count as selection ink" recorded an issue with 1 argument scale → 2 at RepeatSelectedStampDetectorTests.swift:50:9: Expectation failed: (detection → RepeatSelectedStampDetection(region: MirrorProbeCore.NormalizedRect(x: 0.33, y: 0.205, width: 0.37, height: 0.065), redPixelCount: 5436, sampledPixelCount: 35334)).isClearlyAbsent → false
+✘ Test "Red dynamic item rows below the repeat control cannot count as selection ink" recorded an issue with 1 argument scale → 2 at RepeatSelectedStampDetectorTests.swift:51:9: Expectation failed: !((detection → RepeatSelectedStampDetection(region: MirrorProbeCore.NormalizedRect(x: 0.33, y: 0.205, width: 0.37, height: 0.065), redPixelCount: 5436, sampledPixelCount: 35334)).isPresent → true → true)
+✘ Test "Red dynamic item rows below the repeat control cannot count as selection ink" with 2 test cases failed after 0.011 seconds with 6 issues.
+✘ Test "The live unselected loot page excludes the first item row from stamp evidence" recorded an issue at RepeatSelectedStampDetectorTests.swift:30:9: Expectation failed: (detection.redPixelCount → 103) == 0
+✘ Test "The live unselected loot page excludes the first item row from stamp evidence" recorded an issue at RepeatSelectedStampDetectorTests.swift:31:9: Expectation failed: (detection → RepeatSelectedStampDetection(region: MirrorProbeCore.NormalizedRect(x: 0.33, y: 0.205, width: 0.37, height: 0.065), redPixelCount: 103, sampledPixelCount: 8968)).isClearlyAbsent → false
+✘ Test "The live unselected loot page excludes the first item row from stamp evidence" failed after 0.015 seconds with 2 issues.
+✘ Suite "Repeat-selected stamp detector" failed after 0.015 seconds with 8 issues.
+✘ Test run with 2 tests in 1 suite failed after 0.015 seconds with 8 issues.

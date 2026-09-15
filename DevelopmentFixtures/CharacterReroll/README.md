@@ -42,3 +42,18 @@ Only one copy is retained because the other three contained no additional eviden
 
 The raw OCR reports retain their historical `source.capturedImagePath` values. The adjacent renamed
 PNG is tied to each report by the unchanged `image.pngSHA256` value.
+
+## Pixel-guard rejection, September 10, 2026
+
+`total-67-pixel-guard.png` is the unmodified terminal image from
+`logs/character-reroll-20260910-230308.YX8fMX/final-candidate.png` (SHA-256
+`cff32411928ef2f829c1502b24c6bfe24b4afd99825cf41d3577d99d6bdbf957`). The run
+posted 33 rerolls before the final pixel guard cancelled the next click. The page shows Jennie,
+total 67. `total-67-pixel-guard-ocr.json` is a read-only Apple Vision replay of that image.
+`total-67-pixel-guard-focused-ocr.json` records an independent focused Vision revision 3 replay
+using the runtime ROI and source-image coordinate conversion. Its `total:` and `67` fragments
+both have confidence 1.00; the full-frame resolver, focused resolver, and rendered two-glyph
+check agree on below-threshold evidence.
+The old input region started at normalized y=0.08; the replay's clock box extends to about
+y=0.081, confirming the intended status-bar exclusion was incomplete. No before image was
+retained, so this fixture cannot establish the actual temporal difference that ended the run.

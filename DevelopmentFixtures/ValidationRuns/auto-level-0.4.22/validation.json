@@ -1,0 +1,157 @@
+{
+  "version": "0.4.22",
+  "build": 45,
+  "swiftTesting": {
+    "passed": 505,
+    "suites": 41
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "launcherTests": {
+    "passed": 12,
+    "appLaunched": false
+  },
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "launcherDryRun": "passed",
+  "packagedDoctor": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-10T21:23:43Z",
+    "windows": []
+  },
+  "offlineReplay": [
+    {
+      "fixture": "startup",
+      "state": "missionCompleteRepeatSelected",
+      "pngSHA256": "1a12308ad0e2c1f3b59e73b4e7e152434c322c6d6abe8835dcbfba0d2861abe5",
+      "allowedActions": [
+        "advanceMissionComplete"
+      ],
+      "titleEvidence": [
+        {
+          "detail": "任務完成!; source=focusedResultTitle; originalConfidence=0.5; regionOfInterest=(x=0.25, y=0.07, width=0.5, height=0.08)",
+          "kind": "missionCompleteTitle",
+          "observation": {
+            "confidence": 1,
+            "rect": {
+              "height": 0.023656289842393666,
+              "width": 0.20953532627650673,
+              "x": 0.3903062297353822,
+              "y": 0.1042829663338225
+            },
+            "text": "任務完成！"
+          }
+        }
+      ],
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    },
+    {
+      "fixture": "experience",
+      "state": "missionCompleteRepeatSelected",
+      "pngSHA256": "1af0059233c5b2885d1b672591030af86a08e94fa32a763db8924c5e3e614cd4",
+      "allowedActions": [
+        "advanceMissionComplete"
+      ],
+      "titleEvidence": [
+        {
+          "detail": "任務完成!",
+          "kind": "missionCompleteTitle",
+          "observation": {
+            "confidence": 1,
+            "rect": {
+              "height": 0.023946468481856775,
+              "width": 0.2073743660461726,
+              "x": 0.39153574826979337,
+              "y": 0.10285234696514711
+            },
+            "text": "任務完成！"
+          }
+        }
+      ],
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    },
+    {
+      "fixture": "loot-after",
+      "state": "missionCompleteRepeatSelected",
+      "pngSHA256": "368211cc89f68e7a65f5a05bf723ef0d596417388c86c1373a3c530fbdcd2f4f",
+      "allowedActions": [
+        "advanceMissionComplete"
+      ],
+      "titleEvidence": [
+        {
+          "detail": "任務完成!; source=focusedResultTitle; originalConfidence=0.5; regionOfInterest=(x=0.25, y=0.07, width=0.5, height=0.08)",
+          "kind": "missionCompleteTitle",
+          "observation": {
+            "confidence": 1,
+            "rect": {
+              "height": 0.023621039920383027,
+              "width": 0.21197748419099252,
+              "x": 0.3903166783884636,
+              "y": 0.1043005910837067
+            },
+            "text": "任務完成！"
+          }
+        }
+      ],
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    },
+    {
+      "fixture": "loot-final",
+      "state": "missionCompleteRepeatSelected",
+      "pngSHA256": "e3adcdce20cdec79823310b4353af811e132a79e4b0a265b6bcf66edd5075f4c",
+      "allowedActions": [
+        "advanceMissionComplete"
+      ],
+      "titleEvidence": [
+        {
+          "detail": "任務完成!; source=focusedResultTitle; originalConfidence=0.5; regionOfInterest=(x=0.25, y=0.07, width=0.5, height=0.08)",
+          "kind": "missionCompleteTitle",
+          "observation": {
+            "confidence": 1,
+            "rect": {
+              "height": 0.023621039920383027,
+              "width": 0.21197748419099252,
+              "x": 0.3903166783884636,
+              "y": 0.1043005910837067
+            },
+            "text": "任務完成！"
+          }
+        }
+      ],
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    },
+    {
+      "fixture": "occluded",
+      "state": "unknown",
+      "pngSHA256": "d155e21745f916a45b1f5e6e07c81a4c425336e82c897ac1fe068bc736b5e156",
+      "allowedActions": [],
+      "titleEvidence": [],
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    }
+  ],
+  "liveAutomationRun": false,
+  "recoveryValidation": "Actual saved startup and EXP-to-loot sequences replayed through OCR refinement and controller tests. Original occluded title remains unknown. No live game input or long-duration run."
+}

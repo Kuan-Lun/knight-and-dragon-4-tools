@@ -1,0 +1,21 @@
+{
+  "nextStep" : "Run doctor --request-permissions.",
+  "postEventPermission" : "missing",
+  "screenCapturePermission" : "granted",
+  "timestamp" : "2026-09-11T01:23:10Z",
+  "windows" : [
+    {
+      "active" : true,
+      "applicationName" : "iPhone鏡像輸出",
+      "bundleIdentifier" : "com.apple.ScreenContinuity",
+      "height" : 890,
+      "onScreen" : true,
+      "processID" : 91507,
+      "title" : "iPhone鏡像輸出",
+      "width" : 406,
+      "windowID" : 65194,
+      "x" : 0,
+      "y" : 30
+    }
+  ]
+}

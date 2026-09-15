@@ -102,6 +102,49 @@ struct AutoLevelWindowAvailabilityRetryTests {
         #expect(longerSession.validateBoundary(at: 105) == .recoveryExpired)
     }
 
+    @Test("An unlimited session retains the fixed recovery deadline and query cap")
+    func noSessionDeadlineStillBoundsRecovery() {
+        var slowQuery = AutoLevelWindowAvailabilityRetry(startedAt: 100)
+        #expect(slowQuery.sessionDeadline == nil)
+        #expect(slowQuery.actionDeadline == nil)
+        #expect(slowQuery.validateBoundary(at: 100) == nil)
+        #expect(slowQuery.recordMissing(at: 104.75) == .retry(nextAttempt: 2, delaySeconds: 0.25))
+        #expect(slowQuery.validateBoundary(at: 105) == .recoveryExpired)
+        #expect(slowQuery.recordMissing(at: 105.5) == .stop(reason: .recoveryExpired))
+
+        var missingQueries = AutoLevelWindowAvailabilityRetry(startedAt: 100, sessionDeadline: nil)
+        #expect(missingQueries.recordMissing(at: 100) == .retry(nextAttempt: 2, delaySeconds: 1))
+        #expect(missingQueries.recordMissing(at: 101) == .retry(nextAttempt: 3, delaySeconds: 1))
+        #expect(missingQueries.recordMissing(at: 102) == .retry(nextAttempt: 4, delaySeconds: 1.5))
+        #expect(missingQueries.recordMissing(at: 103.5) == .stop(reason: .attemptsExhausted))
+        #expect(missingQueries.attempt == AutoLevelWindowAvailabilityRetry.maximumAttempts)
+    }
+
+    @Test("An unlimited session cannot renew an action deadline while recovering its window")
+    func noSessionDeadlineRetainsOriginalActionDeadline() {
+        var retry = AutoLevelWindowAvailabilityRetry(startedAt: 100, actionDeadline: 100.25)
+        #expect(retry.recordMissing(at: 100) == .retry(nextAttempt: 2, delaySeconds: 0.25))
+        #expect(retry.validateBoundary(at: 100.125) == nil)
+        #expect(retry.validateBoundary(at: 100.25) == .actionExpired)
+        #expect(retry.actionDeadline == 100.25)
+        #expect(retry.recordMissing(at: 101) == .stop(reason: .actionExpired))
+
+        var longerAction = AutoLevelWindowAvailabilityRetry(startedAt: 100, actionDeadline: 110)
+        #expect(longerAction.validateBoundary(at: 105) == .recoveryExpired)
+    }
+
+    @Test("An unlimited session still honors STOP and rejects clock rollback")
+    func noSessionDeadlineRetainsStopAndClockGuards() {
+        var stopped = AutoLevelWindowAvailabilityRetry(startedAt: 100)
+        #expect(stopped.recordMissing(at: 100) == .retry(nextAttempt: 2, delaySeconds: 1))
+        #expect(stopped.validateBoundary(at: 101, stopRequested: true) == .stopRequested)
+        #expect(stopped.validateBoundary(at: 102) == .stopRequested)
+
+        var rollback = AutoLevelWindowAvailabilityRetry(startedAt: 100)
+        #expect(rollback.validateBoundary(at: 101) == nil)
+        #expect(rollback.recordMissing(at: 100.5) == .stop(reason: .invalidClock))
+    }
+
     @Test("The earliest deadline determines the boundary even when several have elapsed")
     func earliestDeadlineWins() {
         var sessionFirst = AutoLevelWindowAvailabilityRetry(
@@ -116,6 +159,16 @@ struct AutoLevelWindowAvailabilityRetryTests {
             startedAt: 100, sessionDeadline: 107, actionDeadline: 106
         )
         #expect(recoveryFirst.validateBoundary(at: 108) == .recoveryExpired)
+    }
+
+    @Test("Coincident deadlines preserve session then action then recovery precedence")
+    func coincidentDeadlinePrecedence() {
+        var allEqual = AutoLevelWindowAvailabilityRetry(
+            startedAt: 100, sessionDeadline: 105, actionDeadline: 105
+        )
+        #expect(allEqual.validateBoundary(at: 105) == .sessionExpired)
+        var actionAndRecovery = AutoLevelWindowAvailabilityRetry(startedAt: 100, actionDeadline: 105)
+        #expect(actionAndRecovery.validateBoundary(at: 105) == .actionExpired)
     }
 
     @Test("Non-finite configuration and observed clocks fail closed")
@@ -135,6 +188,15 @@ struct AutoLevelWindowAvailabilityRetryTests {
         }
         var negativeStart = AutoLevelWindowAvailabilityRetry(startedAt: -1, sessionDeadline: 200)
         #expect(negativeStart.validateBoundary(at: 100) == .invalidClock)
+
+        var negativeSession = AutoLevelWindowAvailabilityRetry(startedAt: 100, sessionDeadline: -1)
+        #expect(negativeSession.validateBoundary(at: 100) == .invalidClock)
+        for invalid in [TimeInterval.nan, .infinity, -.infinity, -1] {
+            var actionWithoutSession = AutoLevelWindowAvailabilityRetry(startedAt: 100, actionDeadline: invalid)
+            #expect(actionWithoutSession.validateBoundary(at: 100) == .invalidClock)
+            var timeWithoutSession = AutoLevelWindowAvailabilityRetry(startedAt: 100)
+            #expect(timeWithoutSession.validateBoundary(at: invalid) == .invalidClock)
+        }
     }
 
     @Test("Clock rollback cannot reset or extend recovery")

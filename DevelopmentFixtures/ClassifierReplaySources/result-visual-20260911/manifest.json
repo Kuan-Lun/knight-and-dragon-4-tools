@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "coordinateConvention": "normalized top-left origin; x/y/width/height against full 406x890 or 812x1780 captures",
+  "verification": "Visual inspection of every original PNG; legacy OCR classifications do not define these expected labels.",
+  "fixtures": [
+    {
+      "resource": "mission-repeat-selected-srlected",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "experience",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "55ec0601f8d3ecabe4468592e287608c93f8aaed3d9f9b700fc20abad9ab6df2",
+      "note": "Visible success title, EXP page header, red SELECTED stamp."
+    },
+    {
+      "resource": "mission-repeat-unselected",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-unselected.png",
+      "expectedState": "missionComplete",
+      "expectedPage": "experience",
+      "expectedIntent": "selectMissionRepeat",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "857d6098bd7a604b359776b5b50d241ac1cbf46ddad82d8d351b8fbdec578c83",
+      "note": "Same result EXP layout without red SELECTED stamp."
+    },
+    {
+      "resource": "mission-result-no-modal",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-result-no-modal.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "loot",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "50c82a52974ac47a085d8a3305f08e012f43a32debf1d7c9dd47816b483da786",
+      "note": "Visible success title, loot header and sell-all control, SELECTED stamp."
+    },
+    {
+      "resource": "failure-repeat-confirmation-before",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/failure-repeat-confirmation-before.png",
+      "expectedState": "missionFailed",
+      "expectedPage": "experience",
+      "expectedIntent": "selectMissionRepeat",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "a9516cecc2e2f9f7b9e54c92018dda546a0434357489ce81ae11b2bbf9064eeb",
+      "note": "Visible failure title, EXP header, repeat row without stamp."
+    },
+    {
+      "resource": "failure-repeat-confirmation-final",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/failure-repeat-confirmation-final.png",
+      "expectedState": "missionFailed",
+      "expectedPage": "experience",
+      "expectedIntent": "selectMissionRepeat",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "f766c7b9cee4b90b781e7ed59410193e4e781ce3a48092d9fead7306732c89aa",
+      "note": "Same failed repeat state after unsuccessful selection."
+    },
+    {
+      "resource": "visual-result-failure-selected",
+      "sourceImage": "DevelopmentFixtures/ButtonGeometryCorpus/captures/three-cycle-0.3.6-20260904-022534/frames/action-0002-advanceMissionFailure-before.png",
+      "expectedState": "missionFailedRepeatSelected",
+      "expectedPage": "experience",
+      "expectedIntent": "advanceMissionFailure",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "ce886bbe93319de612a0399d6783a506286136188aca234ceec7da31e33e6ec2",
+      "note": "Visible failure title, EXP header and red SELECTED stamp."
+    },
+    {
+      "resource": "result-title-occlusion-before",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/result-title-occlusion-before.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "experience",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "c59bb0ded4c3c511b876a4e06843fbbe262dd48897e0dc22faaa1db502712e3a",
+      "note": "Unobscured control for next negative."
+    },
+    {
+      "resource": "result-title-occlusion-confirmation",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/result-title-occlusion-confirmation.png",
+      "expectedState": "unknown",
+      "expectedPage": null,
+      "expectedIntent": null,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "d155e21745f916a45b1f5e6e07c81a4c425336e82c897ac1fe068bc736b5e156",
+      "note": "Black floating pill covers success title. Same visible EXP header, repeat row and SELECTED stamp: must reject result authorization."
+    },
+    {
+      "resource": "mission-skill-acquired-one-button",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-skill-acquired-one-button.png",
+      "expectedState": "unknown",
+      "expectedPage": null,
+      "expectedIntent": null,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "a7185d88baacf1de3831e8d2e3fcedf99f23c7c93ed658de96260bd7ceeb8338",
+      "note": "Complete result title, EXP header and SELECTED remain visible but dimmed behind active skill-acquired modal. Must not authorize result advance."
+    },
+    {
+      "resource": "loot-two-buttons",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/loot-two-buttons.png",
+      "expectedState": "unknown",
+      "expectedPage": null,
+      "expectedIntent": null,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "5d54d3ab250821cc64aab1cc003de6f34ba743725a1c45f056b25b0640a8c8ca",
+      "note": "Complete title, loot header and SELECTED dimmed behind yes/no collection modal."
+    },
+    {
+      "resource": "adventurer-two-buttons",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/adventurer-two-buttons.png",
+      "expectedState": "unknown",
+      "expectedPage": null,
+      "expectedIntent": null,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "baae0bb2f01c221b9f2813d421ed143b20e9797b7fbe60b78abdfc1c192a1cdc",
+      "note": "Complete title, loot header and SELECTED darkened behind recruitment modal."
+    },
+    {
+      "resource": "battle-no-modal",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/battle-no-modal.png",
+      "expectedState": "unknown",
+      "expectedPage": null,
+      "expectedIntent": null,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "f8154c081ceb175dd3a5bfad9bdaab439850994078ed3dfe57d1f85d874ff949",
+      "note": "Battle controls/grid, no result header."
+    },
+    {
+      "resource": "returned-party-manual-stop",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/returned-party-manual-stop.png",
+      "expectedState": "unknown",
+      "expectedPage": null,
+      "expectedIntent": null,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "9c4cf72261062dfe65c07ec9b19afb036ce50970b8c2d7658af6ef0882b8763c",
+      "note": "Map and returned-party modal, no result layout."
+    },
+    {
+      "resource": "low-result-title-startup",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-startup.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "loot",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "1a12308ad0e2c1f3b59e73b4e7e152434c322c6d6abe8835dcbfba0d2861abe5",
+      "note": "2x long loot page from 05:14 run. OCR title confidence .5 but visibly complete."
+    },
+    {
+      "resource": "low-result-title-experience",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-experience.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "experience",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "1af0059233c5b2885d1b672591030af86a08e94fa32a763db8924c5e3e614cd4",
+      "note": "2x EXP frame from 05:16 run. Max-level party rows differ from earlier EXP examples."
+    },
+    {
+      "resource": "low-result-title-loot-after",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-loot-after.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "loot",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "368211cc89f68e7a65f5a05bf723ef0d596417388c86c1373a3c530fbdcd2f4f",
+      "note": "2x different long loot page from 05:16 postclick frame."
+    },
+    {
+      "resource": "visual-result-latest-experience",
+      "sourceImage": "logs/auto-level-20260911-052556.F6y52z/diagnostics/capture-0028.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "experience",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "13bc8d1c03457e2c1b6ac52bb6de3a6a060239b3a3c22502e80e3567d9178c1f",
+      "note": "Original native-size PNG; visible complete result header and red SELECTED stamp. Manually verified."
+    },
+    {
+      "resource": "visual-result-latest-loot-after",
+      "sourceImage": "logs/auto-level-20260911-052556.F6y52z/diagnostics/capture-0029.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "loot",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "e2a69486d3fefe43d64f2db5fe4ffead4e0a3305aadce1cec8e1c1e77e2313d6",
+      "note": "Original native-size PNG; visible complete result header and red SELECTED stamp. Manually verified."
+    },
+    {
+      "resource": "visual-result-latest-loot-final",
+      "sourceImage": "logs/auto-level-20260911-052556.F6y52z/final.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "loot",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "e9663ae34f3a3293b5a815e6860e518a17ed53902a7f41d6d912b3eaab03fa59",
+      "note": "Original native-size PNG; visible complete result header and red SELECTED stamp. Manually verified."
+    },
+    {
+      "resource": "visual-result-latest-live-loot",
+      "sourceImage": "logs/result-visual-live-source.png",
+      "expectedState": "missionCompleteRepeatSelected",
+      "expectedPage": "loot",
+      "expectedIntent": "advanceMissionSuccess",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "a0051e01a851a8c0040210e2385dc1868cc9d861ba01293dd2c38ed3bd51143a",
+      "note": "Original native-size PNG; visible complete result header and red SELECTED stamp. Manually verified."
+    },
+    {
+      "resource": "visual-result-live-unselected-loot",
+      "sourceImage": "logs/result-visual-0.4.23-live.png",
+      "expectedState": "missionComplete",
+      "expectedPage": "loot",
+      "expectedIntent": "selectMissionRepeat",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "45ee0776aec4d5e19cf02879a3545a3f360a4e1e7acfec4277539e3073fbfad8",
+      "note": "User-parked live loot page at 05:47, visibly no SELECTED stamp. Old stamp ROI included first item text; retained as a regression independent of template calibration."
+    }
+  ]
+}

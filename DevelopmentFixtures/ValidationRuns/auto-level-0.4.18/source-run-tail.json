@@ -1,0 +1,95 @@
+{
+  "sessionID": "20260909-181123-6857a1ba",
+  "startedAt": "2026-09-09T10:11:23Z",
+  "endedAt": "2026-09-09T10:16:22Z",
+  "status": "error",
+  "completedCycles": 15,
+  "actionsPosted": 66,
+  "finalReason": "Safety check refused the action: the game state changed from missionCompleteRepeatSelected to unknown, or its result page changed, during action confirmation",
+  "sourceReport": "logs/auto-level-20260909-181123.B5Jt4k/run-report.json",
+  "events": [
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 66, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"4be117efce2b7121344925bcd596c622725ba0b3c51d53488185865051b558f7\", completedCycles: 14))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.35557718528454907",
+      "elapsedSeconds": 297.6443087917287,
+      "frameFingerprint": "f7fe8474f20b9d06bd5483621498ee6f409ce839b0c9f92c06ce80bcf7968d54",
+      "kind": "actionPosted",
+      "sequence": 204,
+      "state": "wideModalOneButton",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.5570224719101123
+        },
+        "rect": {
+          "height": 0.039887640449438204,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5370786516853933
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-09T10:16:21Z"
+    },
+    {
+      "decision": "completedCycle(MirrorProbeCore.AutoLevelCycleCompletion(count: 15, outcome: MirrorProbeCore.AutoLevelCycleOutcome.success))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=modalObserved, captureAgeSeconds=0.13500975002534688, recognitionDurationSeconds=0.12223779177293181",
+      "elapsedSeconds": 297.6443087917287,
+      "frameFingerprint": "f7d06b57df45e2c2e63f781558b32917ba7d04643b6f94779c28c3b34bc29b07",
+      "kind": "observation",
+      "sequence": 205,
+      "state": "missionCompleteRepeatSelected",
+      "timestamp": "2026-09-09T10:16:21Z"
+    },
+    {
+      "decision": "completedCycle(MirrorProbeCore.AutoLevelCycleCompletion(count: 15, outcome: MirrorProbeCore.AutoLevelCycleOutcome.success))",
+      "detail": "cycle=15, outcome=success",
+      "elapsedSeconds": 297.6443087917287,
+      "frameFingerprint": "f7d06b57df45e2c2e63f781558b32917ba7d04643b6f94779c28c3b34bc29b07",
+      "kind": "cycleCompleted",
+      "sequence": 206,
+      "state": "missionCompleteRepeatSelected",
+      "timestamp": "2026-09-09T10:16:21Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 67, intent: MirrorProbeCore.AutoLevelActionIntent.advanceMissionSuccess, target: MirrorProbeCore.AutoLevelActionTarget(name: \"missionCompleteAdvance\", sourceText: \"<measured-result-top-advance>\", rect: MirrorProbeCore.NormalizedRect(x: 0.024630541297208562, y: 0.19775280880149815, width: 0.04433497536945812, height: 0.011235955056179803), point: MirrorProbeCore.NormalizedPoint(x: 0.04679802898193762, y: 0.20337078632958805)), observedState: MirrorProbeCore.GameState.missionCompleteRepeatSelected, frameFingerprint: \"f7d06b57df45e2c2e63f781558b32917ba7d04643b6f94779c28c3b34bc29b07\", completedCycles: 15))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.1396545832976699, recognitionDurationSeconds=0.12223779177293181",
+      "elapsedSeconds": 297.6443087917287,
+      "frameFingerprint": "f7d06b57df45e2c2e63f781558b32917ba7d04643b6f94779c28c3b34bc29b07",
+      "kind": "observation",
+      "sequence": 207,
+      "state": "missionCompleteRepeatSelected",
+      "timestamp": "2026-09-09T10:16:21Z"
+    },
+    {
+      "detail": "Safety check refused the action: the game state changed from missionCompleteRepeatSelected to unknown, or its result page changed, during action confirmation",
+      "elapsedSeconds": 298.40347579168156,
+      "frameFingerprint": "a8abc03cb2e3bdf6c05cdb77052b363d2bf0713cf87f8db9a888df1778cf6b69",
+      "kind": "sessionError",
+      "screenshotPath": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260909-181123.B5Jt4k/final.png",
+      "sequence": 208,
+      "state": "unknown",
+      "timestamp": "2026-09-09T10:16:22Z"
+    }
+  ],
+  "diagnosticScreenshots": [
+    {
+      "captureSequence": 229,
+      "capturedAtElapsedSeconds": 297.6443087917287,
+      "frameFingerprint": "f7d06b57df45e2c2e63f781558b32917ba7d04643b6f94779c28c3b34bc29b07",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260909-181123.B5Jt4k/diagnostics/capture-0229.png",
+      "role": "recent",
+      "state": "missionCompleteRepeatSelected"
+    },
+    {
+      "captureSequence": 230,
+      "capturedAtElapsedSeconds": 298.203643291723,
+      "frameFingerprint": "a8abc03cb2e3bdf6c05cdb77052b363d2bf0713cf87f8db9a888df1778cf6b69",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260909-181123.B5Jt4k/final.png",
+      "role": "final",
+      "state": "unknown"
+    }
+  ]
+}

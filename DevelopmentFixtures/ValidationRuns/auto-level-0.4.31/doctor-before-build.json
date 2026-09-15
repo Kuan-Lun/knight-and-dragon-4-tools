@@ -1,0 +1,20 @@
+{
+  "postEventPermission" : "granted",
+  "screenCapturePermission" : "granted",
+  "timestamp" : "2026-09-15T05:27:44Z",
+  "windows" : [
+    {
+      "active" : true,
+      "applicationName" : "iPhone鏡像輸出",
+      "bundleIdentifier" : "com.apple.ScreenContinuity",
+      "height" : 890,
+      "onScreen" : true,
+      "processID" : 91507,
+      "title" : "iPhone鏡像輸出",
+      "width" : 406,
+      "windowID" : 65194,
+      "x" : 0,
+      "y" : 30
+    }
+  ]
+}

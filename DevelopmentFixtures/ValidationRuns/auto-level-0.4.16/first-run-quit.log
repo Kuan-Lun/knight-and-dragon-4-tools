@@ -1,0 +1,7 @@
+Timestamp               Ty Process[PID:TID]
+2026-09-08 22:07:13.993 Df mirror-probe[32381:3a5d099] [com.apple.AppKit:Application] Handling Quit AppleEvent
+2026-09-08 22:07:13.994 Df mirror-probe[32381:3a5d099] [com.apple.AppKit:Application] Asking app delegate whether applicationShouldTerminate:
+2026-09-08 22:07:13.994 Df mirror-probe[32381:3a5d099] [com.apple.AppKit:Application] replyToApplicationShouldTerminate:YES
+2026-09-08 22:07:13.994 Df mirror-probe[32381:3a5d099] [com.apple.AppKit:Application] App termination approved
+2026-09-08 22:07:14.005 Df mirror-probe[32381:3a5d099] [com.apple.AppKit:Application] Termination complete. Exiting without sudden termination.
+2026-09-08 22:07:14.034 Df runningboardd[407:3a63278] [com.apple.runningboard:ttl] [app<application.com.kuanlun.knightdragon.mirrorprobe.451810819.471571523.9D8AD861-F07E-41E0-B4A2-DB436968ACF8(501)>:32381] termination reported by launchd (0, 0, 0)

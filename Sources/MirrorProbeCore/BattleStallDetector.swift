@@ -66,6 +66,9 @@ public struct BattleStallBackgroundEvidence: Codable, Equatable, Sendable {
     public let trustedRetreatAnchors: Int
     public let automaticCandidates: Int
     public let trustedAutomaticAnchors: Int
+    /// Live graphical evidence uses the validated footer and retreat control. The legacy
+    /// OCR counts remain diagnostic and preserve decoding of historical observations.
+    public let visualControlsConfirmed: Bool?
 
     public init(
         lootCandidates: Int,
@@ -75,7 +78,8 @@ public struct BattleStallBackgroundEvidence: Codable, Equatable, Sendable {
         retreatCandidates: Int,
         trustedRetreatAnchors: Int,
         automaticCandidates: Int,
-        trustedAutomaticAnchors: Int
+        trustedAutomaticAnchors: Int,
+        visualControlsConfirmed: Bool? = nil
     ) {
         self.lootCandidates = lootCandidates
         self.trustedLootAnchors = trustedLootAnchors
@@ -85,10 +89,12 @@ public struct BattleStallBackgroundEvidence: Codable, Equatable, Sendable {
         self.trustedRetreatAnchors = trustedRetreatAnchors
         self.automaticCandidates = automaticCandidates
         self.trustedAutomaticAnchors = trustedAutomaticAnchors
+        self.visualControlsConfirmed = visualControlsConfirmed
     }
 
     public var isStrict: Bool {
-        lootCandidates == 1
+        if let visualControlsConfirmed { return visualControlsConfirmed }
+        return lootCandidates == 1
             && trustedLootAnchors == 1
             && pauseCandidates == 1
             && trustedPauseAnchors == 1
@@ -129,6 +135,29 @@ public struct BattleStallFrameEvidence: Codable, Equatable, Sendable {
             && partyHP.count == 6
             && zeroPartyMembers >= 5
             && !combatLogSignature.isEmpty
+    }
+
+    /// Adapts actually matched battle controls for the existing temporal monitor. No numerical
+    /// HP or recognized combat-log text is inferred from these graphical anchors. Monitoring
+    /// can become armed only through separately verified visual battle activity.
+    public static func extractVisual(
+        from classification: GameStateClassification
+    ) -> BattleStallFrameEvidence {
+        let markers = classification.evidence.compactMap { $0.battleVisualMatch?.marker }
+        let isTrusted = classification.state == .battle
+            && VisualBattleEvidence.hasRunningBattleEvidence(in: classification)
+        func count(_ marker: VisualBattleMarker) -> Int {
+            markers.filter { $0 == marker }.count
+        }
+        let pause = count(.pauseControl)
+        let retreat = count(.retreatControl), automatic = count(.allAutoControl)
+        return .init(background: .init(
+            lootCandidates: 0, trustedLootAnchors: 0,
+            pauseCandidates: pause, trustedPauseAnchors: isTrusted ? pause : 0,
+            retreatCandidates: retreat, trustedRetreatAnchors: isTrusted ? retreat : 0,
+            automaticCandidates: automatic, trustedAutomaticAnchors: isTrusted ? automatic : 0,
+            visualControlsConfirmed: isTrusted
+        ), enemyHP: nil, partyHP: [], combatLogSignature: "")
     }
 
     /// Extracts only complete, layout-constrained readings. Ambiguous, missing, truncated,
@@ -324,6 +353,8 @@ public enum BattleStallResetReason: String, Codable, Equatable, Sendable {
 
 public struct BattleStallAssessment: Codable, Equatable, Sendable {
     public let phase: BattleStallPhase
+    /// Recovery eligibility in this assessment's context. A completed startup confirmation
+    /// can arm recovery without proving normal combat activity.
     public let isArmed: Bool
     public let stableDuration: Double
     public let stableSampleCount: Int
@@ -393,8 +424,10 @@ public struct BattleStallConfiguration: Codable, Equatable, Sendable {
 /// A deterministic state machine. It owns no clock and emits no input; callers supply a
 /// monotonic timestamp and the generation of their own input stream with every observation.
 public struct BattleStallDetector: Sendable {
-    /// Excludes the changing iPhone status bar/clock and the bottom skill tray.
-    public static let battleROI = NormalizedRect(x: 0.02, y: 0.09, width: 0.96, height: 0.79)
+    /// Excludes the changing iPhone status bar/clock and the entire footer, including the
+    /// blinking skill control. Footer glyphs independently identify battle layout; their
+    /// brightness does not establish gameplay progress or interrupt a stable gameplay frame.
+    public static let battleROI = NormalizedRect(x: 0.02, y: 0.09, width: 0.96, height: 0.77)
 
     public let configuration: BattleStallConfiguration
 

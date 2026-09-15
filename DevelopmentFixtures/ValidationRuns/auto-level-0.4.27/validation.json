@@ -1,0 +1,126 @@
+{
+  "version": "0.4.27",
+  "build": "50",
+  "validatedAtUTC": "2026-09-14T00:15:10.734368+00:00",
+  "status": "offline-validation-passed",
+  "incidentRun": "logs/auto-level-20260914-030707.5S7Z3g",
+  "scope": "Use battle footer plus retreat proof for monitoring; pause is diagnostic only, per user request",
+  "tests": {
+    "swiftTesting": 573,
+    "xcTest": 2,
+    "swiftTotal": 575,
+    "launcher": 12,
+    "passed": true,
+    "logs": [
+      "swift-tests.log",
+      "launcher-tests.log"
+    ]
+  },
+  "releaseBuildPassed": true,
+  "signatureVerified": true,
+  "launcherDryRunPassed": true,
+  "executableSHA256": "ef49ba599304c9c1c9fec74527a259f5e1e505aeb0d7483b5d2917c5ced42e65",
+  "packagedOfflineReplays": [
+    {
+      "captureSequence": 7542,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9771687299960272,
+        "allAutoControl": 0.9773526081151154,
+        "retreatControl": 0.9778371045387292
+      },
+      "report": "packaged-capture-7542.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 7543,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9771687299960272,
+        "allAutoControl": 0.9773526081151154,
+        "retreatControl": 0.9778371045387292
+      },
+      "report": "packaged-capture-7543.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 7544,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9771687299960272,
+        "allAutoControl": 0.9773526081151154,
+        "retreatControl": 0.9778371045387292
+      },
+      "report": "packaged-capture-7544.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 7545,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9771687299960272,
+        "allAutoControl": 0.9773526081151154,
+        "retreatControl": 0.9778371045387292
+      },
+      "report": "packaged-capture-7545.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 7546,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9771687299960272,
+        "allAutoControl": 0.9773526081151154,
+        "retreatControl": 0.9778371045387292
+      },
+      "report": "packaged-capture-7546.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 7547,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9771687299960272,
+        "allAutoControl": 0.9773526081151154,
+        "retreatControl": 0.9778371045387292
+      },
+      "report": "packaged-capture-7547.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 7548,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9771687299960272,
+        "allAutoControl": 0.9773526081151154,
+        "retreatControl": 0.9778371045387292
+      },
+      "report": "packaged-capture-7548.json",
+      "inputEventsPosted": 0
+    },
+    {
+      "captureSequence": 7549,
+      "state": "battle",
+      "matches": {
+        "skipControl": 0.9771687299960272,
+        "allAutoControl": 0.9773526081151154,
+        "retreatControl": 0.9778371045387292
+      },
+      "report": "packaged-capture-7549.json",
+      "inputEventsPosted": 0
+    }
+  ],
+  "permissionCheck": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-14T00:14:51Z",
+    "windows": []
+  },
+  "liveAutoLevelRunStarted": false,
+  "inputEventsPosted": 0,
+  "limitations": [
+    "Saved captures and explicit runtime metadata were replayed; uninterrupted eight-hour operation has not been established.",
+    "Pause/Resume is no longer interpreted. A manually paused battle with visible retreat can enter freeze recovery after independently verified progress."
+  ]
+}

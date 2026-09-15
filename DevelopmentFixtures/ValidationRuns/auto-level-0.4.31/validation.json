@@ -1,0 +1,85 @@
+{
+  "version": "0.4.31",
+  "build": "54",
+  "incident": "logs/auto-level-20260915-132057.KbWxRU",
+  "startupRecovery": {
+    "scope": "first observed battle only; one attempt per session",
+    "minimumNoProgressSeconds": 30,
+    "minimumDenseStableSeconds": 5,
+    "minimumDenseSamples": 5,
+    "maximumSampleGapSeconds": 3,
+    "maximumStableBattleROIDifference": 0.002,
+    "genuineProgressInferred": false,
+    "cancellation": "preserve the original expired progress deadline",
+    "postSuccess": "resume existing retreat/result/repeat flow"
+  },
+  "swiftTesting": {
+    "passed": 612,
+    "suites": 54
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "newTests": {
+    "startupPolicy": 8,
+    "incidentReplay": 3
+  },
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "packageSHA256": "6ff553c1a8858fa32f99e6dcaa57945f7b8aaa2f989326d18686c4482e836bf9",
+  "packagedReplays": [
+    {
+      "report": "packaged-before.json",
+      "state": "battle",
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    },
+    {
+      "report": "packaged-final.json",
+      "state": "battle",
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    }
+  ],
+  "doctorBeforeBuild": {
+    "postEventPermission": "granted",
+    "screenCapturePermission": "granted",
+    "timestamp": "2026-09-15T05:27:44Z",
+    "windows": [
+      {
+        "active": true,
+        "applicationName": "iPhone鏡像輸出",
+        "bundleIdentifier": "com.apple.ScreenContinuity",
+        "height": 890,
+        "onScreen": true,
+        "processID": 91507,
+        "title": "iPhone鏡像輸出",
+        "width": 406,
+        "windowID": 65194,
+        "x": 0,
+        "y": 30
+      }
+    ]
+  },
+  "doctorAfterBuild": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-15T05:34:41Z",
+    "windows": []
+  },
+  "launcherDryRun": "original --max-minutes 480 --wait preserved",
+  "liveAutoLevelRunStarted": false,
+  "inputEventsPosted": 0,
+  "limitations": [
+    "Only the last 11.25 seconds of incident screenshots were retained; missing earlier frames are not fabricated.",
+    "The future freeze/retreat/result/repeat sequence is explicitly simulated and does not prove live recovery.",
+    "Rebuilt app requires Screen Recording and Accessibility/post-event permissions to be granted again before live validation."
+  ]
+}

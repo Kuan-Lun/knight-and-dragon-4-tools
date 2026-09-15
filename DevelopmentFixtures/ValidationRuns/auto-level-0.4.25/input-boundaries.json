@@ -1,0 +1,676 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Retained incident evidence for the NotificationCenter input-boundary regression; not a new live validation run.",
+  "sourceRun": {
+    "directory": "logs/auto-level-20260911-062312.BBbuKG",
+    "report": "logs/auto-level-20260911-062312.BBbuKG/run-report.json",
+    "stderr": "logs/auto-level-20260911-062312.BBbuKG.stderr.log",
+    "sessionID": "20260911-062312-09f81360"
+  },
+  "summary": {
+    "startedAt": "2026-09-10T22:23:12Z",
+    "endedAt": "2026-09-11T00:00:07Z",
+    "timezoneForLocalTimes": "Asia/Taipei",
+    "startedAtLocal": "2026-09-11T06:23:12+08:00",
+    "endedAtLocal": "2026-09-11T08:00:07+08:00",
+    "durationSecondsFromRoundedTimestamps": 5815,
+    "status": "error",
+    "completedCycles": 294,
+    "actionsPosted": 1494,
+    "failedRequestID": 1495,
+    "failedAction": "pressWideModalTopButton",
+    "failedRequestInputsPosted": 0,
+    "terminalError": "Safety check refused the action: iPhone Mirroring could not obtain an unobscured foreground input point on all 3 attempts",
+    "terminalErrorSourceLine": 17113
+  },
+  "interpretation": {
+    "observed": "All three final samples place NotificationCenter window 14, layer 21, ahead of Mirroring window 65194. Accessibility hit-testing succeeded for the expected process, which was also frontmost.",
+    "hypothesis": "A passive NotificationCenter management background was counted as an input obstruction. This is a suspected false positive, not proof that the surface was transparent.",
+    "boundsQualification": "The logs record NotificationCenter and Dock bounds as x=0, y=0, width=1512, height=982. They appear to be full-display management surfaces, but the incident did not record live display geometry metadata, so exact equality with a display cannot be verified retrospectively.",
+    "imageQualification": "The final image is captured with SCContentFilter(desktopIndependentWindow:), so it shows the game window and does not establish whether a desktop overlay was visible or interactive.",
+    "expectedFix": "Consider only NotificationCenter layer 21 management surfaces whose bounds match a currently observed full display, and only when successful AX hit-testing at the click belongs to the expected process. Visible/intercepting surfaces and unknown AX hits must remain blockers."
+  },
+  "finalRejectedBoundaries": [
+    {
+      "sourceLine": 17085,
+      "boundary": {
+        "action": "pressWideModalTopButton",
+        "attempt": 1,
+        "axHitError": 0,
+        "axHitPID": 91507,
+        "expectedPID": 91507,
+        "expectedWindowID": 65194,
+        "frontmostPID": 91507,
+        "inputMode": "foreground",
+        "maximumAttempts": 3,
+        "noInputPosted": true,
+        "phase": "finalInputBoundary",
+        "point": {
+          "x": 202.797,
+          "y": 510.25000000000006
+        },
+        "requestID": 1495,
+        "result": "clickPointObscured",
+        "targetProcessTopmostWindow": {
+          "alpha": 1,
+          "bundleIdentifier": "com.apple.ScreenContinuity",
+          "frame": {
+            "height": 890,
+            "width": 406,
+            "x": 0,
+            "y": 33
+          },
+          "layer": 0,
+          "processID": 91507,
+          "windowID": 65194
+        },
+        "timestamp": "2026-09-11T00:00:03Z",
+        "topmostWindow": {
+          "alpha": 1,
+          "bundleIdentifier": "com.apple.notificationcenterui",
+          "frame": {
+            "height": 982,
+            "width": 1512,
+            "x": 0,
+            "y": 0
+          },
+          "layer": 21,
+          "processID": 719,
+          "windowID": 14
+        },
+        "windowsAtPointFrontToBack": [
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.notificationcenterui",
+            "frame": {
+              "height": 982,
+              "width": 1512,
+              "x": 0,
+              "y": 0
+            },
+            "layer": 21,
+            "processID": 719,
+            "windowID": 14
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.dock",
+            "frame": {
+              "height": 982,
+              "width": 1512,
+              "x": 0,
+              "y": 0
+            },
+            "layer": 20,
+            "processID": 637,
+            "windowID": 8
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.ScreenContinuity",
+            "frame": {
+              "height": 890,
+              "width": 406,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 91507,
+            "windowID": 65194
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.openai.codex",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 46525,
+            "windowID": 86529
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "org.mozilla.firefox",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 83313,
+            "windowID": 79405
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.microsoft.VSCode",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 54891,
+            "windowID": 85530
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "es.produkt.app.panels",
+            "frame": {
+              "height": 858,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 12469,
+            "windowID": 61180
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.finder",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 641,
+            "windowID": 15365
+          }
+        ]
+      }
+    },
+    {
+      "sourceLine": 17098,
+      "boundary": {
+        "action": "pressWideModalTopButton",
+        "attempt": 2,
+        "axHitError": 0,
+        "axHitPID": 91507,
+        "expectedPID": 91507,
+        "expectedWindowID": 65194,
+        "frontmostPID": 91507,
+        "inputMode": "foreground",
+        "maximumAttempts": 3,
+        "noInputPosted": true,
+        "phase": "finalInputBoundary",
+        "point": {
+          "x": 202.797,
+          "y": 510.25000000000006
+        },
+        "requestID": 1495,
+        "result": "clickPointObscured",
+        "targetProcessTopmostWindow": {
+          "alpha": 1,
+          "bundleIdentifier": "com.apple.ScreenContinuity",
+          "frame": {
+            "height": 890,
+            "width": 406,
+            "x": 0,
+            "y": 33
+          },
+          "layer": 0,
+          "processID": 91507,
+          "windowID": 65194
+        },
+        "timestamp": "2026-09-11T00:00:04Z",
+        "topmostWindow": {
+          "alpha": 1,
+          "bundleIdentifier": "com.apple.notificationcenterui",
+          "frame": {
+            "height": 982,
+            "width": 1512,
+            "x": 0,
+            "y": 0
+          },
+          "layer": 21,
+          "processID": 719,
+          "windowID": 14
+        },
+        "windowsAtPointFrontToBack": [
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.notificationcenterui",
+            "frame": {
+              "height": 982,
+              "width": 1512,
+              "x": 0,
+              "y": 0
+            },
+            "layer": 21,
+            "processID": 719,
+            "windowID": 14
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.dock",
+            "frame": {
+              "height": 982,
+              "width": 1512,
+              "x": 0,
+              "y": 0
+            },
+            "layer": 20,
+            "processID": 637,
+            "windowID": 8
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.ScreenContinuity",
+            "frame": {
+              "height": 890,
+              "width": 406,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 91507,
+            "windowID": 65194
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.openai.codex",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 46525,
+            "windowID": 86529
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "org.mozilla.firefox",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 83313,
+            "windowID": 79405
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.microsoft.VSCode",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 54891,
+            "windowID": 85530
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "es.produkt.app.panels",
+            "frame": {
+              "height": 858,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 12469,
+            "windowID": 61180
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.finder",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 641,
+            "windowID": 15365
+          }
+        ]
+      }
+    },
+    {
+      "sourceLine": 17111,
+      "boundary": {
+        "action": "pressWideModalTopButton",
+        "attempt": 3,
+        "axHitError": 0,
+        "axHitPID": 91507,
+        "expectedPID": 91507,
+        "expectedWindowID": 65194,
+        "frontmostPID": 91507,
+        "inputMode": "foreground",
+        "maximumAttempts": 3,
+        "noInputPosted": true,
+        "phase": "finalInputBoundary",
+        "point": {
+          "x": 202.797,
+          "y": 510.25000000000006
+        },
+        "requestID": 1495,
+        "result": "clickPointObscured",
+        "targetProcessTopmostWindow": {
+          "alpha": 1,
+          "bundleIdentifier": "com.apple.ScreenContinuity",
+          "frame": {
+            "height": 890,
+            "width": 406,
+            "x": 0,
+            "y": 33
+          },
+          "layer": 0,
+          "processID": 91507,
+          "windowID": 65194
+        },
+        "timestamp": "2026-09-11T00:00:07Z",
+        "topmostWindow": {
+          "alpha": 1,
+          "bundleIdentifier": "com.apple.notificationcenterui",
+          "frame": {
+            "height": 982,
+            "width": 1512,
+            "x": 0,
+            "y": 0
+          },
+          "layer": 21,
+          "processID": 719,
+          "windowID": 14
+        },
+        "windowsAtPointFrontToBack": [
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.notificationcenterui",
+            "frame": {
+              "height": 982,
+              "width": 1512,
+              "x": 0,
+              "y": 0
+            },
+            "layer": 21,
+            "processID": 719,
+            "windowID": 14
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.dock",
+            "frame": {
+              "height": 982,
+              "width": 1512,
+              "x": 0,
+              "y": 0
+            },
+            "layer": 20,
+            "processID": 637,
+            "windowID": 8
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.ScreenContinuity",
+            "frame": {
+              "height": 890,
+              "width": 406,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 91507,
+            "windowID": 65194
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.openai.codex",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 46525,
+            "windowID": 86529
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "org.mozilla.firefox",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 83313,
+            "windowID": 79405
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.microsoft.VSCode",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 54891,
+            "windowID": 85530
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "es.produkt.app.panels",
+            "frame": {
+              "height": 858,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 12469,
+            "windowID": 61180
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.finder",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 641,
+            "windowID": 15365
+          }
+        ]
+      }
+    }
+  ],
+  "earliestMatchingSignatureRecovery": {
+    "rejection": {
+      "sourceLine": 125,
+      "boundary": {
+        "action": "pressWideModalTopButton",
+        "attempt": 1,
+        "axHitError": 0,
+        "axHitPID": 91507,
+        "expectedPID": 91507,
+        "expectedWindowID": 65194,
+        "frontmostPID": 91507,
+        "inputMode": "foreground",
+        "maximumAttempts": 3,
+        "noInputPosted": true,
+        "phase": "finalInputBoundary",
+        "point": {
+          "x": 202.797,
+          "y": 528.75
+        },
+        "requestID": 33,
+        "result": "clickPointObscured",
+        "targetProcessTopmostWindow": {
+          "alpha": 1,
+          "bundleIdentifier": "com.apple.ScreenContinuity",
+          "frame": {
+            "height": 890,
+            "width": 406,
+            "x": 0,
+            "y": 33
+          },
+          "layer": 0,
+          "processID": 91507,
+          "windowID": 65194
+        },
+        "timestamp": "2026-09-10T22:25:15Z",
+        "topmostWindow": {
+          "alpha": 1,
+          "bundleIdentifier": "com.apple.notificationcenterui",
+          "frame": {
+            "height": 982,
+            "width": 1512,
+            "x": 0,
+            "y": 0
+          },
+          "layer": 21,
+          "processID": 719,
+          "windowID": 14
+        },
+        "windowsAtPointFrontToBack": [
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.notificationcenterui",
+            "frame": {
+              "height": 982,
+              "width": 1512,
+              "x": 0,
+              "y": 0
+            },
+            "layer": 21,
+            "processID": 719,
+            "windowID": 14
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.dock",
+            "frame": {
+              "height": 982,
+              "width": 1512,
+              "x": 0,
+              "y": 0
+            },
+            "layer": 20,
+            "processID": 637,
+            "windowID": 8
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.ScreenContinuity",
+            "frame": {
+              "height": 890,
+              "width": 406,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 91507,
+            "windowID": 65194
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.openai.codex",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 46525,
+            "windowID": 86529
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "org.mozilla.firefox",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 83313,
+            "windowID": 79405
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.microsoft.VSCode",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 54891,
+            "windowID": 85530
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "es.produkt.app.panels",
+            "frame": {
+              "height": 858,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 12469,
+            "windowID": 61180
+          },
+          {
+            "alpha": 1,
+            "bundleIdentifier": "com.apple.finder",
+            "frame": {
+              "height": 859,
+              "width": 1512,
+              "x": 0,
+              "y": 33
+            },
+            "layer": 0,
+            "processID": 641,
+            "windowID": 15365
+          }
+        ]
+      }
+    },
+    "recoveredAction": {
+      "sequence": 107,
+      "timestamp": "2026-09-10T22:25:18Z",
+      "elapsedSeconds": 125.1572169167921,
+      "kind": "actionPosted",
+      "action": "pressWideModalTopButton",
+      "state": "wideModalOneButton",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=2, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.35572650240517234"
+    },
+    "note": "The same NotificationCenter window ID, layer, bounds, and AX target hit caused one rejection at 06:25:15 local; request 33 was posted after a fresh second attempt at 06:25:18 local."
+  },
+  "imageEvidence": {
+    "path": "logs/auto-level-20260911-062312.BBbuKG/final.png",
+    "state": "wideModalTwoButtons",
+    "description": "Obtain-all-items confirmation with Yes above No. The planned primary-button point is inside Yes; no recognition error is evident in this image."
+  },
+  "validation": {
+    "status": "pending",
+    "note": "Implementation, unit tests, build, packaging, and any live verification are recorded separately after completion."
+  }
+}

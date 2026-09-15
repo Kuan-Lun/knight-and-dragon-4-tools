@@ -1,0 +1,132 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "selectMissionRepeat",
+        "target" : {
+          "name" : "missionRepeatOption",
+          "point" : {
+            "x" : 0.16699999999999998,
+            "y" : 0.24650000000000002
+          },
+          "rect" : {
+            "height" : 0.025,
+            "width" : 0.29,
+            "x" : 0.022,
+            "y" : 0.234
+          },
+          "sourceText" : "<measured-result-repeat-option>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "source=resultVisualV1, marker=successTitle, similarity=0.9985139699074074, minimumSimilarity=0.94",
+        "kind" : "missionCompleteTitle",
+        "visualMatch" : {
+          "marker" : "successTitle",
+          "region" : {
+            "height" : 0.034,
+            "width" : 0.24,
+            "x" : 0.38,
+            "y" : 0.1
+          },
+          "similarity" : 0.9985139699074074
+        }
+      },
+      {
+        "detail" : "source=resultVisualV1, marker=lootHeader, similarity=0.9974247225094466, minimumSimilarity=0.94",
+        "kind" : "missionLootPage",
+        "visualMatch" : {
+          "marker" : "lootHeader",
+          "region" : {
+            "height" : 0.026,
+            "width" : 0.2,
+            "x" : 0.775,
+            "y" : 0.145
+          },
+          "similarity" : 0.9974247225094466
+        }
+      },
+      {
+        "detail" : "source=resultVisualV1, marker=repeatOption, similarity=0.9974061376347652, minimumSimilarity=0.94",
+        "kind" : "missionRepeatOption",
+        "visualMatch" : {
+          "marker" : "repeatOption",
+          "region" : {
+            "height" : 0.025,
+            "width" : 0.29,
+            "x" : 0.022,
+            "y" : 0.234
+          },
+          "similarity" : 0.9974061376347652
+        }
+      },
+      {
+        "detail" : "<measured-repeat-unselected-empty-stamp>",
+        "kind" : "repeatUnselectedMarker"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "missionComplete"
+  },
+  "command" : "analyze",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.24313725490196078,
+    "luminanceP95" : 0.9254901960784314,
+    "luminanceStandardDeviation" : 0.21397980569563763,
+    "meanLuminance" : 0.8186093022581608,
+    "nearBlackRatio" : 0.00085190642843986,
+    "quantizedColorCount" : 141,
+    "sampledPixels" : 130296
+  },
+  "image" : {
+    "height" : 1780,
+    "orientation" : "up",
+    "pngSHA256" : "d8432b7594661435491b4bf308586e318ad0c1956e80af34c12098c655b8e7f8",
+    "width" : 812
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "capturedImagePath" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/result-visual-0.4.24-live.png",
+    "kind" : "mirrorCapture",
+    "window" : {
+      "active" : true,
+      "applicationName" : "iPhone鏡像輸出",
+      "bundleIdentifier" : "com.apple.ScreenContinuity",
+      "height" : 890,
+      "onScreen" : true,
+      "processID" : 91507,
+      "title" : "iPhone鏡像輸出",
+      "width" : 406,
+      "windowID" : 65194,
+      "x" : 0,
+      "y" : 33
+    }
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-10T22:15:44Z"
+}

@@ -1,0 +1,119 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "selectMissionRepeat",
+        "target" : {
+          "name" : "missionRepeatOption",
+          "point" : {
+            "x" : 0.16699999999999998,
+            "y" : 0.24650000000000002
+          },
+          "rect" : {
+            "height" : 0.025,
+            "width" : 0.29,
+            "x" : 0.022,
+            "y" : 0.234
+          },
+          "sourceText" : "<measured-result-repeat-option>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "source=resultVisualV1, marker=failureTitle, similarity=0.9893231927866994, minimumSimilarity=0.94",
+        "kind" : "missionFailedTitle",
+        "visualMatch" : {
+          "marker" : "failureTitle",
+          "region" : {
+            "height" : 0.034,
+            "width" : 0.24,
+            "x" : 0.38,
+            "y" : 0.1
+          },
+          "similarity" : 0.9893231927866994
+        }
+      },
+      {
+        "detail" : "source=resultVisualV1, marker=experienceHeader, similarity=0.9698619213051611, minimumSimilarity=0.94",
+        "kind" : "missionExperiencePage",
+        "visualMatch" : {
+          "marker" : "experienceHeader",
+          "region" : {
+            "height" : 0.026,
+            "width" : 0.2,
+            "x" : 0.775,
+            "y" : 0.145
+          },
+          "similarity" : 0.9698619213051611
+        }
+      },
+      {
+        "detail" : "source=resultVisualV1, marker=repeatOption, similarity=0.9737590225559181, minimumSimilarity=0.94",
+        "kind" : "missionRepeatOption",
+        "visualMatch" : {
+          "marker" : "repeatOption",
+          "region" : {
+            "height" : 0.025,
+            "width" : 0.29,
+            "x" : 0.022,
+            "y" : 0.234
+          },
+          "similarity" : 0.9737590225559181
+        }
+      },
+      {
+        "detail" : "<measured-repeat-unselected-empty-stamp>",
+        "kind" : "repeatUnselectedMarker"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "missionFailed"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.4117647058823529,
+    "luminanceP95" : 0.9215686274509803,
+    "luminanceStandardDeviation" : 0.17375586573800345,
+    "meanLuminance" : 0.8295987236449079,
+    "nearBlackRatio" : 0.00017715274654892823,
+    "quantizedColorCount" : 98,
+    "sampledPixels" : 73383
+  },
+  "image" : {
+    "height" : 890,
+    "orientation" : "up",
+    "pngSHA256" : "d4da130eb5367737d1d6a77b85188e1d9d937cead2f2319fa34102f61d5546c7",
+    "width" : 406
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-191257.SIxDeH/final.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-14T11:20:52Z"
+}

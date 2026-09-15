@@ -1,0 +1,137 @@
+{
+  "sessionID": "20260914-105210-c2450d1e",
+  "startedAt": "2026-09-14T02:52:10Z",
+  "endedAt": "2026-09-14T02:57:55Z",
+  "status": "error",
+  "window": {
+    "active": true,
+    "applicationName": "iPhone鏡像輸出",
+    "bundleIdentifier": "com.apple.ScreenContinuity",
+    "height": 890,
+    "onScreen": true,
+    "processID": 91507,
+    "title": "iPhone鏡像輸出",
+    "width": 406,
+    "windowID": 65194,
+    "x": 0,
+    "y": 30
+  },
+  "actionsPosted": 68,
+  "completedCycles": 13,
+  "finalReason": "Safety check refused the action: could not resolve the iPhone Mirroring application",
+  "sourceReport": "logs/auto-level-20260914-105209.yOgBxG/run-report.json",
+  "events": [
+    {
+      "action": "advanceMissionSuccess",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 67, intent: MirrorProbeCore.AutoLevelActionIntent.advanceMissionSuccess, target: MirrorProbeCore.AutoLevelActionTarget(name: \"missionCompleteAdvance\", sourceText: \"<measured-result-top-advance>\", rect: MirrorProbeCore.NormalizedRect(x: 0.024630541297208562, y: 0.19775280880149815, width: 0.04433497536945812, height: 0.011235955056179803), point: MirrorProbeCore.NormalizedPoint(x: 0.04679802898193762, y: 0.20337078632958805)), observedState: MirrorProbeCore.GameState.missionCompleteRepeatSelected, frameFingerprint: \"0ad2c58a9761612b7c50448cd93b6e669670b3aa0e52750ae6cc9d560b4a64ac\", completedCycles: 13, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=2, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.2589878994346027",
+      "elapsedSeconds": 341.64883008319885,
+      "frameFingerprint": "0ad2c58a9761612b7c50448cd93b6e669670b3aa0e52750ae6cc9d560b4a64ac",
+      "kind": "actionPosted",
+      "sequence": 194,
+      "state": "missionCompleteRepeatSelected",
+      "target": {
+        "name": "missionCompleteAdvance",
+        "point": {
+          "x": 0.04679802898193762,
+          "y": 0.20337078632958805
+        },
+        "rect": {
+          "height": 0.011235955056179803,
+          "width": 0.04433497536945812,
+          "x": 0.024630541297208562,
+          "y": 0.19775280880149815
+        },
+        "sourceText": "<measured-result-top-advance>"
+      },
+      "timestamp": "2026-09-14T02:57:51Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 68, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5157303370786517, width: 0.783, height: 0.04157303370786517), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5365168539325843)), observedState: MirrorProbeCore.GameState.wideModalTwoButtons, frameFingerprint: \"1e38ae0aedafaa16b11d317c6d4923ef0149839c415091db62f5680258b7e942\", completedCycles: 13, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.016475416719913483, recognitionDurationSeconds=0.0016785417683422565, recognitionMode=visualRegions, classificationEvidence=[wideModalGeometry: layout=twoButtons, underlyingState=unknown, buttonCount=2]",
+      "elapsedSeconds": 341.64883008319885,
+      "frameFingerprint": "1e38ae0aedafaa16b11d317c6d4923ef0149839c415091db62f5680258b7e942",
+      "kind": "observation",
+      "sequence": 195,
+      "state": "wideModalTwoButtons",
+      "timestamp": "2026-09-14T02:57:51Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 68, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5157303370786517, width: 0.783, height: 0.04157303370786517), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5365168539325843)), observedState: MirrorProbeCore.GameState.wideModalTwoButtons, frameFingerprint: \"1e38ae0aedafaa16b11d317c6d4923ef0149839c415091db62f5680258b7e942\", completedCycles: 13, repeatSelectionRetryPage: nil))",
+      "detail": "phase=preflight, attempt=1/3, activationRequestAccepted=false, focusSource=Accessibility, appKitTargetIsActive=false, scWindowIsActive=true, expectedPID=91507, frontmostPID=92695, frontmostApplicationName=\"Steam Helper\", frontmostBundleIdentifier=\"com.valvesoftware.steam.helper\", result=focusContended, noInputPosted=true, nextDelayMilliseconds=1000",
+      "elapsedSeconds": 342.13464908325113,
+      "frameFingerprint": "2b20531f1b9397897476f8bc5b54bf51a7318b71202505abc1e26cf6105998a2",
+      "kind": "activationRetry",
+      "sequence": 196,
+      "state": "wideModalTwoButtons",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.5365168539325843
+        },
+        "rect": {
+          "height": 0.04157303370786517,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5157303370786517
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-14T02:57:52Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 68, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5157303370786517, width: 0.783, height: 0.04157303370786517), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5365168539325843)), observedState: MirrorProbeCore.GameState.wideModalTwoButtons, frameFingerprint: \"1e38ae0aedafaa16b11d317c6d4923ef0149839c415091db62f5680258b7e942\", completedCycles: 13, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=2, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.06880704755103643",
+      "elapsedSeconds": 345.0534686248284,
+      "frameFingerprint": "1e38ae0aedafaa16b11d317c6d4923ef0149839c415091db62f5680258b7e942",
+      "kind": "actionPosted",
+      "sequence": 197,
+      "state": "wideModalTwoButtons",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.5365168539325843
+        },
+        "rect": {
+          "height": 0.04157303370786517,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5157303370786517
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-14T02:57:55Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 69, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5561797752808989, width: 0.783, height: 0.04044943820224719), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5764044943820225)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"40b0e5ef20d0522138374e26bacd8516c8ac01e1ee4754083179118b40f6bbff\", completedCycles: 13, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.01665650005452335, recognitionDurationSeconds=0.0012021248694509268, recognitionMode=visualRegions, classificationEvidence=[wideModalGeometry: layout=oneButton, underlyingState=unknown, buttonCount=1]",
+      "elapsedSeconds": 345.0534686248284,
+      "frameFingerprint": "40b0e5ef20d0522138374e26bacd8516c8ac01e1ee4754083179118b40f6bbff",
+      "kind": "observation",
+      "sequence": 198,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-14T02:57:55Z"
+    },
+    {
+      "detail": "Safety check refused the action: could not resolve the iPhone Mirroring application",
+      "elapsedSeconds": 345.2012900833506,
+      "frameFingerprint": "40b0e5ef20d0522138374e26bacd8516c8ac01e1ee4754083179118b40f6bbff",
+      "kind": "sessionError",
+      "screenshotPath": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-105209.yOgBxG/final.png",
+      "sequence": 199,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-14T02:57:55Z"
+    }
+  ],
+  "diagnosis": {
+    "directFailure": "NSRunningApplication(processIdentifier: 91507) returned nil before action 69 activated or posted input.",
+    "observedProcessStart": "2026-09-06 23:15:04 Asia/Taipei",
+    "appExitedOrRestarted": false,
+    "underlyingCause": "Unproven; transient application lookup inconsistency is suspected.",
+    "wholeProcessRestartAdded": false
+  }
+}

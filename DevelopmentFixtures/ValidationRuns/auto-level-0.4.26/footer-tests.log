@@ -1,0 +1,37 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--58304C5D6DBC2206.txt
+[3/6] Emitting module MirrorProbeCoreTests
+[4/6] Compiling MirrorProbeCoreTests BattleFooterVariantRegressionTests.swift
+[4/6] Write Objects.LinkFileList
+[5/6] Linking KnightDragonMirrorProbePackageTests
+Build complete! (2.85s)
+Test Suite 'Selected tests' started at 2026-09-13 00:42:56.274.
+Test Suite 'KnightDragonMirrorProbePackageTests.xctest' started at 2026-09-13 00:42:56.274.
+Test Suite 'KnightDragonMirrorProbePackageTests.xctest' passed at 2026-09-13 00:42:56.275.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' passed at 2026-09-13 00:42:56.275.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.001) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "Native battle footer incident regression" started.
+◇ Test "Recognizing the incident image cannot create a temporal stall authorization" started.
+◇ Test "The original unstable top edge cannot change footer glyph evidence" started.
+◇ Test "Masking or dimming either incident footer glyph fails closed" started.
+◇ Test "Every retained incident capture remains a running battle beyond uncertainty grace" started.
+◇ Test "The normal pause remains mandatory for running state and retreat remains independently gated" started.
+◇ Test case passing 1 argument marker → .pauseControl to "The normal pause remains mandatory for running state and retreat remains independently gated" started.
+◇ Test case passing 2 arguments marker → .skipControl, scale → 0.0 to "Masking or dimming either incident footer glyph fails closed" started.
+◇ Test case passing 2 arguments marker → .allAutoControl, scale → 0.0 to "Masking or dimming either incident footer glyph fails closed" started.
+◇ Test case passing 2 arguments marker → .allAutoControl, scale → 0.25 to "Masking or dimming either incident footer glyph fails closed" started.
+◇ Test case passing 1 argument marker → .retreatControl to "The normal pause remains mandatory for running state and retreat remains independently gated" started.
+◇ Test case passing 2 arguments marker → .skipControl, scale → 0.25 to "Masking or dimming either incident footer glyph fails closed" started.
+✔ Test "Recognizing the incident image cannot create a temporal stall authorization" passed after 0.259 seconds.
+✔ Test "Masking or dimming either incident footer glyph fails closed" with 4 test cases passed after 0.261 seconds.
+✔ Test "The normal pause remains mandatory for running state and retreat remains independently gated" with 2 test cases passed after 0.278 seconds.
+✔ Test "The original unstable top edge cannot change footer glyph evidence" passed after 0.653 seconds.
+✔ Test "Every retained incident capture remains a running battle beyond uncertainty grace" passed after 1.760 seconds.
+✔ Suite "Native battle footer incident regression" passed after 1.761 seconds.
+✔ Test run with 5 tests in 1 suite passed after 1.761 seconds.

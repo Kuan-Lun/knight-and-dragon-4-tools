@@ -1,0 +1,29 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[2/6] Write swift-version--58304C5D6DBC2206.txt
+[4/14] Compiling MirrorProbeCore MissionSuccessPageIdentity.swift
+[5/14] Compiling MirrorProbeCore MissionRepeatSelectionProof.swift
+[6/14] Compiling MirrorProbeCore VisualResultEvidence.swift
+[7/14] Compiling MirrorProbeCore GameStateClassifier.swift
+[8/14] Compiling MirrorProbeCore VisualResultDetector.swift
+[9/14] Emitting module MirrorProbeCore
+[10/14] Compiling MirrorProbeCore VisualResultTemplates.swift
+[11/14] Compiling MirrorProbeCore AutoLevelController.swift
+[12/18] Compiling MirrorProbeCore MissionResultTopActionResolver.swift
+[13/18] Compiling MirrorProbeCore AutoLevelForegroundActivationRetry.swift
+[14/18] Compiling MirrorProbeCore MissionResultTitleRefinement.swift
+[15/18] Compiling MirrorProbeCore WideModalActionResolver.swift
+[16/27] Compiling MirrorProbe GracefulApplicationTermination.swift
+[17/27] Compiling MirrorProbe MirrorProbe.swift
+[18/27] Compiling MirrorProbe ForegroundFocusBorrow.swift
+[19/27] Compiling MirrorProbe ForegroundApplicationFocus.swift
+[20/27] Compiling MirrorProbe AutomationWindowFocusDiagnostic.swift
+[21/27] Compiling MirrorProbe ForegroundFocusBorrowMonitor.swift
+[22/27] Emitting module MirrorProbe
+[23/27] Compiling MirrorProbe AutomationInputMarker.swift
+[24/27] Compiling MirrorProbe ForegroundApplicationActivation.swift
+[24/27] Write Objects.LinkFileList
+[25/27] Linking mirror-probe
+[26/27] Applying mirror-probe
+Build complete! (6.37s)

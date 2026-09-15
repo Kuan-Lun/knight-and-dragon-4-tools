@@ -1,0 +1,31 @@
+{
+  "version": "0.4.23",
+  "status": "intermediate-result-only-build-superseded-by-0.4.24",
+  "releaseBuildPassed": true,
+  "signatureVerified": true,
+  "launcherDryRunPassed": true,
+  "screenCapturePermission": "granted",
+  "postEventPermission": "granted",
+  "initialTests": {
+    "swiftTesting": 527,
+    "xctest": 2,
+    "launcher": 12,
+    "passed": true
+  },
+  "packagedOfflineReplays": [
+    "experience",
+    "loot-after",
+    "loot-final",
+    "live-loot",
+    "occluded",
+    "skill-modal"
+  ],
+  "firstLiveValidation": {
+    "report": "live-before-stamp-fix.json",
+    "state": "unknown",
+    "reason": "ambiguousSelectionStamp",
+    "visuallyVerified": "unselected loot",
+    "inputEventsPosted": 0
+  },
+  "followup": "User expanded scope to all auto-level OCR removal. Stamp ROI regression and final comprehensive validation are tracked in ../auto-level-0.4.24/."
+}

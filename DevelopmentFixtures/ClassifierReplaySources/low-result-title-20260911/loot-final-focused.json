@@ -1,0 +1,31 @@
+{
+  "engine" : "appleVision",
+  "inputEventsPosted" : 0,
+  "languages" : [
+    "zh-Hant",
+    "en-US"
+  ],
+  "observations" : [
+    {
+      "confidence" : 1,
+      "rect" : {
+        "height" : 0.023621039920383027,
+        "width" : 0.21197748419099252,
+        "x" : 0.39031667838846362,
+        "y" : 0.10430059108370671
+      },
+      "text" : "任務完成！"
+    }
+  ],
+  "readOnly" : true,
+  "recognitionLevel" : "accurate",
+  "region" : {
+    "height" : 0.080000000000000002,
+    "width" : 0.5,
+    "x" : 0.25,
+    "y" : 0.070000000000000007
+  },
+  "revision" : 3,
+  "sourcePath" : "\/Users\/kuanlun_wang\/Desktop\/git-repo\/knight and dragon 4\/logs\/auto-level-20260911-051602.awbevq\/final.png",
+  "usesLanguageCorrection" : false
+}

@@ -1,0 +1,130 @@
+{
+  "classification" : {
+    "allowedActions" : [
+
+    ],
+    "evidence" : [
+      {
+        "battleVisualMatch" : {
+          "marker" : "skipControl",
+          "region" : {
+            "height" : 0.023,
+            "width" : 0.09,
+            "x" : 0.075,
+            "y" : 0.87
+          },
+          "similarity" : 0.9984045599117002
+        },
+        "detail" : "source=battleVisualV1, marker=skipControl, similarity=0.9984045599117002, minimumSimilarity=0.94",
+        "kind" : "battleMarker"
+      },
+      {
+        "battleVisualMatch" : {
+          "marker" : "allAutoControl",
+          "region" : {
+            "height" : 0.021,
+            "width" : 0.14,
+            "x" : 0.225,
+            "y" : 0.87
+          },
+          "similarity" : 0.9979689061781947
+        },
+        "detail" : "source=battleVisualV1, marker=allAutoControl, similarity=0.9979689061781947, minimumSimilarity=0.94",
+        "kind" : "battleMarker"
+      },
+      {
+        "battleVisualMatch" : {
+          "marker" : "pauseControl",
+          "region" : {
+            "height" : 0.024,
+            "width" : 0.085,
+            "x" : 0.84,
+            "y" : 0.626
+          },
+          "similarity" : 0.9982384553433661
+        },
+        "detail" : "source=battleVisualV1, marker=pauseControl, similarity=0.9982384553433661, minimumSimilarity=0.94",
+        "kind" : "battleMarker"
+      },
+      {
+        "battleVisualMatch" : {
+          "marker" : "retreatControl",
+          "region" : {
+            "height" : 0.024,
+            "width" : 0.085,
+            "x" : 0.84,
+            "y" : 0.655
+          },
+          "similarity" : 0.9980935257115361
+        },
+        "detail" : "source=battleVisualV1, marker=retreatControl, similarity=0.9980935257115361, minimumSimilarity=0.94",
+        "kind" : "battleMarker"
+      }
+    ],
+    "policyGatedActions" : [
+      {
+        "name" : "openBattleRetreatConfirmation",
+        "requirement" : "temporalDefeatRecovery",
+        "target" : {
+          "name" : "battleRetreat",
+          "point" : {
+            "x" : 0.8825,
+            "y" : 0.667
+          },
+          "rect" : {
+            "height" : 0.024,
+            "width" : 0.085,
+            "x" : 0.84,
+            "y" : 0.655
+          },
+          "sourceText" : "<measured-visual-battle-retreat>"
+        }
+      }
+    ],
+    "state" : "battle"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.043137254901960784,
+    "luminanceP95" : 0.9372549019607843,
+    "luminanceStandardDeviation" : 0.3581440666613337,
+    "meanLuminance" : 0.40252158885302836,
+    "nearBlackRatio" : 0.000713759440044207,
+    "quantizedColorCount" : 852,
+    "sampledPixels" : 130296
+  },
+  "image" : {
+    "height" : 1780,
+    "orientation" : "up",
+    "pngSHA256" : "f9c1679dcbd92da530ec96fcaea175aa73f184468bd3d9ffc56479b464ee4c7a",
+    "width" : 812
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260913-000136.Q2CoDs/diagnostics/capture-1121.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-12T16:44:26Z"
+}

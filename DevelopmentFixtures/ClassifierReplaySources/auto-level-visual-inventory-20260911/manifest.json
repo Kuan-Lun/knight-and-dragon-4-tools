@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "fixtures": [
+    {
+      "resource": "active-battle-control-grid",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png",
+      "expectedBattle": true,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "fb7690605db038fa95930cbd03ac965273afee1253731fdf0b16c23b3c0897cc",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Battle controls visibly intact; no inference about auto-enabled mode or temporal progress."
+    },
+    {
+      "resource": "active-battle-low-retreat-grid",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-low-retreat-grid.png",
+      "expectedBattle": true,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "b3793884dcd316129107cd893eecbbf1c6f03b2fa70a65cc6c6b83e7ef7b31ab",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Battle controls visibly intact; no inference about auto-enabled mode or temporal progress."
+    },
+    {
+      "resource": "visual-battle-pause-low-confidence",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-pause-low-confidence.png",
+      "expectedBattle": true,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "9513942f8652f1c626550eefbb662f52be435e6a2745dc0a14778850456d39d1",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Battle controls visibly intact; no inference about auto-enabled mode or temporal progress."
+    },
+    {
+      "resource": "visual-battle-low-auto",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-low-auto.png",
+      "expectedBattle": true,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "7a916e41a9a2147ac9aa91e677228e399cbd0853fdc483360d5e7f9d9879d139",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Battle controls visibly intact; no inference about auto-enabled mode or temporal progress."
+    },
+    {
+      "resource": "visual-battle-five-zero-hp",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-five-zero-hp.png",
+      "expectedBattle": true,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "d93e19891d7ceb925e0eea7254d1c3fc7e1b4fafe550a3b97309a06ecfc902ff",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Historical filename natural-defeat-all-zero is misleading: one party HP value remains 3684/14K; five are zero. This fixture proves battle layout only, not all-zero defeat."
+    },
+    {
+      "resource": "visual-battle-native-2x",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png",
+      "expectedBattle": true,
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "050b00147f867e64c0fd4c442ccd8e7594f7a1eedfe9fd81b0cba8f728676ca4",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Native 812x1780; talisman header and single-digit loot count. Source logs/diagnose-052556-live.png."
+    },
+    {
+      "resource": "battle-no-modal",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/battle-no-modal.png",
+      "expectedBattle": true,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "f8154c081ceb175dd3a5bfad9bdaab439850994078ed3dfe57d1f85d874ff949",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Battle controls visibly intact; no inference about auto-enabled mode or temporal progress."
+    },
+    {
+      "resource": "visual-battle-progress-before",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-progress-before.png",
+      "expectedBattle": true,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "febbe8f6b0b028c8aa83b79f51b51e3f3d7eb834753a652448e6a36dadd2ce74",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Native 406x890; talisman header and two-digit loot count 14. Visible combat effects/log before the next frame."
+    },
+    {
+      "resource": "visual-battle-progress-after",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-progress-after.png",
+      "expectedBattle": true,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "29c94d7410b0ad6560f28fc06b48316bfe7206ee0967b98a8e60a4f511918333",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Native 406x890; same talisman/two-digit-count layout; actual changed party/log pixels follow previous frame."
+    },
+    {
+      "resource": "battle-event-one-button",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/battle-event-one-button.png",
+      "expectedBattle": false,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "4a174fbc615decd4a4803b7f0486631a1ba7b98c4c8404c7568f542eddc0e852",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Visually verified modal or nonbattle page; battle recognition must fail closed."
+    },
+    {
+      "resource": "battle-intro-one-button",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/battle-intro-one-button.png",
+      "expectedBattle": false,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "bf0d8bea43c3d880ee9f163e941d20fec57d36e2241c054a6e0f66bb197bd74b",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "One-button encounter modal; party grid is not populated yet. Dimmed pause/retreat remain visible."
+    },
+    {
+      "resource": "battle-prompt-one-button-alt",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/battle-prompt-one-button-alt.png",
+      "expectedBattle": false,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "c554fd609a3b1a0e8ff5712c384fe063d8bde458febefa9b232b4774d0c89fb9",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Visually verified modal or nonbattle page; battle recognition must fail closed."
+    },
+    {
+      "resource": "retreat-two-buttons",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/retreat-two-buttons.png",
+      "expectedBattle": false,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "9d8af2cd2dd9095f0c7d5ed5e158c8a820059393604f09aaf2258e4c5f51a840",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Visually verified modal or nonbattle page; battle recognition must fail closed."
+    },
+    {
+      "resource": "defeat-one-button",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/defeat-one-button.png",
+      "expectedBattle": false,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "f377a0b047f4200b902a18efed4b888123db84433e226b4dbabc312f846b14fd",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Stacked defeat-close modal over retreat-confirmation modal. Visible normal-looking battle controls are darkened."
+    },
+    {
+      "resource": "loot-two-buttons",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/loot-two-buttons.png",
+      "expectedBattle": false,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "5d54d3ab250821cc64aab1cc003de6f34ba743725a1c45f056b25b0640a8c8ca",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Visually verified modal or nonbattle page; battle recognition must fail closed."
+    },
+    {
+      "resource": "mission-repeat-selected-srlected",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png",
+      "expectedBattle": false,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "55ec0601f8d3ecabe4468592e287608c93f8aaed3d9f9b700fc20abad9ab6df2",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Visually verified modal or nonbattle page; battle recognition must fail closed."
+    },
+    {
+      "resource": "returned-party-manual-stop",
+      "sourceImage": "Tests/MirrorProbeCoreTests/Fixtures/Images/returned-party-manual-stop.png",
+      "expectedBattle": false,
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "9c4cf72261062dfe65c07ec9b19afb036ce50970b8c2d7658af6ef0882b8763c",
+      "verifiedBy": "Visual inspection of original PNG",
+      "note": "Visually verified modal or nonbattle page; battle recognition must fail closed."
+    }
+  ],
+  "missingNativeCoverage": [
+    "User-paused battle with its alternate pause/resume control glyph",
+    "Enabled/disabled all-auto toggle states proved by actual transitions",
+    "Inventory-full or connection/lock/disconnection dialogs",
+    "Native 2x one/two-button modal examples"
+  ],
+  "notes": [
+    "Only skip and all-auto footer glyphs identify the battle page. Skill brightness and the entire header are ignored.",
+    "Normal pause and retreat are separate optional visual evidence. Both are required before emitting a gated retreat candidate.",
+    "Temporal state decisions must use chronological image differences and existing deadlines."
+  ]
+}

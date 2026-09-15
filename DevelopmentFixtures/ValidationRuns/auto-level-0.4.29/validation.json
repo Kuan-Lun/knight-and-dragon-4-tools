@@ -1,0 +1,56 @@
+{
+  "version": "0.4.29",
+  "build": "52",
+  "swiftTesting": {
+    "passed": 585,
+    "suites": 51
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "launcherRegressionsPassed": 12,
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "launcherDryRun": "passed: --max-minutes 480 --wait (500-cycle cap retained)",
+  "buildUUID": "083a1440a34534e699eeb05050e0701d",
+  "packageSHA256": "31e65d63ab0b05bf70849c4beb919194a15adf581b2e3e86844428b0ebdfed21",
+  "packagedReplay": {
+    "state": "missionFailed",
+    "actionAuthorization": "none",
+    "inputEventsPosted": 0,
+    "readOnly": true
+  },
+  "doctorBeforeBuild": {
+    "postEventPermission": "granted",
+    "screenCapturePermission": "granted",
+    "timestamp": "2026-09-14T11:21:28Z",
+    "windows": [
+      {
+        "active": true,
+        "applicationName": "iPhone鏡像輸出",
+        "bundleIdentifier": "com.apple.ScreenContinuity",
+        "height": 890,
+        "onScreen": true,
+        "processID": 91507,
+        "title": "iPhone鏡像輸出",
+        "width": 406,
+        "windowID": 65194,
+        "x": 0,
+        "y": 30
+      }
+    ]
+  },
+  "doctorAfterBuild": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-14T11:24:11Z",
+    "windows": []
+  },
+  "scope": "Accept only posted requestRetreat from battle followed by either failure result within the existing acknowledgement deadline. Preserve original state and limits; no retries or restarts added.",
+  "validationLimits": [
+    "Original before/final PNGs classify and replay through the controller offline.",
+    "No live game input was posted during validation.",
+    "The report cannot establish whether an intermediate prompt was skipped or battle completion occurred independently between captures."
+  ]
+}

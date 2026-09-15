@@ -1,0 +1,28 @@
+{
+  "sourceSessionID": "20260914-191257-e8568949",
+  "sourceActionRequestID": 45,
+  "runtimeEvidence": "Stalled battle metadata comes from source event 127: 5.227874583331868 seconds / 13 dense samples after observed battle progress. It is not inferred from the single before PNG.",
+  "postedTimeInTest": "Synthetic before.captureTime + 0.01, between the retained preflight and result frames; original report does not retain exact mouse-event time.",
+  "sequence": [
+    {
+      "resource": "retreat-direct-failure-before",
+      "captureSequence": 182,
+      "capturedAtElapsedSeconds": 227.51317637506872,
+      "originalState": "battle",
+      "frameFingerprint": "8b5589b12b1fc56856d8f019124deb2452229b6b100905c790933d88bddf6657",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "b25b7d3ee45083dfe6ae670305d1e1ddf3f4cb337b24538479ffaa83c4c17124"
+    },
+    {
+      "resource": "retreat-direct-failure-final",
+      "captureSequence": 183,
+      "capturedAtElapsedSeconds": 228.6735342917964,
+      "originalState": "missionFailed",
+      "frameFingerprint": "fdf46c01ae86604e011c68d8ee1ccd42344da25af8b4900deea8d0a3f0d11745",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "d4da130eb5367737d1d6a77b85188e1d9d937cead2f2319fa34102f61d5546c7"
+    }
+  ]
+}

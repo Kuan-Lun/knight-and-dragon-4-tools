@@ -1,0 +1,432 @@
+{
+  "sessionID": "20260911-051602-525b632c",
+  "startedAt": "2026-09-10T21:16:02Z",
+  "endedAt": "2026-09-10T21:16:39Z",
+  "status": "stopped",
+  "completedCycles": 1,
+  "actionsPosted": 5,
+  "finalReason": "actionDidNotAdvance(intent: MirrorProbeCore.AutoLevelActionIntent.advanceMissionSuccess)",
+  "diagnosticScreenshots": [
+    {
+      "captureSequence": 19,
+      "capturedAtElapsedSeconds": 22.957955749938264,
+      "frameFingerprint": "5b30c3cd5e3f1d3b4ea76b96370194f5b44366241cb02f4ba153f410963a196b",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051602.awbevq/diagnostics/capture-0019.png",
+      "role": "recent",
+      "state": "missionCompleteRepeatSelected"
+    },
+    {
+      "captureSequence": 20,
+      "capturedAtElapsedSeconds": 24.25756858312525,
+      "frameFingerprint": "450054b8029cd8a32b47da1000a90a23eb856200a27366444ff3a81f25d20bc6",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051602.awbevq/diagnostics/capture-0020.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 21,
+      "capturedAtElapsedSeconds": 26.261065541533753,
+      "frameFingerprint": "450054b8029cd8a32b47da1000a90a23eb856200a27366444ff3a81f25d20bc6",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051602.awbevq/diagnostics/capture-0021.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 22,
+      "capturedAtElapsedSeconds": 28.248426916543394,
+      "frameFingerprint": "450054b8029cd8a32b47da1000a90a23eb856200a27366444ff3a81f25d20bc6",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051602.awbevq/diagnostics/capture-0022.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 23,
+      "capturedAtElapsedSeconds": 30.20219049998559,
+      "frameFingerprint": "7384c4473fbd1c69bc75b51ec9583edfe15508e60ec40478a25d7e8160c4127f",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051602.awbevq/diagnostics/capture-0023.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 24,
+      "capturedAtElapsedSeconds": 32.15610166662373,
+      "frameFingerprint": "b0d884c04e5d24e45d3200083062477f6862914f92e373b6188de28beb98128f",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051602.awbevq/diagnostics/capture-0024.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 25,
+      "capturedAtElapsedSeconds": 34.09825283312239,
+      "frameFingerprint": "abb5106cde3eedf9e6ebc6b4abb2d4705e97ae1ceac7c82314eef071cc6defcf",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051602.awbevq/diagnostics/capture-0025.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 26,
+      "capturedAtElapsedSeconds": 36.06088054156862,
+      "frameFingerprint": "abb5106cde3eedf9e6ebc6b4abb2d4705e97ae1ceac7c82314eef071cc6defcf",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051602.awbevq/final.png",
+      "role": "final",
+      "state": "unknown"
+    }
+  ],
+  "sourceReport": "logs/auto-level-20260911-051602.awbevq/run-report.json",
+  "events": [
+    {
+      "detail": "User entered the stage manually; automation acquired and locked the mirror window; inputMode=foreground, captureLevel=error, activity=userInitiatedAllowingIdleSystemSleep.",
+      "elapsedSeconds": 0.07414699997752905,
+      "frameFingerprint": "1f6d77248b8b08f49c4c3de216470d0aa8586a26dd7765f1d63fe965f78706ab",
+      "kind": "sessionStarted",
+      "sequence": 1,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:03Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 1))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.4727214581798762, recognitionDurationSeconds=0.4643622918520123, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 0.07414699997752905,
+      "frameFingerprint": "1f6d77248b8b08f49c4c3de216470d0aa8586a26dd7765f1d63fe965f78706ab",
+      "kind": "observation",
+      "sequence": 2,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:03Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 2))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.37649749987758696, recognitionDurationSeconds=0.36743841669522226, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 2.1041031249333173,
+      "frameFingerprint": "449ffcc8f39d96fb201b79ec4aeaaee0825d965d0b0d2ecb47d85f2568d82c4d",
+      "kind": "observation",
+      "sequence": 3,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:04Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 3))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.36123645841144025, recognitionDurationSeconds=0.35379504179582, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 4.054116249782965,
+      "frameFingerprint": "d133268eeb7392b5212c0105113eab390403179801a72afd14b9fbc6a11d8861",
+      "kind": "observation",
+      "sequence": 4,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:06Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 1, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5154494382022472, width: 0.783, height: 0.04157303370786517), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5362359550561798)), observedState: MirrorProbeCore.GameState.wideModalTwoButtons, frameFingerprint: \"786f793b6fedebeb8cbf4a0f834feb2a899f7bbafb53b023729150cfdc4dd245\", completedCycles: 0, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.3042551251128316, recognitionDurationSeconds=0.2970799165777862",
+      "elapsedSeconds": 6.006746916566044,
+      "frameFingerprint": "786f793b6fedebeb8cbf4a0f834feb2a899f7bbafb53b023729150cfdc4dd245",
+      "kind": "observation",
+      "sequence": 5,
+      "state": "wideModalTwoButtons",
+      "timestamp": "2026-09-10T21:16:08Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 1, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5154494382022472, width: 0.783, height: 0.04157303370786517), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5362359550561798)), observedState: MirrorProbeCore.GameState.wideModalTwoButtons, frameFingerprint: \"786f793b6fedebeb8cbf4a0f834feb2a899f7bbafb53b023729150cfdc4dd245\", completedCycles: 0, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.07008017813867119",
+      "elapsedSeconds": 7.750702999997884,
+      "frameFingerprint": "786f793b6fedebeb8cbf4a0f834feb2a899f7bbafb53b023729150cfdc4dd245",
+      "kind": "actionPosted",
+      "sequence": 6,
+      "state": "wideModalTwoButtons",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.5362359550561798
+        },
+        "rect": {
+          "height": 0.04157303370786517,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5154494382022472
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-10T21:16:10Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 2, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5561797752808989, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.576123595505618)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"5a83c1400133032a9c4d3d9443a595e038ed5983e5375c88e5468d20f196cfff\", completedCycles: 0, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.11282187490724027, recognitionDurationSeconds=0.10116358334198594",
+      "elapsedSeconds": 7.750702999997884,
+      "frameFingerprint": "5a83c1400133032a9c4d3d9443a595e038ed5983e5375c88e5468d20f196cfff",
+      "kind": "observation",
+      "sequence": 7,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-10T21:16:10Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 2, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5561797752808989, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.576123595505618)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"5a83c1400133032a9c4d3d9443a595e038ed5983e5375c88e5468d20f196cfff\", completedCycles: 0, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.0",
+      "elapsedSeconds": 9.100580541649833,
+      "frameFingerprint": "5a83c1400133032a9c4d3d9443a595e038ed5983e5375c88e5468d20f196cfff",
+      "kind": "actionPosted",
+      "sequence": 8,
+      "state": "wideModalOneButton",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.576123595505618
+        },
+        "rect": {
+          "height": 0.039887640449438204,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5561797752808989
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-10T21:16:11Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.awaitingFrameChange(intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.13002904155291617, recognitionDurationSeconds=0.119484500028193",
+      "elapsedSeconds": 9.100580541649833,
+      "frameFingerprint": "5a83c1400133032a9c4d3d9443a595e038ed5983e5375c88e5468d20f196cfff",
+      "kind": "observation",
+      "sequence": 9,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-10T21:16:11Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 3, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5561797752808989, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.576123595505618)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"af0bc7206deba91710c7d9518f6b01a8472c92d9a853cd57b4ca9dc2f495d0e1\", completedCycles: 0, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.12041970854625106, recognitionDurationSeconds=0.11264858348295093",
+      "elapsedSeconds": 12.521804041462019,
+      "frameFingerprint": "af0bc7206deba91710c7d9518f6b01a8472c92d9a853cd57b4ca9dc2f495d0e1",
+      "kind": "observation",
+      "sequence": 10,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-10T21:16:15Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 3, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5561797752808989, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.576123595505618)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"af0bc7206deba91710c7d9518f6b01a8472c92d9a853cd57b4ca9dc2f495d0e1\", completedCycles: 0, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.2751046133292527",
+      "elapsedSeconds": 13.89953766646795,
+      "frameFingerprint": "af0bc7206deba91710c7d9518f6b01a8472c92d9a853cd57b4ca9dc2f495d0e1",
+      "kind": "actionPosted",
+      "sequence": 11,
+      "state": "wideModalOneButton",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.576123595505618
+        },
+        "rect": {
+          "height": 0.039887640449438204,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5561797752808989
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-10T21:16:16Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.battleInProgress)",
+      "detail": "stallPhase=awaitingProgress, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.29373862501233816, recognitionDurationSeconds=0.27236866671591997",
+      "elapsedSeconds": 13.89953766646795,
+      "frameFingerprint": "b5e0dfccf34aec52929c179831be47db87cdac30b848e36aa4698f68ef34390b",
+      "kind": "observation",
+      "sequence": 12,
+      "state": "battle",
+      "timestamp": "2026-09-10T21:16:16Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 1))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=incompleteBattleEvidence, captureAgeSeconds=0.3119959165342152, recognitionDurationSeconds=0.3023963749874383, classificationEvidence=[lowConfidenceMarker(text=\"深淵之底 地下7725層-第2場戰鬥-\", confidence=0.5): A known state marker was below the fixed confidence threshold; lowConfidenceMarker(text=\"戰利品 13\", confidence=0.30000001192092896): A known state marker was below the fixed confidence threshold; lowConfidenceMarker(text=\"暫停\", confidence=0.30000001192092896): A known state marker was below the fixed confidence threshold; lowConfidenceMarker(text=\"技能>\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 17.50220474996604,
+      "frameFingerprint": "be1cb3c136cb8dcfbdab8be51a02d96b71566be690435f5dbefa81b2da11d0a1",
+      "kind": "observation",
+      "sequence": 13,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:20Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.battleInProgress)",
+      "detail": "stallPhase=awaitingProgress, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.28044812520965934, recognitionDurationSeconds=0.27008166653104126",
+      "elapsedSeconds": 19.407432458130643,
+      "frameFingerprint": "6cf577549069d888e414203b08303e440ffe6d3124cb3e9f2ce181d74427b631",
+      "kind": "observation",
+      "sequence": 14,
+      "state": "battle",
+      "timestamp": "2026-09-10T21:16:22Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 4, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"3eff90fe7ba4069327c70c2655a594968aff7c33e0b23b4a3862cc1849755662\", completedCycles: 0, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=modalObserved, captureAgeSeconds=0.19117158325389028, recognitionDurationSeconds=0.1821262917947024",
+      "elapsedSeconds": 21.256429416593164,
+      "frameFingerprint": "3eff90fe7ba4069327c70c2655a594968aff7c33e0b23b4a3862cc1849755662",
+      "kind": "observation",
+      "sequence": 15,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-10T21:16:23Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 4, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"3eff90fe7ba4069327c70c2655a594968aff7c33e0b23b4a3862cc1849755662\", completedCycles: 0, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.35501231979295655",
+      "elapsedSeconds": 22.758388833142817,
+      "frameFingerprint": "3eff90fe7ba4069327c70c2655a594968aff7c33e0b23b4a3862cc1849755662",
+      "kind": "actionPosted",
+      "sequence": 16,
+      "state": "wideModalOneButton",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.5570224719101123
+        },
+        "rect": {
+          "height": 0.039887640449438204,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5370786516853933
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-10T21:16:25Z"
+    },
+    {
+      "decision": "completedCycle(MirrorProbeCore.AutoLevelCycleCompletion(count: 1, outcome: MirrorProbeCore.AutoLevelCycleOutcome.success))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=modalObserved, captureAgeSeconds=0.17155375005677342, recognitionDurationSeconds=0.15725391660816967",
+      "elapsedSeconds": 22.758388833142817,
+      "frameFingerprint": "5b30c3cd5e3f1d3b4ea76b96370194f5b44366241cb02f4ba153f410963a196b",
+      "kind": "observation",
+      "sequence": 17,
+      "state": "missionCompleteRepeatSelected",
+      "timestamp": "2026-09-10T21:16:25Z"
+    },
+    {
+      "decision": "completedCycle(MirrorProbeCore.AutoLevelCycleCompletion(count: 1, outcome: MirrorProbeCore.AutoLevelCycleOutcome.success))",
+      "detail": "cycle=1, outcome=success",
+      "elapsedSeconds": 22.758388833142817,
+      "frameFingerprint": "5b30c3cd5e3f1d3b4ea76b96370194f5b44366241cb02f4ba153f410963a196b",
+      "kind": "cycleCompleted",
+      "sequence": 18,
+      "state": "missionCompleteRepeatSelected",
+      "timestamp": "2026-09-10T21:16:25Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 5, intent: MirrorProbeCore.AutoLevelActionIntent.advanceMissionSuccess, target: MirrorProbeCore.AutoLevelActionTarget(name: \"missionCompleteAdvance\", sourceText: \"<measured-result-top-advance>\", rect: MirrorProbeCore.NormalizedRect(x: 0.024630541297208562, y: 0.19775280880149815, width: 0.04433497536945812, height: 0.011235955056179803), point: MirrorProbeCore.NormalizedPoint(x: 0.04679802898193762, y: 0.20337078632958805)), observedState: MirrorProbeCore.GameState.missionCompleteRepeatSelected, frameFingerprint: \"5b30c3cd5e3f1d3b4ea76b96370194f5b44366241cb02f4ba153f410963a196b\", completedCycles: 1, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.17330000014044344, recognitionDurationSeconds=0.15725391660816967",
+      "elapsedSeconds": 22.758388833142817,
+      "frameFingerprint": "5b30c3cd5e3f1d3b4ea76b96370194f5b44366241cb02f4ba153f410963a196b",
+      "kind": "observation",
+      "sequence": 19,
+      "state": "missionCompleteRepeatSelected",
+      "timestamp": "2026-09-10T21:16:25Z"
+    },
+    {
+      "action": "advanceMissionSuccess",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 5, intent: MirrorProbeCore.AutoLevelActionIntent.advanceMissionSuccess, target: MirrorProbeCore.AutoLevelActionTarget(name: \"missionCompleteAdvance\", sourceText: \"<measured-result-top-advance>\", rect: MirrorProbeCore.NormalizedRect(x: 0.024630541297208562, y: 0.19775280880149815, width: 0.04433497536945812, height: 0.011235955056179803), point: MirrorProbeCore.NormalizedPoint(x: 0.04679802898193762, y: 0.20337078632958805)), observedState: MirrorProbeCore.GameState.missionCompleteRepeatSelected, frameFingerprint: \"5b30c3cd5e3f1d3b4ea76b96370194f5b44366241cb02f4ba153f410963a196b\", completedCycles: 1, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.0670330688132156",
+      "elapsedSeconds": 24.25756858312525,
+      "frameFingerprint": "5b30c3cd5e3f1d3b4ea76b96370194f5b44366241cb02f4ba153f410963a196b",
+      "kind": "actionPosted",
+      "sequence": 20,
+      "state": "missionCompleteRepeatSelected",
+      "target": {
+        "name": "missionCompleteAdvance",
+        "point": {
+          "x": 0.04679802898193762,
+          "y": 0.20337078632958805
+        },
+        "rect": {
+          "height": 0.011235955056179803,
+          "width": 0.04433497536945812,
+          "x": 0.024630541297208562,
+          "y": 0.19775280880149815
+        },
+        "sourceText": "<measured-result-top-advance>"
+      },
+      "timestamp": "2026-09-10T21:16:27Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 1))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.40777575015090406, recognitionDurationSeconds=0.39404908334836364, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 24.25756858312525,
+      "frameFingerprint": "450054b8029cd8a32b47da1000a90a23eb856200a27366444ff3a81f25d20bc6",
+      "kind": "observation",
+      "sequence": 21,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:27Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 2))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.40442341659218073, recognitionDurationSeconds=0.3938611666671932, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 26.261065541533753,
+      "frameFingerprint": "450054b8029cd8a32b47da1000a90a23eb856200a27366444ff3a81f25d20bc6",
+      "kind": "observation",
+      "sequence": 22,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:29Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 3))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.39087391667999327, recognitionDurationSeconds=0.3827441248577088, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 28.248426916543394,
+      "frameFingerprint": "450054b8029cd8a32b47da1000a90a23eb856200a27366444ff3a81f25d20bc6",
+      "kind": "observation",
+      "sequence": 23,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:31Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 4))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.3853462082333863, recognitionDurationSeconds=0.3770987915340811, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 30.20219049998559,
+      "frameFingerprint": "7384c4473fbd1c69bc75b51ec9583edfe15508e60ec40478a25d7e8160c4127f",
+      "kind": "observation",
+      "sequence": 24,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:33Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 5))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.39166249986737967, recognitionDurationSeconds=0.3839219165965915, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 32.15610166662373,
+      "frameFingerprint": "b0d884c04e5d24e45d3200083062477f6862914f92e373b6188de28beb98128f",
+      "kind": "observation",
+      "sequence": 25,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:35Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 6))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.39449445833452046, recognitionDurationSeconds=0.3875030833296478, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 34.09825283312239,
+      "frameFingerprint": "abb5106cde3eedf9e6ebc6b4abb2d4705e97ae1ceac7c82314eef071cc6defcf",
+      "kind": "observation",
+      "sequence": 26,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:36Z"
+    },
+    {
+      "decision": "stop(MirrorProbeCore.AutoLevelStopReason.actionDidNotAdvance(intent: MirrorProbeCore.AutoLevelActionIntent.advanceMissionSuccess))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.4079759167507291, recognitionDurationSeconds=0.3988163333851844, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 36.06088054156862,
+      "frameFingerprint": "abb5106cde3eedf9e6ebc6b4abb2d4705e97ae1ceac7c82314eef071cc6defcf",
+      "kind": "observation",
+      "sequence": 27,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:38Z"
+    },
+    {
+      "detail": "actionDidNotAdvance(intent: MirrorProbeCore.AutoLevelActionIntent.advanceMissionSuccess)",
+      "elapsedSeconds": 36.81064354162663,
+      "frameFingerprint": "abb5106cde3eedf9e6ebc6b4abb2d4705e97ae1ceac7c82314eef071cc6defcf",
+      "kind": "sessionEnded",
+      "screenshotPath": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051602.awbevq/final.png",
+      "sequence": 28,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:16:39Z"
+    }
+  ]
+}

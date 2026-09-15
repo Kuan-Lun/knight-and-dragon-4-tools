@@ -1,0 +1,9 @@
+{
+  "nextStep" : "Run doctor --request-permissions.",
+  "postEventPermission" : "missing",
+  "screenCapturePermission" : "missing",
+  "timestamp" : "2026-09-14T11:24:11Z",
+  "windows" : [
+
+  ]
+}

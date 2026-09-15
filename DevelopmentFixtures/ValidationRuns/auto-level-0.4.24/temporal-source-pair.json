@@ -1,0 +1,21 @@
+{
+  "verification": "Original consecutive native captures, visually verified as same battle with changing party HP and combat log. No OCR used by the new temporal detector.",
+  "frames": [
+    {
+      "name": "before",
+      "originalSource": "logs/auto-level-20260911-051142.zV14EU/diagnostics/capture-0013.png",
+      "testFixture": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-progress-before.png",
+      "pngSHA256": "febbe8f6b0b028c8aa83b79f51b51e3f3d7eb834753a652448e6a36dadd2ce74",
+      "width": 406,
+      "height": 890
+    },
+    {
+      "name": "after",
+      "originalSource": "logs/auto-level-20260911-051142.zV14EU/diagnostics/capture-0014.png",
+      "testFixture": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-progress-after.png",
+      "pngSHA256": "29c94d7410b0ad6560f28fc06b48316bfe7206ee0967b98a8e60a4f511918333",
+      "width": 406,
+      "height": 890
+    }
+  ]
+}

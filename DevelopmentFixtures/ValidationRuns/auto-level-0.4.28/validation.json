@@ -1,0 +1,63 @@
+{
+  "version": "0.4.28",
+  "build": "51",
+  "swiftTesting": {
+    "passed": 576,
+    "suites": 50
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "launcherRegressionsPassed": 12,
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "launcherDryRun": "passed",
+  "releaseAndPackageBuildUUID": "e739b9a936073237982585222bfa5738",
+  "packageBinarySHA256": "a51462e48c0f111bb2f3b3c72e6f0f0fb6d2faa10e55ecd58e439652a21b78a3",
+  "packagedReplay": {
+    "state": "wideModalOneButton",
+    "actionAuthorization": "none",
+    "inputEventsPosted": 0,
+    "readOnly": true
+  },
+  "doctorBeforeBuild": {
+    "postEventPermission": "granted",
+    "screenCapturePermission": "granted",
+    "timestamp": "2026-09-14T03:09:20Z",
+    "windows": [
+      {
+        "active": true,
+        "applicationName": "iPhone鏡像輸出",
+        "bundleIdentifier": "com.apple.ScreenContinuity",
+        "height": 890,
+        "onScreen": true,
+        "processID": 91507,
+        "title": "iPhone鏡像輸出",
+        "width": 406,
+        "windowID": 65194,
+        "x": 0,
+        "y": 30
+      }
+    ]
+  },
+  "doctorAfterBuild": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-14T03:10:26Z",
+    "windows": []
+  },
+  "newPolicy": {
+    "maximumSharedActionAttempts": 3,
+    "failureBackoffMilliseconds": 1000,
+    "requiresConfirmedLiveOriginalProcess": true,
+    "freshPreflightRequired": true,
+    "wholeProgramRestart": false,
+    "originalLimitsPreserved": true
+  },
+  "validationLimits": [
+    "No live game input was posted.",
+    "Regression tests exercise retry policy; the original macOS AppKit lookup fault was not forced in a live process.",
+    "Renew Screen Recording and Accessibility permissions before another run."
+  ]
+}

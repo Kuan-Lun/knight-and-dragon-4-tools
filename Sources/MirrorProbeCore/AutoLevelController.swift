@@ -38,8 +38,8 @@ public enum AutoLevelAllAutoStatus: String, Codable, Equatable, Sendable {
 
 public enum AutoLevelBattleStatus: String, Codable, Equatable, Sendable {
     case inProgress
-    /// A separate, conservative temporal detector concluded that the battle is irrecoverably
-    /// stalled after defeat. A single classified frame must never set this value.
+    /// A separate temporal policy confirmed a frozen battle eligible for retreat, including
+    /// the bounded startup recovery path. A single classified frame must never set this value.
     case stalledAfterDefeat
     case unknown
 }
@@ -223,18 +223,21 @@ public struct AutoLevelPolicy: Codable, Equatable, Sendable {
     public let postActionTimeout: TimeInterval
     public let uncertainStateGraceDuration: TimeInterval
     public let uncertainStateGraceSnapshots: Int
-    public let maxCycles: Int
-    public let maxRuntime: TimeInterval
-    public let maxActions: Int
+    /// `nil` leaves this session without a cycle-count limit.
+    public let maxCycles: Int?
+    /// `nil` leaves this session without a runtime limit. Per-action timeouts still apply.
+    public let maxRuntime: TimeInterval?
+    /// `nil` leaves this session without an issued-action limit.
+    public let maxActions: Int?
 
     public init(
         actionCooldown: TimeInterval = 0.8,
         postActionTimeout: TimeInterval = 8,
         uncertainStateGraceDuration: TimeInterval = 2,
         uncertainStateGraceSnapshots: Int = 2,
-        maxCycles: Int = 100,
-        maxRuntime: TimeInterval = 8 * 60 * 60,
-        maxActions: Int = 2_000
+        maxCycles: Int? = nil,
+        maxRuntime: TimeInterval? = nil,
+        maxActions: Int? = nil
     ) {
         self.actionCooldown = actionCooldown
         self.postActionTimeout = postActionTimeout
@@ -253,10 +256,9 @@ public struct AutoLevelPolicy: Codable, Equatable, Sendable {
             && uncertainStateGraceDuration.isFinite
             && uncertainStateGraceDuration >= 0
             && uncertainStateGraceSnapshots >= 0
-            && maxCycles > 0
-            && maxRuntime.isFinite
-            && maxRuntime > 0
-            && maxActions > 0
+            && (maxCycles.map { $0 > 0 } ?? true)
+            && (maxRuntime.map { $0.isFinite && $0 > 0 } ?? true)
+            && (maxActions.map { $0 > 0 } ?? true)
     }
 }
 
@@ -282,6 +284,9 @@ public struct AutoLevelActionRequest: Codable, Equatable, Sendable {
     public let observedState: GameState
     public let frameFingerprint: String
     public let completedCycles: Int
+    /// Non-nil only for a posted repeat-toggle retry. The runner must establish the same
+    /// explicit empty-stamp proof again in its fresh confirmation capture before posting.
+    public let repeatSelectionRetryPage: MissionSuccessPageIdentity?
 
     public init(
         requestID: UInt64,
@@ -289,7 +294,8 @@ public struct AutoLevelActionRequest: Codable, Equatable, Sendable {
         target: AutoLevelActionTarget,
         observedState: GameState,
         frameFingerprint: String,
-        completedCycles: Int
+        completedCycles: Int,
+        repeatSelectionRetryPage: MissionSuccessPageIdentity? = nil
     ) {
         self.requestID = requestID
         self.intent = intent
@@ -297,10 +303,12 @@ public struct AutoLevelActionRequest: Codable, Equatable, Sendable {
         self.observedState = observedState
         self.frameFingerprint = frameFingerprint
         self.completedCycles = completedCycles
+        self.repeatSelectionRetryPage = repeatSelectionRetryPage
     }
 }
 
 public enum AutoLevelWaitReason: Codable, Equatable, Sendable {
+    case freshObservationRequired
     case actionCooldown(remaining: TimeInterval)
     case awaitingFrameChange(intent: AutoLevelActionIntent)
     case awaitingStateChange(intent: AutoLevelActionIntent)
@@ -401,7 +409,14 @@ public struct AutoLevelController: Sendable {
         }
     }
 
-    public mutating func consume(_ snapshot: AutoLevelSnapshot) -> AutoLevelDecision {
+    /// A delayed OCR result may still prove that an earlier posted action advanced on time.
+    /// Callers set `allowNewActions` to false when those captured pixels are too old to authorize
+    /// another input. State transitions and cycle accounting retain their actual capture time;
+    /// issuing an initial action or a bounded result retry requires a fresh observation.
+    public mutating func consume(
+        _ snapshot: AutoLevelSnapshot,
+        allowNewActions: Bool = true
+    ) -> AutoLevelDecision {
         if let terminalReason {
             return .stop(terminalReason)
         }
@@ -421,14 +436,15 @@ public struct AutoLevelController: Sendable {
                 actual: snapshot.runtime.windowIdentity
             ))
         }
-        guard now - session.startedAt < policy.maxRuntime else {
-            return stop(.maximumRuntimeReached(limit: policy.maxRuntime))
+        if let maximumRuntime = policy.maxRuntime,
+           now - session.startedAt >= maximumRuntime {
+            return stop(.maximumRuntimeReached(limit: maximumRuntime))
         }
-        guard completedCycles < policy.maxCycles else {
-            return stop(.maximumCyclesReached(limit: policy.maxCycles))
+        if let maximumCycles = policy.maxCycles, completedCycles >= maximumCycles {
+            return stop(.maximumCyclesReached(limit: maximumCycles))
         }
-        guard actionsIssued < policy.maxActions else {
-            return stop(.maximumActionsReached(limit: policy.maxActions))
+        if let maximumActions = policy.maxActions, actionsIssued >= maximumActions {
+            return stop(.maximumActionsReached(limit: maximumActions))
         }
 
         if snapshot.classification.state == .inventoryFull {
@@ -442,7 +458,7 @@ public struct AutoLevelController: Sendable {
             return stop(.classificationConflict)
         }
 
-        if let decision = resolvePendingAction(with: snapshot) {
+        if let decision = resolvePendingAction(with: snapshot, allowNewActions: allowNewActions) {
             return decision
         }
 
@@ -488,14 +504,15 @@ public struct AutoLevelController: Sendable {
             return request(
                 .closeBattlePrompt,
                 from: snapshot,
-                at: now
+                at: now,
+                allowNewActions: allowNewActions
             )
 
         case .wideModalOneButton:
-            return request(.pressWideModalTopButton, from: snapshot, at: now)
+            return request(.pressWideModalTopButton, from: snapshot, at: now, allowNewActions: allowNewActions)
 
         case .wideModalTwoButtons:
-            let decision = request(.pressWideModalTopButton, from: snapshot, at: now)
+            let decision = request(.pressWideModalTopButton, from: snapshot, at: now, allowNewActions: allowNewActions)
             if recoveryConfirmationAuthorized,
                case .requestAction = decision
             {
@@ -504,7 +521,7 @@ public struct AutoLevelController: Sendable {
             return decision
 
         case .battle:
-            return handleBattle(snapshot, at: now)
+            return handleBattle(snapshot, at: now, allowNewActions: allowNewActions)
 
         case .missionComplete:
             // Once either result family positively showed SELECTED, no later OCR title jitter
@@ -512,34 +529,34 @@ public struct AutoLevelController: Sendable {
             guard !repeatSelectionObservedForActiveResult else {
                 return observeUncertainty(.missingAction, at: now)
             }
-            return request(.selectMissionRepeat, from: snapshot, at: now)
+            return request(.selectMissionRepeat, from: snapshot, at: now, allowNewActions: allowNewActions)
 
         case .missionCompleteRepeatSelected:
             guard MissionSuccessPageIdentity.resolve(in: snapshot.classification) != nil else {
                 return observeUncertainty(.missingAction, at: now)
             }
-            return request(.advanceMissionSuccess, from: snapshot, at: now)
+            return request(.advanceMissionSuccess, from: snapshot, at: now, allowNewActions: allowNewActions)
 
         case .missionFailed:
             guard !repeatSelectionObservedForActiveResult else {
                 return observeUncertainty(.missingAction, at: now)
             }
-            return request(.selectMissionRepeat, from: snapshot, at: now)
+            return request(.selectMissionRepeat, from: snapshot, at: now, allowNewActions: allowNewActions)
 
         case .missionFailedRepeatSelected:
-            return request(.advanceMissionFailure, from: snapshot, at: now)
+            return request(.advanceMissionFailure, from: snapshot, at: now, allowNewActions: allowNewActions)
 
         case .lootCollectionConfirmation:
-            return request(.confirmLootCollection, from: snapshot, at: now)
+            return request(.confirmLootCollection, from: snapshot, at: now, allowNewActions: allowNewActions)
 
         case .adventurerRecruitment:
-            return request(.recruitAdventurer, from: snapshot, at: now)
+            return request(.recruitAdventurer, from: snapshot, at: now, allowNewActions: allowNewActions)
 
         case .retreatConfirmation:
             guard recoveryConfirmationAuthorized else {
                 return stop(.retreatConfirmationWasNotRequested)
             }
-            return request(.confirmRetreatWithoutTalisman, from: snapshot, at: now)
+            return request(.confirmRetreatWithoutTalisman, from: snapshot, at: now, allowNewActions: allowNewActions)
 
         case .inventoryFull, .defeat, .unknown:
             // These states were handled by `uncertainKind(for:)` above.
@@ -680,7 +697,7 @@ public struct AutoLevelController: Sendable {
               pendingAction.postedAt == nil,
               postedAt >= pendingAction.issuedAt,
               postedAt - pendingAction.issuedAt < policy.postActionTimeout,
-              postedAt - session.startedAt < policy.maxRuntime
+              policy.maxRuntime.map({ postedAt - session.startedAt < $0 }) ?? true
         else {
             return false
         }
@@ -692,11 +709,12 @@ public struct AutoLevelController: Sendable {
 
     private mutating func handleBattle(
         _ snapshot: AutoLevelSnapshot,
-        at now: TimeInterval
+        at now: TimeInterval,
+        allowNewActions: Bool
     ) -> AutoLevelDecision {
         switch snapshot.runtime.battleStatus {
         case .stalledAfterDefeat:
-            return request(.requestRetreat, from: snapshot, at: now)
+            return request(.requestRetreat, from: snapshot, at: now, allowNewActions: allowNewActions)
 
         case .unknown:
             return observeUncertainty(.battleMetadataUnknown, at: now)
@@ -731,6 +749,7 @@ public struct AutoLevelController: Sendable {
         _ intent: AutoLevelActionIntent,
         from snapshot: AutoLevelSnapshot,
         at now: TimeInterval,
+        allowNewActions: Bool,
         postAttempt: Int = 1
     ) -> AutoLevelDecision {
         let matches = snapshot.actionCandidates.filter { $0.intent == intent }
@@ -763,6 +782,7 @@ public struct AutoLevelController: Sendable {
             target: candidate.target,
             from: snapshot,
             at: now,
+            allowNewActions: allowNewActions,
             postAttempt: postAttempt
         )
     }
@@ -772,10 +792,16 @@ public struct AutoLevelController: Sendable {
         target: AutoLevelActionTarget,
         from snapshot: AutoLevelSnapshot,
         at now: TimeInterval,
+        allowNewActions: Bool,
         postAttempt: Int
     ) -> AutoLevelDecision {
         guard postAttempt > 0 else {
             return stop(.invalidSnapshot(detail: "the action post attempt must be positive"))
+        }
+        // Do not allocate an ID, spend the action/cooldown budget, replace a pending posted
+        // retry, or consume one-shot confirmation authorization from an old captured frame.
+        guard allowNewActions else {
+            return .wait(.freshObservationRequired)
         }
 
         if intent == .enableAllAuto {
@@ -788,7 +814,10 @@ public struct AutoLevelController: Sendable {
             target: target,
             observedState: snapshot.classification.state,
             frameFingerprint: snapshot.runtime.frameFingerprint,
-            completedCycles: completedCycles
+            completedCycles: completedCycles,
+            repeatSelectionRetryPage: intent == .selectMissionRepeat && postAttempt > 1
+                ? MissionRepeatSelectionProof.page(in: snapshot.classification, matching: target)
+                : nil
         )
         nextRequestID += 1
         actionsIssued += 1
@@ -801,6 +830,9 @@ public struct AutoLevelController: Sendable {
             originState: snapshot.classification.state,
             originFrameFingerprint: snapshot.runtime.frameFingerprint,
             originMissionSuccessPage: MissionSuccessPageIdentity.resolve(in: snapshot.classification),
+            originRepeatSelectionPage: intent == .selectMissionRepeat
+                ? MissionRepeatSelectionProof.page(in: snapshot.classification, matching: target)
+                : nil,
             postAttempt: postAttempt
         )
         if intent == .confirmRetreatWithoutTalisman {
@@ -812,7 +844,8 @@ public struct AutoLevelController: Sendable {
     }
 
     private mutating func resolvePendingAction(
-        with snapshot: AutoLevelSnapshot
+        with snapshot: AutoLevelSnapshot,
+        allowNewActions: Bool
     ) -> AutoLevelDecision? {
         guard let pendingAction else { return nil }
         let now = snapshot.runtime.observedAt
@@ -824,10 +857,19 @@ public struct AutoLevelController: Sendable {
         }
         let elapsed = now - acknowledgementStartedAt
         if elapsed >= policy.postActionTimeout {
+            if let retry = retryTimedOutMissionRepeatSelection(
+                pendingAction,
+                with: snapshot,
+                at: now,
+                allowNewActions: allowNewActions
+            ) {
+                return retry
+            }
             if let retry = retryTimedOutMissionSuccessAdvance(
                 pendingAction,
                 with: snapshot,
-                at: now
+                at: now,
+                allowNewActions: allowNewActions
             ) {
                 return retry
             }
@@ -878,7 +920,8 @@ public struct AutoLevelController: Sendable {
         if transitionIsAccepted(
             after: pendingAction.request.intent,
             from: pendingAction.originState,
-            to: snapshot.classification.state
+            to: snapshot.classification.state,
+            actionWasPosted: pendingAction.postedAt != nil
         ) {
             if pendingAction.request.intent == .requestRetreat {
                 recoveryConfirmationAuthorized = pendingAction.postedAt != nil
@@ -901,6 +944,40 @@ public struct AutoLevelController: Sendable {
         ))
     }
 
+    /// A repeat row is a toggle, so retry only with explicit empty-stamp evidence on the same
+    /// independently identified page and exact target. Each retry gets fresh input validation;
+    /// an observed selection is never eligible, even if later recognition loses its stamp.
+    private mutating func retryTimedOutMissionRepeatSelection(
+        _ pendingAction: PendingAction,
+        with snapshot: AutoLevelSnapshot,
+        at now: TimeInterval,
+        allowNewActions: Bool
+    ) -> AutoLevelDecision? {
+        guard pendingAction.postedAt != nil,
+              pendingAction.request.intent == .selectMissionRepeat,
+              pendingAction.postAttempt < Self.maximumMissionRepeatSelectionPostAttempts,
+              !repeatSelectionObservedForActiveResult,
+              snapshot.classification.state == pendingAction.originState,
+              let originPage = pendingAction.originRepeatSelectionPage,
+              let currentTarget = uniqueMatchingCandidateTarget(for: .selectMissionRepeat, in: snapshot),
+              currentTarget == pendingAction.request.target,
+              MissionRepeatSelectionProof.page(in: snapshot.classification, matching: currentTarget)
+                  == originPage
+        else { return nil }
+
+        if let lastActionAt, now - lastActionAt < policy.actionCooldown {
+            return .wait(.actionCooldown(remaining: policy.actionCooldown - (now - lastActionAt)))
+        }
+        return issueActionRequest(
+            .selectMissionRepeat,
+            target: currentTarget,
+            from: snapshot,
+            at: now,
+            allowNewActions: allowNewActions,
+            postAttempt: pendingAction.postAttempt + 1
+        )
+    }
+
     /// The game's result-page arrow occasionally ignores a posted event even though the locked
     /// mirror remained frontmost. Re-post only while the same independently identified EXP or
     /// loot page and exact target remain visible. A different page sharing the arrow is not a
@@ -908,7 +985,8 @@ public struct AutoLevelController: Sendable {
     private mutating func retryTimedOutMissionSuccessAdvance(
         _ pendingAction: PendingAction,
         with snapshot: AutoLevelSnapshot,
-        at now: TimeInterval
+        at now: TimeInterval,
+        allowNewActions: Bool
     ) -> AutoLevelDecision? {
         guard pendingAction.postedAt != nil,
               pendingAction.request.intent == .advanceMissionSuccess,
@@ -950,12 +1028,12 @@ public struct AutoLevelController: Sendable {
             }
         }
 
-        uncertainty = nil
         return issueActionRequest(
             .advanceMissionSuccess,
             target: currentTarget,
             from: snapshot,
             at: now,
+            allowNewActions: allowNewActions,
             postAttempt: pendingAction.postAttempt + 1
         )
     }
@@ -963,7 +1041,8 @@ public struct AutoLevelController: Sendable {
     private func transitionIsAccepted(
         after intent: AutoLevelActionIntent,
         from: GameState,
-        to: GameState
+        to: GameState,
+        actionWasPosted: Bool
     ) -> Bool {
         switch intent {
         case .selectMissionRepeat:
@@ -1006,9 +1085,14 @@ public struct AutoLevelController: Sendable {
             return battleContinuationStates.contains(to)
 
         case .requestRetreat:
+            // The battle can finish while a posted retreat is being acknowledged, so the
+            // first captured continuation may already be its failure result. An unposted
+            // request still needs the caller's separate preflight cancellation path.
             return to == .retreatConfirmation
                 || to == .defeatPrompt
                 || genericModalStates.contains(to)
+                || (actionWasPosted && from == .battle
+                    && (to == .missionFailed || to == .missionFailedRepeatSelected))
 
         case .confirmRetreatWithoutTalisman:
             return to == .defeatPrompt
@@ -1174,6 +1258,15 @@ public struct AutoLevelController: Sendable {
         }
         guard target.name == expectedName.rawValue else { return false }
         switch intent {
+        case .requestRetreat:
+            if target.sourceText == VisualBattleEvidence.measuredRetreatSentinel
+                || classification.evidence.contains(where: { $0.battleVisualMatch != nil }) {
+                return VisualBattleEvidence.hasTrustedRetreat(in: classification)
+                    && target.sourceText == VisualBattleEvidence.measuredRetreatSentinel
+                    && target.rect == VisualBattleEvidence.measuredRetreatRect
+                    && target.point == VisualBattleEvidence.measuredRetreatRect.center
+            }
+            return true
         case .advanceMissionSuccess:
             guard classifierAllowedMissionAdvance(
                 matching: target,
@@ -1223,19 +1316,9 @@ public struct AutoLevelController: Sendable {
             .precomposedStringWithCompatibilityMapping
             .replacingOccurrences(of: "＞", with: ">")
             .replacingOccurrences(of: " ", with: "")
-        let repeats = classification.evidence.filter {
-            $0.kind == .missionRepeatOption && $0.observation != nil
-        }
-        guard repeats.count == 1,
-              let repeatObservation = repeats.first?.observation,
-              compactResultText(repeatObservation.text) == "重複進行此任務",
-              repeatObservation.confidence >= GameStateClassifier.minimumMarkerConfidence,
-              repeatObservation.rect.isValid,
-              (0.08...0.45).contains(repeatObservation.rect.center.y)
-        else {
+        guard let repeatRect = VisualResultEvidence.trustedRepeatRect(in: classification) else {
             return false
         }
-        let repeatRect = repeatObservation.rect
         let verticalSeparation = repeatRect.center.y - target.point.y
         let isMeasuredResultTop = canonicalSource
                 == MissionResultTopActionResolver.measuredTopAdvanceSentinel
@@ -1373,10 +1456,12 @@ public struct AutoLevelController: Sendable {
         let originState: GameState
         let originFrameFingerprint: String
         let originMissionSuccessPage: MissionSuccessPageIdentity?
+        let originRepeatSelectionPage: MissionSuccessPageIdentity?
         let postAttempt: Int
     }
 
     private static let maximumMissionSuccessAdvancePostAttempts = 3
+    private static let maximumMissionRepeatSelectionPostAttempts = 3
 
     private func compactResultText(_ text: String) -> String {
         let compatible = text.precomposedStringWithCompatibilityMapping

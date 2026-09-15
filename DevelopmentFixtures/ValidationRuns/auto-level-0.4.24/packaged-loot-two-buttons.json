@@ -1,0 +1,77 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "pressWideModalTopButton",
+        "target" : {
+          "name" : "wideModalTopButton",
+          "point" : {
+            "x" : 0.4995,
+            "y" : 0.5320224719101124
+          },
+          "rect" : {
+            "height" : 0.04157303370786517,
+            "width" : 0.783,
+            "x" : 0.108,
+            "y" : 0.5112359550561798
+          },
+          "sourceText" : "<measured-wide-modal-primary-button>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "layout=twoButtons, underlyingState=unknown, buttonCount=2",
+        "kind" : "wideModalGeometry"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "wideModalTwoButtons"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.25098039215686274,
+    "luminanceP95" : 0.9490196078431372,
+    "luminanceStandardDeviation" : 0.1896638111403605,
+    "meanLuminance" : 0.5592653959229053,
+    "nearBlackRatio" : 0.00031342409004810377,
+    "quantizedColorCount" : 148,
+    "sampledPixels" : 73383
+  },
+  "image" : {
+    "height" : 890,
+    "orientation" : "up",
+    "pngSHA256" : "5d54d3ab250821cc64aab1cc003de6f34ba743725a1c45f056b25b0640a8c8ca",
+    "width" : 406
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/Tests/MirrorProbeCoreTests/Fixtures/Images/loot-two-buttons.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-10T22:13:31Z"
+}

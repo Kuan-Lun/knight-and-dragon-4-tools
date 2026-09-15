@@ -1,0 +1,77 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "pressWideModalTopButton",
+        "target" : {
+          "name" : "wideModalTopButton",
+          "point" : {
+            "x" : 0.4995,
+            "y" : 0.5764044943820225
+          },
+          "rect" : {
+            "height" : 0.04044943820224719,
+            "width" : 0.783,
+            "x" : 0.108,
+            "y" : 0.5561797752808989
+          },
+          "sourceText" : "<measured-wide-modal-primary-button>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "layout=oneButton, underlyingState=unknown, buttonCount=1",
+        "kind" : "wideModalGeometry"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "wideModalOneButton"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.23921568627450981,
+    "luminanceP95" : 0.9333333333333333,
+    "luminanceStandardDeviation" : 0.20353394000787273,
+    "meanLuminance" : 0.5521284648657947,
+    "nearBlackRatio" : 0.00028616982134826866,
+    "quantizedColorCount" : 120,
+    "sampledPixels" : 73383
+  },
+  "image" : {
+    "height" : 890,
+    "orientation" : "up",
+    "pngSHA256" : "41a88854404e179c47299663b1927c2f8268d2a0b6fa067b5e042e70d68498b8",
+    "width" : 406
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260914-105209.yOgBxG/final.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-14T03:11:39Z"
+}

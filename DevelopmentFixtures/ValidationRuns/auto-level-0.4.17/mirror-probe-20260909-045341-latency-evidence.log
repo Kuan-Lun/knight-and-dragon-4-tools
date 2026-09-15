@@ -1,0 +1,162 @@
+Timestamp               Ty Process[PID:TID]
+2026-09-09 04:51:00.462 Df mirror-probe[67174:3bf1beb] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:00.488 Df mirror-probe[67174:3be3f26] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:00.506 Df mirror-probe[67174:3be3f26] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bd080 streamID=<private>
+2026-09-09 04:51:00.512 Df mirror-probe[67174:3bf1beb] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:02.264 Df mirror-probe[67174:3bf1beb] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:02.286 Df mirror-probe[67174:3be3f76] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:02.307 Df mirror-probe[67174:3be3f76] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bd080 streamID=<private>
+2026-09-09 04:51:02.333 Df mirror-probe[67174:3be3f76] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:04.615 Df mirror-probe[67174:3bf1beb] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:04.652 Df mirror-probe[67174:3be3f76] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:04.674 Df mirror-probe[67174:3be3f76] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:04.694 Df mirror-probe[67174:3be3f76] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:07.059 Df mirror-probe[67174:3be3f76] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:07.088 Df mirror-probe[67174:3bf1beb] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:07.109 Df mirror-probe[67174:3bf1beb] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc5572a400 streamID=<private>
+2026-09-09 04:51:07.131 Df mirror-probe[67174:3bf1beb] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:09.413 Df mirror-probe[67174:3bf1beb] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:09.439 Df mirror-probe[67174:3bf1be7] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:09.459 Df mirror-probe[67174:3bf1be7] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:09.488 Df mirror-probe[67174:3bf1beb] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:09.867 Df mirror-probe[67174:3bf1beb] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:09.893 Df mirror-probe[67174:3bf1be7] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:09.909 Df mirror-probe[67174:3bf1be7] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:09.926 Df mirror-probe[67174:3bf1beb] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:11.461 Df mirror-probe[67174:3be3f85] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:11.491 Df mirror-probe[67174:3bf1beb] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:11.515 Df mirror-probe[67174:3bf1beb] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc5572a880 streamID=<private>
+2026-09-09 04:51:11.540 Df mirror-probe[67174:3be3f85] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:11.937 Df mirror-probe[67174:3be3f85] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:11.963 Df mirror-probe[67174:3bf1beb] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:11.985 Df mirror-probe[67174:3bf1beb] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc5572bd80 streamID=<private>
+2026-09-09 04:51:11.999 Df mirror-probe[67174:3be3f85] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:13.471 Df mirror-probe[67174:3be3f85] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:13.496 Df mirror-probe[67174:3bf1a3c] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:13.514 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:13.528 Df mirror-probe[67174:3be3f85] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:13.878 Df mirror-probe[67174:3be3f85] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:13.902 Df mirror-probe[67174:3bf1a3c] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:13.923 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bd080 streamID=<private>
+2026-09-09 04:51:13.942 Df mirror-probe[67174:3be3f85] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:15.357 Df mirror-probe[67174:3be3f2c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:15.387 Df mirror-probe[67174:3be3f85] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:15.409 Df mirror-probe[67174:3be3f85] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bd080 streamID=<private>
+2026-09-09 04:51:15.436 Df mirror-probe[67174:3be3f2c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:15.791 Df mirror-probe[67174:3be3f2c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:15.826 Df mirror-probe[67174:3be3f85] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:15.847 Df mirror-probe[67174:3be3f85] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:15.868 Df mirror-probe[67174:3be3f2c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:17.161 Df mirror-probe[67174:3be3f2c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:17.193 Df mirror-probe[67174:3be3f40] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:17.205 Df mirror-probe[67174:3be3f40] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:17.211 Df mirror-probe[67174:3be3f2c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:19.063 Df mirror-probe[67174:3be3f2c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:19.087 Df mirror-probe[67174:3bf1be7] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:19.105 Df mirror-probe[67174:3bf1be7] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:19.124 Df mirror-probe[67174:3be3f2c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:21.616 Df mirror-probe[67174:3be3f40] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:21.645 Df mirror-probe[67174:3be3f2c] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:21.668 Df mirror-probe[67174:3be3f2c] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc5572a700 streamID=<private>
+2026-09-09 04:51:21.694 Df mirror-probe[67174:3be3f2c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:24.010 Df mirror-probe[67174:3be3f2c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:24.042 Df mirror-probe[67174:3be3f40] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:24.061 Df mirror-probe[67174:3be3f40] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:24.087 Df mirror-probe[67174:3be3f40] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:24.574 Df mirror-probe[67174:3be3f40] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:24.609 Df mirror-probe[67174:3be3f2c] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:24.632 Df mirror-probe[67174:3be3f2c] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:24.651 Df mirror-probe[67174:3be3f40] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:26.211 Df mirror-probe[67174:3bf1be6] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:26.234 Df mirror-probe[67174:3be3f40] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:26.256 Df mirror-probe[67174:3be3f40] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bd080 streamID=<private>
+2026-09-09 04:51:26.276 Df mirror-probe[67174:3bf1be6] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:26.657 Df mirror-probe[67174:3bf1be6] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:26.684 Df mirror-probe[67174:3bf1a3c] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:26.705 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:26.718 Df mirror-probe[67174:3bf1be6] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:28.114 Df mirror-probe[67174:3bf1be6] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:28.136 Df mirror-probe[67174:3bf1a3c] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:28.157 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc5572aa00 streamID=<private>
+2026-09-09 04:51:28.171 Df mirror-probe[67174:3bf1a3c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:28.407 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:28.431 Df mirror-probe[67174:3be3f40] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:28.451 Df mirror-probe[67174:3be3f40] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:28.464 Df mirror-probe[67174:3bf1a3c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:29.762 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:29.792 Df mirror-probe[67174:3bf1be6] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:29.812 Df mirror-probe[67174:3bf1be6] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:29.821 Df mirror-probe[67174:3bf1a3c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:29.908 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:29.918 Df mirror-probe[67174:3be3f75] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:29.931 Df mirror-probe[67174:3be3f75] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:29.935 Df mirror-probe[67174:3bf1a3c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:31.113 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:31.147 Df mirror-probe[67174:3be44d5] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:31.173 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:31.179 Df mirror-probe[67174:3bf1a3c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:31.268 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:31.280 Df mirror-probe[67174:3be3f25] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:31.292 Df mirror-probe[67174:3be3f25] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc5572ba80 streamID=<private>
+2026-09-09 04:51:31.296 Df mirror-probe[67174:3bf1a3c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:32.560 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:32.580 Df mirror-probe[67174:3bf1a3c] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:32.599 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:32.634 Df mirror-probe[67174:3be44d5] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:35.312 Df mirror-probe[67174:3bf1be7] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:35.353 Df mirror-probe[67174:3be44d5] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:35.382 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bd080 streamID=<private>
+2026-09-09 04:51:35.414 Df mirror-probe[67174:3bf1be7] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:38.014 Df mirror-probe[67174:3bf1be7] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:38.040 Df mirror-probe[67174:3be44d5] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:38.061 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc5572b000 streamID=<private>
+2026-09-09 04:51:38.082 Df mirror-probe[67174:3be44d5] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:40.579 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:40.606 Df mirror-probe[67174:3bf1a3c] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:40.634 Df mirror-probe[67174:3bf1a3c] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:40.660 Df mirror-probe[67174:3be44d5] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:41.228 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:41.261 Df mirror-probe[67174:3be3f76] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:41.287 Df mirror-probe[67174:3be3f76] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:41.310 Df mirror-probe[67174:3be44d5] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:42.864 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:42.886 Df mirror-probe[67174:3be3f85] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:42.906 Df mirror-probe[67174:3be3f85] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:42.911 Df mirror-probe[67174:3be44d5] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:43.044 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:43.052 Df mirror-probe[67174:3be3f76] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:43.062 Df mirror-probe[67174:3be3f76] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:43.066 Df mirror-probe[67174:3be44d5] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:44.663 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:44.714 Df mirror-probe[67174:3bf1be6] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:44.788 Df mirror-probe[67174:3bf1be6] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:44.963 Df mirror-probe[67174:3be44d5] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:45.762 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:45.806 Df mirror-probe[67174:3be3f40] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:45.827 Df mirror-probe[67174:3be3f40] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:45.847 Df mirror-probe[67174:3be44d5] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:47.556 Df mirror-probe[67174:3be3f2c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:47.578 Df mirror-probe[67174:3be44d5] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:47.596 Df mirror-probe[67174:3be44d5] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:47.604 Df mirror-probe[67174:3be3f2c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:47.763 Df mirror-probe[67174:3be3f2c] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:47.786 Df mirror-probe[67174:3bf1be9] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:47.801 Df mirror-probe[67174:3bf1be9] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bd080 streamID=<private>
+2026-09-09 04:51:47.817 Df mirror-probe[67174:3be3f2c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:49.463 Df mirror-probe[67174:3bf1be9] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:49.506 Df mirror-probe[67174:3be3f40] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:49.546 Df mirror-probe[67174:3be3f40] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550bcf00 streamID=<private>
+2026-09-09 04:51:49.687 Df mirror-probe[67174:3bf1be9] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:50.095 Df mirror-probe[67174:3bf1be9] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:50.129 Df mirror-probe[67174:3be47fd] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:50.160 Df mirror-probe[67174:3be47fd] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:50.180 Df mirror-probe[67174:3bf1be9] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:51.623 Df mirror-probe[67174:3bf1be9] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:51:56.410 Df mirror-probe[67174:3bf1be7] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:51:57.075 Df mirror-probe[67174:3bf1be7] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:51:59.605 Df mirror-probe[67174:3bf1be7] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:52:35.666 Df mirror-probe[67174:3bf1be7] (ScreenCaptureKit)  [INFO] +[SCShareableContent getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:]:56
+2026-09-09 04:52:40.129 Df mirror-probe[67174:3bf1be7] (ReplayKit)  [INFO] -[RPDaemonProxy captureScreenshot:withRect:contentFilter:properties:completionHandler:]:930
+2026-09-09 04:52:40.152 Df mirror-probe[67174:3bf1be7] (ScreenCaptureKit)  [INFO] -[SCStream dealloc]:589 0xc550be580 streamID=<private>
+2026-09-09 04:52:40.855 Df mirror-probe[67174:3bf1be7] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:53:41.588 Df runningboardd[407:3bf6237] [com.apple.runningboard:ttl] [app<application.com.kuanlun.knightdragon.mirrorprobe.451810819.473680685.A5109A70-B9BF-4CDC-A69A-5CA55C14293E(501)>:67174] termination reported by launchd (0, 0, 256)

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "sourceRun": "logs/auto-level-20260913-000136.Q2CoDs",
+  "note": "Original native captures from the unknown-state incident, copied byte-for-byte. Identical PNGs share one resource; all eight recorded capture positions remain in chronological order. Footer variants identify battle layout only and do not establish automatic mode, battle progress, or a temporal stall.",
+  "sequence": [
+    {
+      "resource": "battle-footer-variant-capture-1116",
+      "sourceImage": "logs/auto-level-20260913-000136.Q2CoDs/diagnostics/capture-1116.png",
+      "captureSequence": 1116,
+      "capturedAtElapsedSeconds": 1342.6966955414973,
+      "timestamp": "2026-09-12T16:23:59Z",
+      "originalState": "unknown",
+      "frameFingerprint": "c22fd052d56be558f6a69766f6c73d101403ab56dea3e685a1a8640d650acb91",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "e304087d297d955ea221ad146ce201517a32f239e1a941096cdf5783df312faf"
+    },
+    {
+      "resource": "battle-footer-variant-capture-1117",
+      "sourceImage": "logs/auto-level-20260913-000136.Q2CoDs/diagnostics/capture-1117.png",
+      "captureSequence": 1117,
+      "capturedAtElapsedSeconds": 1344.356750458246,
+      "timestamp": "2026-09-12T16:24:01Z",
+      "originalState": "unknown",
+      "frameFingerprint": "62410c4a2b8ac3dda5d08d37a3a00813756dfa8342c22dfde83dd5199e270460",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "b7b7bad6c8ee0c0b2ff898e0a1f3795b9ffe140e44c33a2947d1a22f53ba5e27"
+    },
+    {
+      "resource": "battle-footer-variant-capture-1118",
+      "sourceImage": "logs/auto-level-20260913-000136.Q2CoDs/diagnostics/capture-1118.png",
+      "captureSequence": 1118,
+      "capturedAtElapsedSeconds": 1345.9661813748535,
+      "timestamp": "2026-09-12T16:24:02Z",
+      "originalState": "unknown",
+      "frameFingerprint": "554ed49f43f015c524a466151df273854339ea15b9893801be636f6a160b4663",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "cc3670e640c34e956fc07707b84bb29983b828e74cb465ee5caa6b2b707d7183"
+    },
+    {
+      "resource": "battle-footer-variant-capture-1119",
+      "sourceImage": "logs/auto-level-20260913-000136.Q2CoDs/diagnostics/capture-1119.png",
+      "captureSequence": 1119,
+      "capturedAtElapsedSeconds": 1347.5596162916627,
+      "timestamp": "2026-09-12T16:24:04Z",
+      "originalState": "unknown",
+      "frameFingerprint": "0f9a72be62478ee2a87771864dd7d5bdb0978060bac3a46cfc9c61485cf00d66",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "da2c24fc038d57a45c4d67712360a0ca779300cc441aeb9daa315b66c3cdaa1a"
+    },
+    {
+      "resource": "battle-footer-variant-capture-1120",
+      "sourceImage": "logs/auto-level-20260913-000136.Q2CoDs/diagnostics/capture-1120.png",
+      "captureSequence": 1120,
+      "capturedAtElapsedSeconds": 1349.1552707916126,
+      "timestamp": "2026-09-12T16:24:06Z",
+      "originalState": "unknown",
+      "frameFingerprint": "eeec2df3de8fcdb1e6ca180d6cd8d068f3d24d7cd3d4b6d4ba9f5dbe69009efc",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "f9c1679dcbd92da530ec96fcaea175aa73f184468bd3d9ffc56479b464ee4c7a"
+    },
+    {
+      "resource": "battle-footer-variant-capture-1120",
+      "sourceImage": "logs/auto-level-20260913-000136.Q2CoDs/diagnostics/capture-1121.png",
+      "captureSequence": 1121,
+      "capturedAtElapsedSeconds": 1350.7552937499713,
+      "timestamp": "2026-09-12T16:24:07Z",
+      "originalState": "unknown",
+      "frameFingerprint": "eeec2df3de8fcdb1e6ca180d6cd8d068f3d24d7cd3d4b6d4ba9f5dbe69009efc",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "f9c1679dcbd92da530ec96fcaea175aa73f184468bd3d9ffc56479b464ee4c7a"
+    },
+    {
+      "resource": "battle-footer-variant-final",
+      "sourceImage": "logs/auto-level-20260913-000136.Q2CoDs/diagnostics/capture-1122.png",
+      "captureSequence": 1122,
+      "capturedAtElapsedSeconds": 1352.3551730415784,
+      "timestamp": "2026-09-12T16:24:09Z",
+      "originalState": "unknown",
+      "frameFingerprint": "7e288a115d7632f9b94d38c0a58bccffa18e70d5e3bd8f6ab65f2957080669ae",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "06bda2a4592f279166bf0f2a7f07849986a6c987a64a785d2c6ae6dfbd2a4a28"
+    },
+    {
+      "resource": "battle-footer-variant-final",
+      "sourceImage": "logs/auto-level-20260913-000136.Q2CoDs/final.png",
+      "captureSequence": 1123,
+      "capturedAtElapsedSeconds": 1353.9574516247958,
+      "timestamp": "2026-09-12T16:24:10Z",
+      "originalState": "unknown",
+      "frameFingerprint": "7e288a115d7632f9b94d38c0a58bccffa18e70d5e3bd8f6ab65f2957080669ae",
+      "width": 812,
+      "height": 1780,
+      "pngSHA256": "06bda2a4592f279166bf0f2a7f07849986a6c987a64a785d2c6ae6dfbd2a4a28"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "pressWideModalTopButton",
+        "target" : {
+          "name" : "wideModalTopButton",
+          "point" : {
+            "x" : 0.4995,
+            "y" : 0.5362359550561798
+          },
+          "rect" : {
+            "height" : 0.04157303370786517,
+            "width" : 0.783,
+            "x" : 0.108,
+            "y" : 0.5154494382022472
+          },
+          "sourceText" : "<measured-wide-modal-primary-button>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "layout=twoButtons, underlyingState=unknown, buttonCount=2",
+        "kind" : "wideModalGeometry"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "wideModalTwoButtons"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.23137254901960785,
+    "luminanceP95" : 0.9490196078431372,
+    "luminanceStandardDeviation" : 0.1957396383535546,
+    "meanLuminance" : 0.5679368665248354,
+    "nearBlackRatio" : 0.0010437772456560446,
+    "quantizedColorCount" : 145,
+    "sampledPixels" : 130296
+  },
+  "image" : {
+    "height" : 1780,
+    "orientation" : "up",
+    "pngSHA256" : "8b68f9473b21634075075b2cac52c457d474d697b474d22b6548a547b36c2091",
+    "width" : 812
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-062312.BBbuKG/final.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-11T01:22:50Z"
+}

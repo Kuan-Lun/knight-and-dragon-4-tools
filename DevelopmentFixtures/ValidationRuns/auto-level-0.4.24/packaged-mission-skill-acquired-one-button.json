@@ -1,0 +1,77 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "pressWideModalTopButton",
+        "target" : {
+          "name" : "wideModalTopButton",
+          "point" : {
+            "x" : 0.4995,
+            "y" : 0.5525280898876405
+          },
+          "rect" : {
+            "height" : 0.039887640449438204,
+            "width" : 0.783,
+            "x" : 0.108,
+            "y" : 0.5325842696629214
+          },
+          "sourceText" : "<measured-wide-modal-primary-button>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "layout=oneButton, underlyingState=unknown, buttonCount=1",
+        "kind" : "wideModalGeometry"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "wideModalOneButton"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.24313725490196078,
+    "luminanceP95" : 0.9294117647058824,
+    "luminanceStandardDeviation" : 0.17475827334755775,
+    "meanLuminance" : 0.5424589175297939,
+    "nearBlackRatio" : 0.00029979695569818624,
+    "quantizedColorCount" : 130,
+    "sampledPixels" : 73383
+  },
+  "image" : {
+    "height" : 890,
+    "orientation" : "up",
+    "pngSHA256" : "a7185d88baacf1de3831e8d2e3fcedf99f23c7c93ed658de96260bd7ceeb8338",
+    "width" : 406
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/Tests/MirrorProbeCoreTests/Fixtures/Images/mission-skill-acquired-one-button.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-10T22:13:31Z"
+}

@@ -1,0 +1,98 @@
+[
+  {
+    "captureSequence": 1116,
+    "state": "battle",
+    "matches": {
+      "skipControl": 0.9984045599117002,
+      "allAutoControl": 0.9979689061781947,
+      "pauseControl": 0.9982384553433661,
+      "retreatControl": 0.9980935257115361
+    },
+    "report": "packaged-capture-1116.json",
+    "inputEventsPosted": 0
+  },
+  {
+    "captureSequence": 1117,
+    "state": "battle",
+    "matches": {
+      "skipControl": 0.9984045599117002,
+      "allAutoControl": 0.9979689061781947,
+      "pauseControl": 0.9982384553433661,
+      "retreatControl": 0.9980935257115361
+    },
+    "report": "packaged-capture-1117.json",
+    "inputEventsPosted": 0
+  },
+  {
+    "captureSequence": 1118,
+    "state": "battle",
+    "matches": {
+      "skipControl": 0.9984045599117002,
+      "allAutoControl": 0.9979689061781947,
+      "pauseControl": 0.9982384553433661,
+      "retreatControl": 0.9980935257115361
+    },
+    "report": "packaged-capture-1118.json",
+    "inputEventsPosted": 0
+  },
+  {
+    "captureSequence": 1119,
+    "state": "battle",
+    "matches": {
+      "skipControl": 0.9984045599117002,
+      "allAutoControl": 0.9979689061781947,
+      "pauseControl": 0.9982384553433661,
+      "retreatControl": 0.9980935257115361
+    },
+    "report": "packaged-capture-1119.json",
+    "inputEventsPosted": 0
+  },
+  {
+    "captureSequence": 1120,
+    "state": "battle",
+    "matches": {
+      "skipControl": 0.9984045599117002,
+      "allAutoControl": 0.9979689061781947,
+      "pauseControl": 0.9982384553433661,
+      "retreatControl": 0.9980935257115361
+    },
+    "report": "packaged-capture-1120.json",
+    "inputEventsPosted": 0
+  },
+  {
+    "captureSequence": 1121,
+    "state": "battle",
+    "matches": {
+      "skipControl": 0.9984045599117002,
+      "allAutoControl": 0.9979689061781947,
+      "pauseControl": 0.9982384553433661,
+      "retreatControl": 0.9980935257115361
+    },
+    "report": "packaged-capture-1121.json",
+    "inputEventsPosted": 0
+  },
+  {
+    "captureSequence": 1122,
+    "state": "battle",
+    "matches": {
+      "skipControl": 0.9984045599117002,
+      "allAutoControl": 0.9979689061781947,
+      "pauseControl": 0.9982384553433661,
+      "retreatControl": 0.9980935257115361
+    },
+    "report": "packaged-capture-1122.json",
+    "inputEventsPosted": 0
+  },
+  {
+    "captureSequence": 1123,
+    "state": "battle",
+    "matches": {
+      "skipControl": 0.9984045599117002,
+      "allAutoControl": 0.9979689061781947,
+      "pauseControl": 0.9982384553433661,
+      "retreatControl": 0.9980935257115361
+    },
+    "report": "packaged-capture-1123.json",
+    "inputEventsPosted": 0
+  }
+]

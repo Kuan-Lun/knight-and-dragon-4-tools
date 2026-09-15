@@ -1,0 +1,121 @@
+{
+  "version": "0.4.16",
+  "swiftTesting": {
+    "passed": 434,
+    "suites": 33
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "launcherTests": {
+    "passed": 12,
+    "appLaunched": false
+  },
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "launcherDryRun": "passed",
+  "packagedOfflineReplay": [
+    {
+      "capture": "capture-0179",
+      "pngSHA256": "d690ea5cca9125503ad353fbe7a62099a70ac7072f2b7c1828841a310bd62277",
+      "state": "battle",
+      "allowedActions": [
+        "enableAutoBattle"
+      ],
+      "inputEventsPosted": 0
+    },
+    {
+      "capture": "capture-0180",
+      "pngSHA256": "4a637022bc0f8c7f85f8947380cccb672bb121da9ed6214aa7c85bdd48264536",
+      "state": "battle",
+      "allowedActions": [],
+      "inputEventsPosted": 0
+    },
+    {
+      "capture": "capture-0181",
+      "pngSHA256": "18df38c9d7cdbb064b234c6745b36f67e0672b7215670eb048ce317732117050",
+      "state": "battle",
+      "allowedActions": [],
+      "inputEventsPosted": 0
+    },
+    {
+      "capture": "capture-0182",
+      "pngSHA256": "61960cb8ee1bc2f2218f2922f0d4381498ac923bb5837a2fc8d0dba35fa994fc",
+      "state": "battle",
+      "allowedActions": [],
+      "inputEventsPosted": 0
+    },
+    {
+      "capture": "capture-0183",
+      "pngSHA256": "61960cb8ee1bc2f2218f2922f0d4381498ac923bb5837a2fc8d0dba35fa994fc",
+      "state": "battle",
+      "allowedActions": [],
+      "inputEventsPosted": 0
+    },
+    {
+      "capture": "capture-0184",
+      "pngSHA256": "61960cb8ee1bc2f2218f2922f0d4381498ac923bb5837a2fc8d0dba35fa994fc",
+      "state": "battle",
+      "allowedActions": [],
+      "inputEventsPosted": 0
+    },
+    {
+      "capture": "capture-0185",
+      "pngSHA256": "7a916e41a9a2147ac9aa91e677228e399cbd0853fdc483360d5e7f9d9879d139",
+      "state": "battle",
+      "allowedActions": [],
+      "inputEventsPosted": 0
+    },
+    {
+      "capture": "final",
+      "pngSHA256": "7a916e41a9a2147ac9aa91e677228e399cbd0853fdc483360d5e7f9d9879d139",
+      "state": "battle",
+      "allowedActions": [],
+      "inputEventsPosted": 0
+    }
+  ],
+  "liveAutomationRun": false,
+  "packagedDoctorBeforeReauthorization": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-08T16:27:31Z",
+    "windows": []
+  },
+  "packagedDoctor": {
+    "postEventPermission": "granted",
+    "screenCapturePermission": "granted",
+    "timestamp": "2026-09-08T16:30:40Z",
+    "windows": [
+      {
+        "active": true,
+        "applicationName": "iPhone鏡像輸出",
+        "bundleIdentifier": "com.apple.ScreenContinuity",
+        "height": 890,
+        "onScreen": true,
+        "processID": 91507,
+        "title": "iPhone鏡像輸出",
+        "width": 406,
+        "windowID": 65194,
+        "x": 0,
+        "y": 30
+      }
+    ]
+  },
+  "externalQuitAppleEventSmoke": {
+    "finalizedBeforeExit": true,
+    "finalReason": "applicationQuitRequested",
+    "quitRequestsReceived": 1,
+    "status": "stopped",
+    "workerResumedAfterQuit": true
+  },
+  "liveReadOnlyPreflight": {
+    "status": "classified",
+    "state": "missionCompleteRepeatSelected",
+    "safety": {
+      "actionAuthorization": "none",
+      "inputEventsPosted": 0,
+      "readOnly": true
+    }
+  }
+}

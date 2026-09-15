@@ -1,0 +1,32 @@
+{
+  "version": "0.4.17",
+  "swiftTesting": {
+    "passed": 448,
+    "suites": 35
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "launcherTests": {
+    "passed": 12,
+    "appLaunched": false
+  },
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "launcherDryRun": "passed",
+  "packagedDoctor": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-08T21:20:35Z",
+    "windows": []
+  },
+  "offlineReplay": {
+    "source": "logs/auto-level-20260909-043306.LgKS8M/final.png",
+    "state": "wideModalOneButton",
+    "wallSeconds": 0.325,
+    "inputEventsPosted": 0
+  },
+  "liveAutomationRun": false,
+  "appNapCausality": "active in source run; contribution plausible but not proven sole cause"
+}

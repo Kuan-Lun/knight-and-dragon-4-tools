@@ -1,0 +1,220 @@
+{
+  "startedAt": "2026-09-09T16:39:57Z",
+  "endedAt": "2026-09-09T16:56:00Z",
+  "status": "error",
+  "completedCycles": 46,
+  "actionsPosted": 213,
+  "finalReason": "Safety check refused the action: the game state changed from missionFailed to unknown, or its result page changed, during action confirmation",
+  "window": {
+    "active": true,
+    "applicationName": "iPhone鏡像輸出",
+    "bundleIdentifier": "com.apple.ScreenContinuity",
+    "height": 890,
+    "onScreen": true,
+    "processID": 91507,
+    "title": "iPhone鏡像輸出",
+    "width": 406,
+    "windowID": 65194,
+    "x": 0,
+    "y": 30
+  },
+  "sourceReport": "logs/auto-level-20260910-003956.qxapyQ/run-report.json",
+  "events": [
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 212, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"fab915669711e9f796f5e979952d659775cff756d16ce3285d30b40cd96b69f3\", completedCycles: 45, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.09341983334161341, recognitionDurationSeconds=0.07630654145032167",
+      "elapsedSeconds": 950.1674033750314,
+      "frameFingerprint": "fab915669711e9f796f5e979952d659775cff756d16ce3285d30b40cd96b69f3",
+      "kind": "observation",
+      "sequence": 608,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-09T16:55:47Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 212, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"fab915669711e9f796f5e979952d659775cff756d16ce3285d30b40cd96b69f3\", completedCycles: 45, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.26672806847135083",
+      "elapsedSeconds": 951.9111793751363,
+      "frameFingerprint": "fab915669711e9f796f5e979952d659775cff756d16ce3285d30b40cd96b69f3",
+      "kind": "actionPosted",
+      "sequence": 609,
+      "state": "wideModalOneButton",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.5570224719101123
+        },
+        "rect": {
+          "height": 0.039887640449438204,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5370786516853933
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-09T16:55:49Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.battleInProgress)",
+      "detail": "stallPhase=awaitingProgress, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.23957224981859326, recognitionDurationSeconds=0.21976429177448153",
+      "elapsedSeconds": 951.9111793751363,
+      "frameFingerprint": "acb27948ba414a3584e0b1a9b08dbc5d185d3415c1100623fd6e88ec496826c0",
+      "kind": "observation",
+      "sequence": 610,
+      "state": "battle",
+      "timestamp": "2026-09-09T16:55:49Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.battleInProgress)",
+      "detail": "stallPhase=monitoring, armed=true, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.20443829172290862, recognitionDurationSeconds=0.1991611667908728",
+      "elapsedSeconds": 955.5078683749307,
+      "frameFingerprint": "ad5634443100678e34a6b85507e42bff9aa55728da4ffc31aaf1e05387d4bcf6",
+      "kind": "observation",
+      "sequence": 611,
+      "state": "battle",
+      "timestamp": "2026-09-09T16:55:52Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 213, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"744c6362a51405f488f0b508452101089b0b9c98d16ed628aca37e2a95cfe373\", completedCycles: 45, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=modalObserved, captureAgeSeconds=0.14462720835581422, recognitionDurationSeconds=0.1391600000206381",
+      "elapsedSeconds": 960.9620011250954,
+      "frameFingerprint": "744c6362a51405f488f0b508452101089b0b9c98d16ed628aca37e2a95cfe373",
+      "kind": "observation",
+      "sequence": 612,
+      "state": "wideModalOneButton",
+      "timestamp": "2026-09-09T16:55:58Z"
+    },
+    {
+      "action": "pressWideModalTopButton",
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 213, intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton, target: MirrorProbeCore.AutoLevelActionTarget(name: \"wideModalTopButton\", sourceText: \"<measured-wide-modal-primary-button>\", rect: MirrorProbeCore.NormalizedRect(x: 0.108, y: 0.5370786516853933, width: 0.783, height: 0.039887640449438204), point: MirrorProbeCore.NormalizedPoint(x: 0.4995, y: 0.5570224719101123)), observedState: MirrorProbeCore.GameState.wideModalOneButton, frameFingerprint: \"744c6362a51405f488f0b508452101089b0b9c98d16ed628aca37e2a95cfe373\", completedCycles: 45, repeatSelectionRetryPage: nil))",
+      "detail": "inputMode=foreground, captureLevel=error, activationAttempts=1, resultObservationFailures=0, actionScreenshotsPersisted=false, focusRestorationAfterPostCapture=true, meanAbsoluteDifference=0.39641095906269",
+      "elapsedSeconds": 962.8153430833481,
+      "frameFingerprint": "14f19e8bcb7522a8a0b83c2d0209872260ffeded155531f81143187d8534d20a",
+      "kind": "actionPosted",
+      "sequence": 613,
+      "state": "wideModalOneButton",
+      "target": {
+        "name": "wideModalTopButton",
+        "point": {
+          "x": 0.4995,
+          "y": 0.5570224719101123
+        },
+        "rect": {
+          "height": 0.039887640449438204,
+          "width": 0.783,
+          "x": 0.108,
+          "y": 0.5370786516853933
+        },
+        "sourceText": "<measured-wide-modal-primary-button>"
+      },
+      "timestamp": "2026-09-09T16:56:00Z"
+    },
+    {
+      "decision": "completedCycle(MirrorProbeCore.AutoLevelCycleCompletion(count: 46, outcome: MirrorProbeCore.AutoLevelCycleOutcome.failure))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=modalObserved, captureAgeSeconds=0.1494552083313465, recognitionDurationSeconds=0.1316280416212976",
+      "elapsedSeconds": 962.8153430833481,
+      "frameFingerprint": "8e6d5072eeaea7cf1074f4ce0414fc32a8355077915bdaf02837d206d63d8ddd",
+      "kind": "observation",
+      "sequence": 614,
+      "state": "missionFailed",
+      "timestamp": "2026-09-09T16:56:00Z"
+    },
+    {
+      "decision": "completedCycle(MirrorProbeCore.AutoLevelCycleCompletion(count: 46, outcome: MirrorProbeCore.AutoLevelCycleOutcome.failure))",
+      "detail": "cycle=46, outcome=failure",
+      "elapsedSeconds": 962.8153430833481,
+      "frameFingerprint": "8e6d5072eeaea7cf1074f4ce0414fc32a8355077915bdaf02837d206d63d8ddd",
+      "kind": "cycleCompleted",
+      "sequence": 615,
+      "state": "missionFailed",
+      "timestamp": "2026-09-09T16:56:00Z"
+    },
+    {
+      "decision": "requestAction(MirrorProbeCore.AutoLevelActionRequest(requestID: 214, intent: MirrorProbeCore.AutoLevelActionIntent.selectMissionRepeat, target: MirrorProbeCore.AutoLevelActionTarget(name: \"missionRepeatOption\", sourceText: \"重複進行此任務\", rect: MirrorProbeCore.NormalizedRect(x: 0.024630543912737477, y: 0.23595505606741574, width: 0.2857142857142857, height: 0.020224719101123556), point: MirrorProbeCore.NormalizedPoint(x: 0.16748768676988032, y: 0.24606741561797751)), observedState: MirrorProbeCore.GameState.missionFailed, frameFingerprint: \"8e6d5072eeaea7cf1074f4ce0414fc32a8355077915bdaf02837d206d63d8ddd\", completedCycles: 46, repeatSelectionRetryPage: nil))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.15853966679424047, recognitionDurationSeconds=0.1316280416212976",
+      "elapsedSeconds": 962.8153430833481,
+      "frameFingerprint": "8e6d5072eeaea7cf1074f4ce0414fc32a8355077915bdaf02837d206d63d8ddd",
+      "kind": "observation",
+      "sequence": 616,
+      "state": "missionFailed",
+      "timestamp": "2026-09-09T16:56:00Z"
+    },
+    {
+      "detail": "Safety check refused the action: the game state changed from missionFailed to unknown, or its result page changed, during action confirmation",
+      "elapsedSeconds": 963.594395250082,
+      "frameFingerprint": "bc316a8de4cbe89e51a5ddd12f47eec4bf8634864742bbaabeea53469200cc7a",
+      "kind": "sessionError",
+      "screenshotPath": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260910-003956.qxapyQ/final.png",
+      "sequence": 617,
+      "state": "unknown",
+      "timestamp": "2026-09-09T16:56:00Z"
+    }
+  ],
+  "diagnosticScreenshots": [
+    {
+      "captureSequence": 733,
+      "capturedAtElapsedSeconds": 953.7017948334105,
+      "frameFingerprint": "833908cb2ea49ed09838b8a02390886490152d24f9ddebde82c878b92347c2a7",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260910-003956.qxapyQ/diagnostics/capture-0733.png",
+      "role": "recent",
+      "state": "battle"
+    },
+    {
+      "captureSequence": 734,
+      "capturedAtElapsedSeconds": 955.5078683749307,
+      "frameFingerprint": "ad5634443100678e34a6b85507e42bff9aa55728da4ffc31aaf1e05387d4bcf6",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260910-003956.qxapyQ/diagnostics/capture-0734.png",
+      "role": "recent",
+      "state": "battle"
+    },
+    {
+      "captureSequence": 735,
+      "capturedAtElapsedSeconds": 957.3152876666281,
+      "frameFingerprint": "9f7f138bef49673427edeba43e6de5ed6a74c370724e7c3a527ba0a322b106bc",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260910-003956.qxapyQ/diagnostics/capture-0735.png",
+      "role": "recent",
+      "state": "battle"
+    },
+    {
+      "captureSequence": 736,
+      "capturedAtElapsedSeconds": 959.1664282500278,
+      "frameFingerprint": "df56940013ce252c7e34bebcc4c088bbb1d814f924496ef2a5dbec4476f6b9d3",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260910-003956.qxapyQ/diagnostics/capture-0736.png",
+      "role": "recent",
+      "state": "battle"
+    },
+    {
+      "captureSequence": 737,
+      "capturedAtElapsedSeconds": 960.9620011250954,
+      "frameFingerprint": "744c6362a51405f488f0b508452101089b0b9c98d16ed628aca37e2a95cfe373",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260910-003956.qxapyQ/diagnostics/capture-0737.png",
+      "role": "recent",
+      "state": "wideModalOneButton"
+    },
+    {
+      "captureSequence": 738,
+      "capturedAtElapsedSeconds": 961.5282847916242,
+      "frameFingerprint": "14f19e8bcb7522a8a0b83c2d0209872260ffeded155531f81143187d8534d20a",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260910-003956.qxapyQ/diagnostics/capture-0738.png",
+      "role": "recent",
+      "state": "wideModalOneButton"
+    },
+    {
+      "captureSequence": 739,
+      "capturedAtElapsedSeconds": 962.8153430833481,
+      "frameFingerprint": "8e6d5072eeaea7cf1074f4ce0414fc32a8355077915bdaf02837d206d63d8ddd",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260910-003956.qxapyQ/diagnostics/capture-0739.png",
+      "role": "recent",
+      "state": "missionFailed"
+    },
+    {
+      "captureSequence": 740,
+      "capturedAtElapsedSeconds": 963.396804291755,
+      "frameFingerprint": "bc316a8de4cbe89e51a5ddd12f47eec4bf8634864742bbaabeea53469200cc7a",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260910-003956.qxapyQ/final.png",
+      "role": "final",
+      "state": "unknown"
+    }
+  ]
+}

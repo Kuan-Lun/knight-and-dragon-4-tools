@@ -1,0 +1,1532 @@
+[0/1] Planning build
+Building for debugging...
+[0/6] Write sources
+[1/6] Write swift-version--58304C5D6DBC2206.txt
+[2/10] Linking mirror-probe
+[3/10] Applying mirror-probe
+[5/10] Emitting module MirrorProbeCoreTests
+[6/10] Compiling MirrorProbeCoreTests AutoLevelControllerTests.swift
+[7/10] Compiling MirrorProbeCoreTests ActiveBattleLowAutoRegressionTests.swift
+[8/10] Compiling MirrorProbeCoreTests RetreatDirectFailureRegressionTests.swift
+[8/10] Write Objects.LinkFileList
+[9/10] Linking KnightDragonMirrorProbePackageTests
+Build complete! (5.30s)
+Test Suite 'All tests' started at 2026-09-14 19:22:48.450.
+Test Suite 'KnightDragonMirrorProbePackageTests.xctest' started at 2026-09-14 19:22:48.451.
+Test Suite 'AutomationStopRequestTests' started at 2026-09-14 19:22:48.451.
+Test Case '-[MirrorProbeCoreTests.AutomationStopRequestTests testNormalQuitStopsCommandsWithoutAStopFileAndRemainsLatched]' started.
+Test Case '-[MirrorProbeCoreTests.AutomationStopRequestTests testNormalQuitStopsCommandsWithoutAStopFileAndRemainsLatched]' passed (0.002 seconds).
+Test Case '-[MirrorProbeCoreTests.AutomationStopRequestTests testStopFileStillWorksWithoutQuitAndIsNotModifiedByQuit]' started.
+Test Case '-[MirrorProbeCoreTests.AutomationStopRequestTests testStopFileStillWorksWithoutQuitAndIsNotModifiedByQuit]' passed (0.002 seconds).
+Test Suite 'AutomationStopRequestTests' passed at 2026-09-14 19:22:48.455.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+Test Suite 'KnightDragonMirrorProbePackageTests.xctest' passed at 2026-09-14 19:22:48.455.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+Test Suite 'All tests' passed at 2026-09-14 19:22:48.455.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.004 (0.005) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite "Active battle control-grid regression" started.
+◇ Suite "Auto-level capture retention" started.
+◇ Suite "Window availability recovery budget" started.
+◇ Suite "Fixed result top-action resolver" started.
+◇ Suite "Frame region difference" started.
+◇ Suite "Failure repeat-confirmation regression" started.
+◇ Suite "Repeat-selected stamp detector" started.
+◇ Suite "Native battle footer incident regression" started.
+◇ Suite "Geometry-first modal regression" started.
+◇ Suite "Active battle low-retreat control-grid regression" started.
+◇ Suite "Native battle pause occlusion incident regression" started.
+◇ Suite "Dense battle visual stability confirmation" started.
+◇ Suite "Auto-level recognition uses only measured image evidence" started.
+◇ Suite "Verified unselected mission-repeat recovery" started.
+◇ Suite "Character reroll final pixel guard" started.
+◇ Suite "Visual result detector rejects obscured or unrelated pixels" started.
+◇ Suite "Natural defeat stall detector" started.
+◇ Suite "Character total boundary corroborator" started.
+◇ Suite "Character total boundary latch" started.
+◇ Suite "Character total digit pixel detector" started.
+◇ Suite "Visual result evidence at controller boundaries" started.
+◇ Suite "Wide modal action resolver" started.
+◇ Suite "Mission success page identity" started.
+◇ Suite "Native retreat to failure result regression" started.
+◇ Suite "Character reroll detector" started.
+◇ Suite "Result-page visual recognition from original captures" started.
+◇ Suite "Per-window automation run lock" started.
+◇ Suite "AutoLevelController" started.
+◇ Suite "Focused successful-result title refinement" started.
+◇ Suite "Battle visual controls from native captures" started.
+◇ Suite "GameStateClassifier live fixture replay" started.
+◇ Suite "Character total boundary evidence resolver" started.
+◇ Suite "Auto-level delayed observation sequence" started.
+◇ Suite "Active battle low-auto OCR regression" started.
+◇ Suite "Observation freshness recovery" started.
+◇ Suite "AutoLevelInputSafety" started.
+◇ Suite "Focused character total resolver" started.
+◇ Suite "Foreground focus restoration" started.
+◇ Suite "Foreground focus fallback validation" started.
+◇ Suite "System backdrop input-point filtering" started.
+◇ Suite "FrameAnalyzer" started.
+◇ Suite "Transient result-title occlusion regression" started.
+◇ Suite "Battle activity progress detector" started.
+◇ Suite "Captured low-confidence result-title sequences" started.
+◇ Suite "GameStateClassifier" started.
+◇ Suite "Foreground activation retry" started.
+◇ Suite "Full-frame character total resolver" started.
+◇ Suite "Unacknowledged experience-page replay" started.
+◇ Suite "Graphical battle progress without OCR" started.
+◇ Test "Both issuing and validating evidence reject modal, paused, unknown or incomplete screens" started.
+◇ Test "A stricter configured duration and sample count remain binding" started.
+◇ Test "Sudden motion in either comparison permanently revokes even completed evidence" started.
+◇ Suite "All-auto progress validation" started.
+◇ Test "A weaker configuration cannot lower the five-second and five-sample floor" started.
+◇ Test "Missing, negative and non-finite differences never count as stability" started.
+◇ Test "Window context and input generation remain bound through issuing, pixels and preflight" started.
+◇ Test "Dense samples need five seconds and fresh OCR before confirming recovery" started.
+◇ Test "A measured battle accepts a 0.30 retreat marker only with the full corroborating grid" started.
+◇ Test "Final OCR confirmation remains valid only while the later retreat preflight is stable" started.
+◇ Test "Sparse, repeated, reversed and non-finite capture times permanently invalidate" started.
+◇ Suite "WideModalButtonDetector" started.
+◇ Test "Elapsed time alone cannot replace the minimum number of captured samples" started.
+◇ Test "An unarmed or merely assumed-automatic battle cannot issue a confirmation" started.
+◇ Test "The right stack and bottom row must keep their measured ordering" started.
+◇ Test "Failure result uses the fixed top target without arrow OCR" started.
+◇ Test "Reprocessing an old image and waiting through a preflight gap cannot refresh proof" started.
+◇ Test "Invalid geometry and truncated input are rejected before any classifier can authorize an action" started.
+◇ Test "The earliest deadline determines the boundary even when several have elapsed" started.
+◇ Test "Exactly eight captures fill the buffer without eviction" started.
+◇ Test "Action expiry applies both before and after a successful window query" started.
+◇ Test "Success EXP and loot pages use the same fixed top target without arrow OCR" started.
+◇ Test "Error-level safety stops and runtime errors retain recent and final evidence" started.
+◇ Test "Masking or dimming any required footer or retreat glyph fails closed" started.
+◇ Test "Incomplete result identity never gains a fixed target" started.
+◇ Test "Recognizing the incident image cannot create a temporal stall authorization" started.
+◇ Test "The ninth capture evicts only the oldest capture" started.
+◇ Test "Loot, retreat and recruitment dialogs expose only the upper of two measured rows" started.
+◇ Test "A missing window may recover on the next bounded query" started.
+◇ Test "A conflicting mission result keeps the low-retreat frame fail-closed" started.
+◇ Test "Controller accepts the measured target for success and failure intents" started.
+◇ Test "The low-retreat grid must preserve both measured control orderings" started.
+◇ Test "Fixed-anchor comparison rejects gradual movement hidden by adjacent comparisons" started.
+◇ Test "An empty recent-capture buffer has no elements" started.
+◇ Test "A live battle survives simultaneous title and loot-prefix OCR loss" started.
+◇ Test "Retries wait at least one second and four missing queries exhaust the budget" started.
+◇ Test "Every low-retreat fallback anchor must remain unique and present" started.
+◇ Test "Equality compares chronological content rather than circular storage layout" started.
+◇ Test "Fewer than eight captures preserve insertion order" started.
+◇ Test "Info-level diagnostic terminations retain audit, recent, and final frames" started.
+◇ Test "Non-finite configuration and observed clocks fail closed" started.
+◇ Test "Native result captures retain visual state, page identity and their single authorized action" started.
+◇ Test "Native battle captures carry graphical battle evidence and only a gated retreat target" started.
+◇ Test "Temporal stall metadata permits only a complete graphical battle proof and its exact retreat target" started.
+◇ Test "Every low-retreat fallback anchor must remain trusted and layout-bound" started.
+◇ Test "Captures with no pending action retain session and recovery limits" started.
+◇ Test "Every control-grid fallback anchor remains unique trusted and layout-bound" started.
+◇ Test "Copies have independent value semantics after mutation" started.
+◇ Test "A real partially obscured result cannot fall through to battle or authorize any action" started.
+◇ Test "A subsecond session wait reaches the deadline without permitting another query" started.
+◇ Test "Repeated identical native images cannot establish battle progress" started.
+◇ Test "Blank black and white images cannot produce graphical actions" started.
+◇ Test "Timeout recovery cannot cross page, result-family, or exact target boundaries" started.
+◇ Test "Captures with the same fingerprint remain distinct temporal samples" started.
+◇ Test "Clock rollback cannot reset or extend recovery" started.
+◇ Test "STOP is honored before a query, after a query, and after a wait" started.
+◇ Test "Recovery time starts once and includes slow window queries" started.
+◇ Test "Red dynamic item rows below the repeat control cannot count as selection ink" started.
+◇ Test "Info-level expected limits and user stops retain the audit trail and final frame" started.
+◇ Test "Sixteen captures leave captures nine through sixteen in chronological order" started.
+◇ Test "Error-level expected limits and user stops retain no screenshots" started.
+◇ Test "Every retained incident capture remains a running battle beyond uncertainty grace" started.
+◇ Test "Both original and current captures must positively prove an absent stamp" started.
+◇ Test "A delayed selected stamp acknowledges a posted repeat retry" started.
+◇ Test "Only unique trusted pixel absence, page, and repeat-row evidence prove an unselected toggle" started.
+◇ Test "The rejected live PNG is Jennie total 67 and its clock overlaps only the former crop" started.
+◇ Test "Clear absence uses a separate noise allowance and rejects partial stamp pixels" started.
+◇ Test "Title, Random, total, Decide, and Reset changes still reject the final guard" started.
+◇ Test "Exactly three posted attempts are permitted for each verified result family and page" started.
+◇ Test "The captured failure has no selected stamp and receives recovery after twelve seconds" started.
+◇ Test "An explicit exclusion masks a changing pixel inside the outer region" started.
+◇ Test "An unposted original or retry request cannot obtain another attempt" started.
+◇ Test "Pixel absence requires valid measured pixels and never a merely subthreshold red stamp" started.
+◇ Test "Repeat recovery preserves cooldown, maximum actions, runtime, and cycle limits" started.
+◇ Test "A change outside the selected battle region is ignored" started.
+◇ Test "An ambiguous confirmation reobserves the same unposted request without spending a posted attempt" started.
+◇ Test "An exclusion covering the entire region is rejected" started.
+◇ Test "A stamp appearing during retry preflight cancels the stale toggle and preserves its latch" started.
+◇ Test "The exact SRLECTED frame resolves to selected and only the upper continuation" started.
+◇ Test "Transparent marker pixels cannot authorize a result even when stored RGB still matches" started.
+◇ Test "Brown separator shades cannot become selection ink as capture colors fluctuate" started.
+◇ Test "Measured target variation inside the existing tolerance can be reauthorized" started.
+◇ Test "Red pixels cannot promote a non-result screen" started.
+◇ Test "Live result images distinguish the fixed red stamp without reading its word" started.
+◇ Test "A supplied measured modal vetoes a matching result before any result action is created" started.
+◇ Test "Changing the clock and dynamic result body leaves fixed result evidence unchanged" started.
+◇ Test "Both captured unselected failure frames retain the same repeat target after hue filtering" started.
+◇ Test "Unchanged low result permits only three complete authorization retries" started.
+◇ Test "The untouched captured result has visual evidence and the calibrated upper target" started.
+◇ Test "A selected confirmation cancels either the initial repeat or an already-issued retry" started.
+◇ Test "A dimmed result under an overlay cannot pass brightness-invariant correlation alone" started.
+◇ Test "One-digit low reads must agree below 100, while three digits stop" started.
+◇ Test "Every cross-boundary OCR disagreement is a terminal conflict" started.
+◇ Test "Covering any required result anchor removes all result actions" started.
+◇ Test "Confirmation recovery keeps the request's original twelve-second input deadline" started.
+◇ Test "Encounter, event, defeat, skill and returned-party dialogs take priority over their background" started.
+◇ Test "Freshness waits preserve the posted deadline and do not spend repeat attempts" started.
+◇ Test "The entire measured status bar is excluded at native and scaled dimensions" started.
+◇ Test "High, conflicting, and unavailable boundary evidence permanently cancel recovery" started.
+◇ Test "Changing the aspect ratio or using a thumbnail cannot authorize calibrated coordinates" started.
+◇ Test "An uncorroborated OCR HP change is not accepted as genuine progress" started.
+◇ Test "Invalid configuration fails closed instead of trapping" started.
+◇ Test "A third stable observation can confirm only after 60 seconds" started.
+◇ Test "High evidence can never be replaced by low or unavailable OCR" started.
+◇ Test "Two OCR reads on the high side stop even when their digit values differ" started.
+◇ Test "An empty measured stamp region wins safely over hallucinated SELECTED OCR" started.
+◇ Test "The live unselected loot page excludes the first item row from stamp evidence" started.
+◇ Test "Unselected proof is absent without pixels or a unique trusted result scaffold" started.
+◇ Test "Target changes beyond the existing tolerance or invalid coordinates are terminal" started.
+◇ Test "A changed or unrecognized character cannot be replaced by a later low sample" started.
+◇ Test "Invalid thresholds, ranges, and focused metadata fail closed" started.
+◇ Test "A narrow but complete leading one is counted as the third digit" started.
+◇ Test "Even a sub-threshold narrow mark in the hundreds slot fails closed" started.
+◇ Test "Unselected success and failure pages retain trusted page identity and pixel proof" started.
+◇ Test "Restoration must retain the original known result page even when state and coordinates agree" started.
+◇ Test "The thresholded live total 73 pixel mask is two digits" started.
+◇ Test "A boundary conflict is immediately terminal" started.
+◇ Test "A two-digit low-side reroll requires exact OCR value agreement" started.
+◇ Test "Recognizing the incident image cannot create a temporal stall authorization" started.
+◇ Test "Every retained incident capture remains a running battle beyond uncertainty grace" started.
+◇ Test "The measured 0.50 pause remains strict and fails below its local floor" started.
+◇ Test "Invalid pixel metrics cannot authorize retries or appear quiescent" started.
+◇ Test "Invalid dimensions and short buffers are rejected" started.
+◇ Test "Red ink survives background blending while a partial stamp remains ambiguous" started.
+◇ Test "The measured low-confidence loot anchor remains strict and fails below its floor" started.
+◇ Test "Invalid byte layouts fail closed" started.
+◇ Test "Malformed dimensions and truncated buffers fail before sampling" started.
+◇ Test "Visual movement resets the five-second freeze candidate" started.
+◇ Test "The original unstable top edge cannot change footer glyph evidence" started.
+◇ Test "An armed detector tolerates incomplete HP OCR and can resume without counting the gap" started.
+◇ Test "Marker kind, fixed region, and provenance must agree" started.
+◇ Test "Sparse samples cannot be counted as a continuous five-second freeze" started.
+◇ Test "Duplicate or conflicting visual anchors cannot identify a result" started.
+◇ Test "Ordinary unavailable and low samples may stabilize before any high evidence" started.
+◇ Test "Masking or dimming either incident footer glyph fails closed" started.
+◇ Test "The 100 mode still permits different two-digit OCR values" started.
+◇ Test "Missing, oversized, excessive, or shifted components fail closed" started.
+◇ Test "Any OCR or rendered digit-count disagreement fails closed" started.
+◇ Test "The measured natural-defeat OCR yields strict, complete evidence" started.
+◇ Test "One, two, and three right-aligned glyphs are counted" started.
+◇ Test "Three or more rows block every actionable background state" started.
+◇ Test "Durable live 69, 73, 76, 81, 84, and 97 PNGs remain valid two-digit frames" started.
+◇ Test "Verified normal combat can confirm a dense five-second visual freeze without HP OCR" started.
+◇ Test "Truncated loot requires its own confidence floor and exact header region" started.
+◇ Test "Every visual result requires its title, page, repeat row, and positive stamp evidence" started.
+◇ Test "Evidence kind and complete label text must agree" started.
+◇ Test "An uncorroborated OCR log change is not accepted as genuine progress" started.
+◇ Test "The historical returned-party layout follows the one-button rule" started.
+◇ Test "Visual evidence round-trips without inventing OCR and old evidence still decodes" started.
+◇ Test "Retreat remains mandatory for monitoring while an obscured pause is tolerated" started.
+◇ Test "Page labels remain bound to the measured upper-right header" started.
+◇ Test "A recognized OCR modal cannot bypass missing pixel geometry" started.
+◇ Test "Visual repeat retries require the measured source and unchanged empty-stamp proof" started.
+◇ Test "An OCR anchor cannot complete an otherwise visual result" started.
+◇ Test "HP parser accepts complete measured values and rejects guesses" started.
+◇ Test "Flat white, black, and transparent images provide no result authorization" started.
+◇ Test "Tiny texture specks do not invent another digit" started.
+◇ Test "Adjacent measured rows tolerate only floating-point normalization noise" started.
+◇ Test "An empty stamp supports the same bounded visual repeat retry for both result families" started.
+◇ Test "Page confidence must be finite and within the trusted probability range" started.
+◇ Test "Missing, truncated, or duplicate party HP is incomplete" started.
+◇ Test "Truncated loot cannot replace any other trusted unique battle control" started.
+◇ Test "A non-battle frame breaks an armed visual-freeze sequence" started.
+◇ Test "One button is actionable without OCR text or a recognized state" started.
+◇ Test "The visual similarity floor is finite and bounded independently of OCR confidence" started.
+◇ Test "Confirmed defeat evidence cannot cross an input-generation boundary" started.
+◇ Test "Visual EXP and loot results advance with no OCR observations" started.
+◇ Test "Two buttons always select the upper row without OCR text" started.
+◇ Test "Paused frames reset and require automatic mode to be enabled again" started.
+◇ Test "Pixel movement prevents a stable HP and log snapshot from accumulating" started.
+◇ Test "The missed new-skill popup is actionable from its one-button geometry" started.
+◇ Test "A second nonblocking acquisition for the same window is refused" started.
+◇ Test "Incomplete battle background can never accumulate stall evidence" started.
+◇ Test "Posted retreat accepts the recorded result and continues with repeat selection exactly once" started.
+◇ Test "A frozen battle cannot confirm before normal combat was independently verified" started.
+◇ Test "One trusted page label identifies EXP or loot including OCR whitespace" started.
+◇ Test "Total parsing accepts compatibility characters but rejects guesses" started.
+◇ Test "Lock names are stable and include user, mirror process, and window identities" started.
+◇ Test "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test "A stalled-looking battle never arms before automatic mode and real progress" started.
+◇ Test "Measured frames 03 and 04 are suspected after 32 seconds, not confirmed" started.
+◇ Test "HP or log progress clears an existing stall timer but stays armed" started.
+◇ Test "The measured truncated loot header supports freeze detection with or without talismans" started.
+◇ Test "Modal authorization does not require any recognized text" started.
+◇ Test "The visual corpus covers both native resolutions and all four result states" started.
+◇ Test "Random must stay within its calibrated top-right control" started.
+◇ Test "Duplicate total observations are ambiguous" started.
+◇ Test "Modal, generated input, context change, gaps, and out-of-order time reset" started.
+◇ Test "A measured low-confidence total is provisional without lowering the Random floor" started.
+◇ Test "Captured 406 by 890 OCR replays as the total 69 roll" started.
+◇ Test "The preliminary OCR decision supports bounded 90 through 100 thresholds" started.
+◇ Test "The stopped total 81 and 84 frames resolve split full-frame and focused OCR consistently" started.
+◇ Test "A live frame with an omitted red stat remains usable because stats are ignored" started.
+◇ Test "Every required page anchor is mandatory" started.
+◇ Test "Anchor, name, and provisional total confidence floors fail closed below their values" started.
+◇ Test "The 05:25 run's actual EXP-to-loot image change acknowledges the posted result action" started.
+◇ Test "Full and truncated loot readings share one global uniqueness requirement" started.
+◇ Test "An explicit EXP-to-loot identity change authorizes the same top arrow once more" started.
+◇ Test "Split total rows preserve threshold stops and the original target" started.
+◇ Test "A supplemental bottom arrow cannot bypass the result classifier" started.
+◇ Test "Delayed result OCR cannot restart posted deadlines or spend a success retry" started.
+◇ Test "An OCR-only external retreat confirmation remains unauthorized without geometry" started.
+◇ Test "Incomplete or invalid geometry never produces a modal action" started.
+◇ Test "The fixed three-digit boundary rerolls 99 and stops at 100 through 125" started.
+◇ Test "Success-page retry requires the same unique exact action target" started.
+◇ Test "Action cooldown blocks a second transition click" started.
+◇ Test "An invalid OCR observation poisons the whole snapshot" started.
+◇ Test "Obscuring either required footer control fails closed" started.
+◇ Test "An unposted repeat action can be cancelled after its exact forward success transition" started.
+◇ Test "Extra or malformed fragments cannot authorize a provisional roll" started.
+◇ Test "Resume state rejects a changed context or input generation" started.
+◇ Test "Missing, unobserved, duplicate, and conflicting page labels have no identity" started.
+◇ Test "Corpus keeps its opt-in and known-mismatch cases explicit" started.
+◇ Test "Generated-field pixel movement blocks recovery even when name and total match" started.
+◇ Test "Split and merged name rows resolve to the same semantic roll" started.
+◇ Test "Profession, race, faith, stats, and remaining points are ignored" started.
+◇ Test "Thresholds outside 90 through 100 fail closed" started.
+◇ Test "The name row must be complete, correctly placed, and unambiguous" started.
+◇ Test "Posted actions, reverse transitions, unrelated actions, and stopped sessions cannot cancel" started.
+◇ Test "Serialized visual evidence rejects missing, repeated, weak, displaced or mixed anchors" started.
+◇ Test "An obscured pause preserves retreat evidence while a missing retreat removes monitoring proof" started.
+◇ Test "Direct failure acknowledgement retains the original fingerprint and deadline guards" started.
+◇ Test "Replays captured OCR together with its screen-layout contract" started.
+◇ Test "Missing and duplicate action targets fail closed after grace" started.
+◇ Test "Result episode is counted once across selected and unselected frames" started.
+◇ Test "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test "The measured original and focused confidence floors are independent and bounded" started.
+◇ Test "Closing a battle encounter may reach mission failure before the next poll" started.
+◇ Test "Retreat cancellation requires every field of the pending request to match" started.
+◇ Test "Focused OCR must contain one matching title with agreeing geometry" started.
+◇ Test "Missing, duplicate, weak, or misplaced repeat and page anchors do not trigger OCR refinement" started.
+◇ Test "A forward transition acknowledges a bounded loot-page retry" started.
+◇ Test "The next battle clears the selected-result latch" started.
+◇ Test "An actual stronger title read recovers EXP and loot with the same fixed upper target" started.
+◇ Test "Closing a battle event may reach mission success before the next poll" started.
+◇ Test "Skill brightness and the changing header are irrelevant to battle identity and evidence" started.
+◇ Test "A supplemental top arrow cannot bypass missing page identity" started.
+◇ Test "Inactive or unknown all-auto metadata can never request the toggle" started.
+◇ Test "The legitimate loot-page sell-all header remains ordinary page content" started.
+◇ Test "All-auto may reach a failed result before the next poll" started.
+◇ Test "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" started.
+◇ Test "Refinement requires the sole matching low-confidence classification evidence" started.
+◇ Test "A longer cooldown preserves the timed-out retry context" started.
+◇ Test "Capture recovery sees the original posted-action deadline until acknowledgement" started.
+◇ Test "A direct failure result does not acknowledge an unposted retreat" started.
+◇ Test "Reclassifying the intact full frame exposes conflicts hidden by the first weak-title gate" started.
+◇ Test "Title placement must remain wholly inside the measured region and match its center" started.
+◇ Test "Result episode survives loot and recruitment until the next battle family" started.
+◇ Test "An unposted retreat cannot authorize an OCR-only confirmation" started.
+◇ Test "Success-page cancellation rejects uncertain pages and ambiguous or incompatible targets" started.
+◇ Test "Unrelated invalid full-frame OCR and suspicious decision controls remain blockers" started.
+◇ Test "A changed frame in the same modal waits for a state transition without replay" started.
+◇ Test "Maximum action count stops before another action" started.
+◇ Test "Only one intact measured title qualifies; fragments and failure variants stay blocked" started.
+◇ Test "State and action intent must agree" started.
+◇ Test "All-auto may complete the mission before the next poll" started.
+◇ Test "A geometry-only two-button modal uses its upper-row rule without equipment metadata" started.
+◇ Test "A conflicting result still blocks the corroborated battle" started.
+◇ Test "Invalid policy and session metadata are terminal" started.
+◇ Test "Loot collection uses yes candidate and never a generic confirmation" started.
+◇ Test "An action cannot borrow a differently named target" started.
+◇ Test "A classifier-produced zero-OCR loot fallback advances after the EXP page exactly once" started.
+◇ Test "Only the exact pending unposted request can start acknowledgement" started.
+◇ Test "Incomplete low evidence never authorizes a click" started.
+◇ Test "Low-auto classification retains independent confidence floors" started.
+◇ Test "Invalid target never becomes a click" started.
+◇ Test "Any raw detector failure is terminal and cannot be erased by a later low sample" started.
+◇ Test "A geometry-only modal closes and resumes the same result without recounting it" started.
+◇ Test "A direct failure cannot acknowledge retreat from a different window" started.
+◇ Test "Low-auto fallback requires ordered and aligned control rows" started.
+◇ Test "Inconsistent public read metadata is terminal" started.
+◇ Test "Absent, ambiguous, or invalid rendered stamps cannot be replaced by SELECTED OCR" started.
+◇ Test "September 9 delayed battle ACK and modal require fresh pixels before the next post" started.
+◇ Test "A posted retreat still rejects success results and stops on full inventory" started.
+◇ Test "Classification conflict stops immediately" started.
+◇ Test "Geometry-only modals carry the stalled-defeat recovery through its button sequence" started.
+◇ Test "Success-page preflight cancellation requires every field of the unposted request" started.
+◇ Test "Any incomplete credible high source is an immediate conflict" started.
+◇ Test "The captured sequence remains battle without authorizing low-confidence auto clicks" started.
+◇ Test "A default-on battle never toggles the visible all-auto control" started.
+◇ Test "A supplemental measured fallback cannot bypass its classifier action and evidence" started.
+◇ Test "Small OCR box variation preserves threshold and contamination vetoes" started.
+◇ Test "Contaminated full-frame evidence can veto but never authorize" started.
+◇ Test "Cross-boundary and unequal low reads conflict at 90" started.
+◇ Test "Three complete sources distinguish safe low and safe keeper values" started.
+◇ Test "Focused contamination containing a keeper read is terminal" started.
+◇ Test "Unexpected known post-action state stops" started.
+◇ Test "Two-digit-threshold contamination permanently vetoes a later clean low sample" started.
+◇ Test "Every new default-on battle session remains click-free" started.
+◇ Test "Retreat cancellation cannot discard an unrelated pending action" started.
+◇ Test "Verified stalled defeat requests retreat without equipment metadata" started.
+◇ Test "A timed-out success advance cannot retry across different result pages" started.
+◇ Test "Maximum cycle count reports the last completion before stopping, even on stale pixels" started.
+◇ Test "Custom positive timing and recapture bounds are honored" started.
+◇ Test "Visual EXP-to-loot identity acknowledges the posted advance without recounting" started.
+◇ Test "A possible leading hundreds glyph is terminal even before OCR agrees" started.
+◇ Test "A direct failure after retreat retains cycle, runtime, and action limits" started.
+◇ Test "Persistently slow fresh captures allow only two recaptures before exhaustion" started.
+◇ Test "Closing a battle event may reach repeat-selected mission success before the next poll" started.
+◇ Test "All-auto becoming inactive after it was latched stops" started.
+◇ Test "All five low-auto anchors must be present, unique, and in their measured regions" started.
+◇ Test "The 100 boundary retains its digit-length compatibility rules" started.
+◇ Test "A loot-to-EXP change cannot replay the shared top arrow" started.
+◇ Test "A modal appearing during preflight cancels stale coordinates for fresh authorization" started.
+◇ Test "An observation at the age limit is stale, while zero age and just under the limit are fresh" started.
+◇ Test "A directly observed selected failure keeps the repeat toggle latched" started.
+◇ Test "Runtime limit is hard and inclusive" started.
+◇ Test "A selected result cannot regress into the repeat toggle within the same episode" started.
+◇ Test "Fresh observation gating preserves one-shot retreat confirmation until it can issue" started.
+◇ Test "An uncertain timeout snapshot cannot authorize a success-page retry" started.
+◇ Test "Inventory full stops immediately and can never sell" started.
+◇ Test "An unposted success-page request is never converted into a retry" started.
+◇ Test "Fresh evidence resets even an exhausted consecutive streak" started.
+◇ Test "Closing a battle encounter may reach repeat-selected mission failure before the next poll" started.
+◇ Test "A click which never changes the frame stops at the bounded timeout" started.
+◇ Test "Delayed EXP-to-loot proof acknowledges the old post without issuing loot's new action" started.
+◇ Test "Reevaluating the same old frame does not rewrite its capture time or restore freshness" started.
+◇ Test "User input takes over the mirror even when its focused PID never changes" started.
+◇ Test "Delayed modal OCR waits for fresh pixels without consuming an action or its deadline" started.
+◇ Test "Focused splits use the same measured overlap allowance for low and keeper totals" started.
+◇ Test "A malformed or weak focused row is contaminated rather than absent" started.
+◇ Test "Successful result counts once, selects repeat, then uses success advance" started.
+◇ Test "Invalid process identifiers never authorize restoration" started.
+◇ Test "Merged and adjacent split Vision rows resolve identically" started.
+◇ Test "Recruitment always selects the explicit top recruit action" started.
+◇ Test "A synthetic loot-page 22 without matching OCR evidence cannot bypass the controller" started.
+◇ Test "A posted success advance retries twice on the same page before the third timeout stops" started.
+◇ Test "A terminated original application cannot become a later restoration target" started.
+◇ Test "Only exact, in-range, non-padded ASCII totals are accepted" started.
+◇ Test "Delayed acknowledgement preserves cycle and repeat-selection proof but defers the next input" started.
+◇ Test "A three-digit split row preserves the digit boundary" started.
+◇ Test "Unknown state gets bounded count grace then stops" started.
+◇ Test "A user-selected third application invalidates an otherwise true AX read" started.
+◇ Test "Missing and incorrectly typed AX values cannot authorize focus borrowing" started.
+◇ Test "Negative, future, NaN, and infinite timestamps fail closed and do not reset recovery" started.
+◇ Test "Cancelling an unposted retreat resumes battle observations and preserves limits" started.
+◇ Test "Leaving the mirror and returning before cleanup still cancels restoration" started.
+◇ Test "A roughly 55-second analysis delay discards the frame and a fresh capture resets recovery" started.
+◇ Test "Contaminated crops retain credible merged or split keeper reads as veto evidence" started.
+◇ Test "A recognized battle prompt requests exactly its close action" started.
+◇ Test "Starting with the mirror already focused requires no restoration" started.
+◇ Test "Preflight EXP-to-loot cancellation preserves the action count and cooldown" started.
+◇ Test "Unknown candidates before or after the live AX read fail closed" started.
+◇ Test "Unavailable monitoring or a changed setup snapshot must not restore focus" started.
+◇ Test "Low confidence, gaps, vertical splits, and extra row text fail closed" started.
+◇ Test "Already returning to the original application consumes restoration" started.
+◇ Test "A posted recovery transaction may confirm the exact gated yes target once" started.
+◇ Test "The user's third application is preserved, even if the mirror later regains focus" started.
+◇ Test "Automation clicks and the expected activation preserve restoration" started.
+◇ Test "Focus changes after target selection still cancel the Accessibility fallback" started.
+◇ Test "A fully black opaque image is rejected" started.
+◇ Test "An identical post-click frame is never clicked twice" started.
+◇ Test "A transparent image is rejected" started.
+◇ Test "Invalid identifiers never become focus or restoration destinations" started.
+◇ Test "Invalid configuration fails closed without issuing a recapture" started.
+◇ Test "A changed result frame with the same target does not replay advance" started.
+◇ Test "A posted non-success action never retries after its timeout" started.
+◇ Test "An unknown original application has no restoration target" started.
+◇ Test "A live original application receives focus at most once" started.
+◇ Test "A cancelled retreat does not authorize a later OCR-only confirmation" started.
+◇ Test "The locked window must still be frontmost and topmost at the click point" started.
+◇ Test "An unexpected application before the target activates also cancels restoration" started.
+◇ Test "An acknowledged EXP retry starts a fresh loot-page budget without recounting success" started.
+◇ Test "Window identity changes stop immediately and permanently" started.
+◇ Test "Unknown current focus consumes restoration without activating anything" started.
+◇ Test "A stable AppKit candidate requires a successful live AXFrontmost true" started.
+◇ Test "The real obscured title remains unknown even with the intact EXP header and red stamp" started.
+◇ Test "The unobscured captured EXP page resolves using actual red-stamp pixels" started.
+◇ Test "A later borrow independently restores the user's newly selected application" started.
+◇ Test "Action and session deadlines are strict and fail closed" started.
+◇ Test "An exact current snapshot remains authorized before both deadlines" started.
+◇ Test "A STOP request wins at the final input boundary" started.
+◇ Test "Unavailable live focus never authorizes a click on an otherwise matching window" started.
+◇ Test "Repeated fresh confirmation checks do not renew the original twelve-second posting deadline" started.
+◇ Test "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test "Consecutive geometry-only modals remain actionable without OCR identity" started.
+◇ Test "Mean difference reports identical and changed images" started.
+◇ Test "A varied opaque UI-like image is accepted" started.
+◇ Test "The recorded NotificationCenter and Dock stack resolves to the locked mirror" started.
+◇ Test "User activity after target selection still cancels a pending activation request" started.
+◇ Test "Primary errors other than noValue cannot be replaced with a candidate" started.
+◇ Test "External and same-process windows remain occluders beneath the system backdrops" started.
+◇ Test "Focused observations outside the measured total row are ignored" started.
+◇ Test "A direct failure after retreat grants no later OCR confirmation authorization" started.
+◇ Test "Classifier actions adapt to result-specific neutral intents" started.
+◇ Test "An unfocused application's covering window is not ignored" started.
+◇ Test "Only temporal stalled-defeat metadata can request retreat" started.
+◇ Test "Unavailable, failed, or foreign AX hits never dismiss a system surface" started.
+◇ Test "Failed result counts once, selects repeat, then uses failure top advance" started.
+◇ Test "Only the exact system owners and observed layers qualify" started.
+◇ Test "NotificationCenter requires exact current display bounds" started.
+◇ Test "Malformed or overflowing geometry cannot qualify as a system backdrop" started.
+◇ Test "The Dock exception retains its name guard without requiring display discovery" started.
+◇ Test "Geometry must match exactly at the input boundary" started.
+◇ Test "A pending unposted result request survives an unknown confirmation and posts only once after restoration" started.
+◇ Test "A posted retreat cannot be cancelled and retains its confirmation transaction" started.
+◇ Test "Another window from the focused application still obscures the locked window" started.
+◇ Test "An unposted repeat action can be cancelled after its exact forward failure transition" started.
+◇ Test "A live-quality partial HP frame still exposes bounded activity evidence" started.
+◇ Test "Activity evidence cannot cross battle, context, or input-generation boundaries" started.
+◇ Test "A full-display surface must contain the whole locked window" started.
+◇ Test "Process routing permits another app in front but binds the destination window" started.
+◇ Test "A posted retreat may reach either failure result directly and resume the next cycle" started.
+◇ Test "Stable-position HP movement requires a corroborating ROI pixel change" started.
+◇ Test "Original saved OCR reproduces the result-title failure without changing the confidence floor" started.
+◇ Test "A delayed post starts its acknowledgement timeout without extending authorization" started.
+◇ Test "A panel covering the entire mirror is still an occluder" started.
+◇ Test "Unposted action cancellation rejects every non-equivalent transition" started.
+◇ Test "Arbitrary battle animation without an HP or log change is insufficient" started.
+◇ Test "A bounded log change also requires corroborating pixels" started.
+◇ Test "Unconfirmed process liveness and posted input reject resolution recovery without spending attempts" started.
+◇ Test "Non-monotonic observations stop" started.
+◇ Test "Offset displays use their own full bounds without an origin-zero assumption" started.
+◇ Test "Unknown loot after a successful EXP post reproduces the original acknowledgement timeout" started.
+◇ Test "Same-image focused loot title acknowledges EXP and issues a fresh loot request without recounting" started.
+◇ Test "Every action starts with a fresh retry budget" started.
+◇ Test "Focused OCR of the first run's intact title enables one selected-loot startup request" started.
+◇ Test "Persistent unknown result confirmations allow exactly three total attempts" started.
+◇ Test "Mission failed exposes only the observed repeat option" started.
+◇ Test "Focus and result observation failures share one total attempt budget" started.
+◇ Test "Focus contention gets exactly three total attempts" started.
+◇ Test "Inventory full overrides otherwise actionable mission-complete text" started.
+◇ Test "Live AX focus wins over advisory activation and stale AppKit active flags" started.
+◇ Test "The exact live Battle 3 OCR fixture tolerates split narrative text" started.
+◇ Test "Title-free battle-background anchors use their dedicated measured floors" started.
+◇ Test "Battle event text keeps its specific state when battle context is also visible" started.
+◇ Test case passing 2 arguments marker → .skipControl, scale → 0.0 to "Masking or dimming any required footer or retreat glyph fails closed" started.
+◇ Test "Every post-boss narrative fragment is required in the same observation" started.
+◇ Test case passing 2 arguments marker → .skipControl, scale → 0.25 to "Masking or dimming any required footer or retreat glyph fails closed" started.
+◇ Test case passing 2 arguments marker → .allAutoControl, scale → 0.0 to "Masking or dimming any required footer or retreat glyph fails closed" started.
+◇ Test case passing 1 argument resource → "loot-two-buttons" to "Loot, retreat and recruitment dialogs expose only the upper of two measured rows" started.
+◇ Test case passing 1 argument resource → "adventurer-two-buttons" to "Loot, retreat and recruitment dialogs expose only the upper of two measured rows" started.
+◇ Test case passing 2 arguments marker → .allAutoControl, scale → 0.25 to "Masking or dimming any required footer or retreat glyph fails closed" started.
+◇ Test case passing 1 argument resource → "retreat-two-buttons" to "Loot, retreat and recruitment dialogs expose only the upper of two measured rows" started.
+◇ Test case passing 1 argument resource → "adventurer-two-buttons-colin" to "Loot, retreat and recruitment dialogs expose only the upper of two measured rows" started.
+◇ Test "The measured loot collection modal exposes only its unique Yes control" started.
+◇ Test case passing 2 arguments marker → .retreatControl, scale → 0.0 to "Masking or dimming any required footer or retreat glyph fails closed" started.
+◇ Test "Duplicate, misplaced, or low-confidence auto controls are never actionable" started.
+◇ Test case passing 2 arguments marker → .retreatControl, scale → 0.25 to "Masking or dimming any required footer or retreat glyph fails closed" started.
+◇ Test "Adjacent split rows preserve low and keeper values" started.
+◇ Test "Duplicate rows are contaminated but retain credible keeper reads" started.
+◇ Test "Defeat prompt keeps priority over the generic battle fingerprint" started.
+◇ Test "A calibrated exact total resolves independently of unrelated page anchors" started.
+◇ Test "Subpixel variation around the measured overlap preserves low and keeper digits" started.
+◇ Test "Only exact, bounded, non-padded ASCII totals resolve" started.
+◇ Test "The >2 OCR variant cannot turn the success page's top glyph into an action" started.
+◇ Test "Extra merged or split row text stays contaminated and retains credible subrows" started.
+◇ Test "Conflicting successful result-page identities fail closed" started.
+◇ Test "Selected mission-failed repeat uses only the measured top advance marker" started.
+◇ Test "Every split fragment retains the full-frame confidence floor" started.
+◇ Test "Split fragments need calibrated geometry and exact numeric grammar" started.
+◇ Test "Every fallback battle anchor is required" started.
+◇ Test "The failed live total 81 row resolves despite Vision's small fragment overlap" started.
+◇ Test "Overlap beyond the subpixel allowance remains contaminated" started.
+◇ Test "Ambiguous, weak, or misplaced total rows do not become boundary evidence" started.
+◇ Test "A three-part row can separate the colon from its label" started.
+◇ Test "Duplicate recruitment options are never whitelisted" started.
+◇ Test case passing 1 argument resource → "mission-repeat-selected-srlected" to "Native result captures retain visual state, page identity and their single authorized action" started.
+◇ Test case passing 1 argument resource → "mission-repeat-unselected" to "Native result captures retain visual state, page identity and their single authorized action" started.
+◇ Test case passing 1 argument resource → "mission-result-no-modal" to "Native result captures retain visual state, page identity and their single authorized action" started.
+◇ Test case passing 1 argument resource → "failure-repeat-confirmation-before" to "Native result captures retain visual state, page identity and their single authorized action" started.
+◇ Test case passing 1 argument resource → "visual-result-failure-selected" to "Native result captures retain visual state, page identity and their single authorized action" started.
+◇ Test case passing 1 argument resource → "battle-no-modal" to "Native battle captures carry graphical battle evidence and only a gated retreat target" started.
+◇ Test case passing 1 argument resource → "visual-result-latest-experience" to "Native result captures retain visual state, page identity and their single authorized action" started.
+◇ Test case passing 1 argument resource → "active-battle-control-grid" to "Native battle captures carry graphical battle evidence and only a gated retreat target" started.
+◇ Test case passing 1 argument resource → "visual-result-latest-loot-after" to "Native result captures retain visual state, page identity and their single authorized action" started.
+◇ Test case passing 1 argument resource → "visual-result-live-unselected-loot" to "Native result captures retain visual state, page identity and their single authorized action" started.
+◇ Test case passing 1 argument resource → "active-battle-low-retreat-grid" to "Native battle captures carry graphical battle evidence and only a gated retreat target" started.
+◇ Test "Two plausible mission-failed top arrows fail closed" started.
+◇ Test "Battle encounter modal is recognized at the measured OCR confidence" started.
+◇ Test "A partial battle event prompt fails closed" started.
+◇ Test "A partial modal marker fails closed" started.
+◇ Test "A misplaced successful result-page header fails closed" started.
+◇ Test "Defeat prompt markers below their dedicated threshold fail closed" started.
+◇ Test "Ambiguous battle retreat targets are not exposed to recovery" started.
+◇ Test "Battle encounter titles accept a positive multi-digit battle number" started.
+◇ Test "Selected mission-complete state remains stopped without a top advance marker" started.
+◇ Test case passing 1 argument luminance → 0 to "Blank black and white images cannot produce graphical actions" started.
+◇ Test case passing 1 argument luminance → 255 to "Blank black and white images cannot produce graphical actions" started.
+◇ Test "The live title-free battle control stack accepts its measured 0.50 pause" started.
+◇ Test "A low-confidence successful result-page header fails closed" started.
+◇ Test case passing 1 argument scale → 1 to "Red dynamic item rows below the repeat control cannot count as selection ink" started.
+◇ Test "A lone central close remains unknown" started.
+◇ Test "Natural-defeat frames 03 and 04 remain recognized without Round OCR" started.
+◇ Test "Every no-Round control-stack anchor is unique, trusted, and layout-bound" started.
+◇ Test case passing 1 argument scale → 2 to "Red dynamic item rows below the repeat control cannot count as selection ink" started.
+◇ Test "Encounter anchors cannot hide a conflicting mission-result marker" started.
+◇ Test "Similar text and dangerous controls do not become actions" started.
+◇ Test case passing 1 argument state → .missionComplete to "A delayed selected stamp acknowledges a posted repeat retry" started.
+◇ Test case passing 1 argument missingFromOrigin → false to "Both original and current captures must positively prove an absent stamp" started.
+◇ Test case passing 1 argument state → .missionFailed to "A delayed selected stamp acknowledges a posted repeat retry" started.
+◇ Test case passing 1 argument missingFromOrigin → true to "Both original and current captures must positively prove an absent stamp" started.
+◇ Test "A generic defeat marker blocks the recruitment action" started.
+◇ Test "Misplaced encounter anchors fail closed" started.
+◇ Test "Only the measured loot-page top 22 substitution is accepted" started.
+◇ Test "A mission-failed lower arrow is never accepted as its top advance action" started.
+◇ Test "Every measured loot fallback anchor must remain trusted, unique, and tightly placed" started.
+◇ Test "The measured lower-only >2 variant cannot authorize a failure-page top advance" started.
+◇ Test case passing 2 arguments state → .missionComplete, page → .experience to "Exactly three posted attempts are permitted for each verified result family and page" started.
+◇ Test case passing 2 arguments state → .missionComplete, page → .loot to "Exactly three posted attempts are permitted for each verified result family and page" started.
+◇ Test case passing 2 arguments state → .missionFailed, page → .experience to "Exactly three posted attempts are permitted for each verified result family and page" started.
+◇ Test case passing 1 argument unpostedRetry → false to "An unposted original or retry request cannot obtain another attempt" started.
+◇ Test case passing 1 argument unpostedRetry → true to "An unposted original or retry request cannot obtain another attempt" started.
+◇ Test case passing 2 arguments state → .missionFailed, page → .loot to "Exactly three posted attempts are permitted for each verified result family and page" started.
+◇ Test "A different all-items confirmation cannot borrow the loot Yes action" started.
+◇ Test "The exact live post-boss narrative is a narrowly recognized battle event" started.
+◇ Test "A mission-complete top arrow is not actionable without a result-page identity" started.
+◇ Test "Retreat confirmation never borrows the generic battle-close action" started.
+◇ Test case passing 1 argument alreadyIssuedRetry → false to "An ambiguous confirmation reobserves the same unposted request without spending a posted attempt" started.
+◇ Test case passing 1 argument alreadyIssuedRetry → true to "An ambiguous confirmation reobserves the same unposted request without spending a posted attempt" started.
+◇ Test case passing 1 argument state → .missionComplete to "A stamp appearing during retry preflight cancels the stale toggle and preserves its latch" started.
+◇ Test "Misplaced defeat prompt anchors fail closed" started.
+◇ Test "Returned-party text alone is non-actionable until geometry resolves its button" started.
+◇ Test case passing 1 argument state → .missionFailed to "A stamp appearing during retry preflight cancels the stale toggle and preserves its latch" started.
+◇ Test "Encounter close-only and title-only observations fail closed" started.
+◇ Test "Duplicate battle event close markers fail closed" started.
+◇ Test "A low-confidence narrative fragment never vetoes complete encounter anchors" started.
+◇ Test case passing 1 argument marker → .successTitle to "Transparent marker pixels cannot authorize a result even when stored RGB still matches" started.
+◇ Test case passing 1 argument marker → .lootHeader to "Transparent marker pixels cannot authorize a result even when stored RGB still matches" started.
+◇ Test case passing 1 argument marker → .repeatOption to "Transparent marker pixels cannot authorize a result even when stored RGB still matches" started.
+◇ Test "A selected-like marker below its fixed threshold stops" started.
+◇ Test "Only one measured underlying No label is tolerated by a defeat prompt" started.
+◇ Test case passing 1 argument layout → .oneButton to "A supplied measured modal vetoes a matching result before any result action is created" started.
+◇ Test case passing 1 argument layout → .twoButtons to "A supplied measured modal vetoes a matching result before any result action is created" started.
+◇ Test case passing 1 argument layout → .unsupportedButtonCount to "A supplied measured modal vetoes a matching result before any result action is created" started.
+◇ Test case passing 1 argument alreadyIssuedRetry → false to "A selected confirmation cancels either the initial repeat or an already-issued retry" started.
+◇ Test case passing 1 argument alreadyIssuedRetry → true to "A selected confirmation cancels either the initial repeat or an already-issued retry" started.
+◇ Test case passing 1 argument factor → 0.85 to "A dimmed result under an overlay cannot pass brightness-invariant correlation alone" started.
+◇ Test case passing 1 argument factor → 0.65 to "A dimmed result under an overlay cannot pass brightness-invariant correlation alone" started.
+◇ Test case passing 1 argument factor → 0.35 to "A dimmed result under an overlay cannot pass brightness-invariant correlation alone" started.
+◇ Test case passing 1 argument marker → .successTitle to "Covering any required result anchor removes all result actions" started.
+◇ Test case passing 1 argument marker → .lootHeader to "Covering any required result anchor removes all result actions" started.
+◇ Test case passing 1 argument marker → .repeatOption to "Covering any required result anchor removes all result actions" started.
+◇ Test case passing 1 argument alreadyIssuedRetry → false to "Confirmation recovery keeps the request's original twelve-second input deadline" started.
+◇ Test case passing 1 argument alreadyIssuedRetry → true to "Confirmation recovery keeps the request's original twelve-second input deadline" started.
+◇ Test case passing 1 argument resource → "battle-intro-one-button" to "Encounter, event, defeat, skill and returned-party dialogs take priority over their background" started.
+◇ Test case passing 1 argument resource → "battle-event-one-button" to "Encounter, event, defeat, skill and returned-party dialogs take priority over their background" started.
+◇ Test case passing 1 argument resource → "defeat-one-button" to "Encounter, event, defeat, skill and returned-party dialogs take priority over their background" started.
+◇ Test case passing 1 argument resource → "battle-prompt-one-button-alt" to "Encounter, event, defeat, skill and returned-party dialogs take priority over their background" started.
+◇ Test case passing 1 argument resource → "mission-skill-acquired-one-button" to "Encounter, event, defeat, skill and returned-party dialogs take priority over their background" started.
+◇ Test case passing 1 argument resource → "returned-party-manual-stop" to "Encounter, event, defeat, skill and returned-party dialogs take priority over their background" started.
+◇ Test case passing 1 argument intent → .selectMissionRepeat to "Restoration must retain the original known result page even when state and coordinates agree" started.
+◇ Test case passing 1 argument intent → .advanceMissionFailure to "Restoration must retain the original known result page even when state and coordinates agree" started.
+◇ Test case passing 1 argument intent → .advanceMissionSuccess to "Restoration must retain the original known result page even when state and coordinates agree" started.
+◇ Test "Unrecognized narrative text cannot veto a complete encounter anchor pair" started.
+◇ Test "Obstruction retries require every identity and ordering observation" started.
+◇ Test "Recognized preflight state changes keep their existing cancellation or stop handling" started.
+◇ Test "Explicit adverse or unrelated evidence cannot be hidden by a low-confidence marker" started.
+◇ Test "A covering external window never makes other safety failures retryable" started.
+◇ Test "A live process with a missing application handle gets exactly three total attempts" started.
+◇ Test "Only a fresh unobscured snapshot can authorize input after recovery" started.
+◇ Test "Focus contention and external obstruction consume one shared budget" started.
+◇ Test "Measured retreat confirmation is recognized but never actionable" started.
+◇ Test "Selected mission-complete EXP page uses only the fixed top advance marker" started.
+◇ Test case passing 2 arguments marker → .skipControl, scale → 0.0 to "Masking or dimming either incident footer glyph fails closed" started.
+◇ Test case passing 2 arguments marker → .skipControl, scale → 0.25 to "Masking or dimming either incident footer glyph fails closed" started.
+◇ Test case passing 2 arguments marker → .allAutoControl, scale → 0.0 to "Masking or dimming either incident footer glyph fails closed" started.
+◇ Test case passing 2 arguments marker → .allAutoControl, scale → 0.25 to "Masking or dimming either incident footer glyph fails closed" started.
+◇ Test case passing 1 argument count → 1 to "One, two, and three right-aligned glyphs are counted" started.
+◇ Test case passing 1 argument count → 2 to "One, two, and three right-aligned glyphs are counted" started.
+◇ Test case passing 1 argument count → 3 to "One, two, and three right-aligned glyphs are counted" started.
+◇ Test "Persistent external obstruction exhausts the same three-attempt budget" started.
+◇ Test case passing 1 argument marker → .pauseControl to "Retreat remains mandatory for monitoring while an obscured pause is tolerated" started.
+◇ Test case passing 1 argument marker → .retreatControl to "Retreat remains mandatory for monitoring while an obscured pause is tolerated" started.
+◇ Test case passing 2 arguments page → .experience, failure → false to "An empty stamp supports the same bounded visual repeat retry for both result families" started.
+◇ Test case passing 2 arguments page → .experience, failure → true to "An empty stamp supports the same bounded visual repeat retry for both result families" started.
+◇ Test case passing 2 arguments page → .loot, failure → false to "An empty stamp supports the same bounded visual repeat retry for both result families" started.
+◇ Test case passing 2 arguments page → .loot, failure → true to "An empty stamp supports the same bounded visual repeat retry for both result families" started.
+◇ Test case passing 2 arguments page → .experience, failure → false to "Visual EXP and loot results advance with no OCR observations" started.
+◇ Test case passing 2 arguments page → .experience, failure → true to "Visual EXP and loot results advance with no OCR observations" started.
+◇ Test case passing 2 arguments page → .loot, failure → false to "Visual EXP and loot results advance with no OCR observations" started.
+◇ Test case passing 2 arguments page → .loot, failure → true to "Visual EXP and loot results advance with no OCR observations" started.
+◇ Test case passing 1 argument resource → "mission-repeat-selected-srlected" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "mission-repeat-unselected" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "mission-result-no-modal" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "failure-repeat-confirmation-before" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "failure-repeat-confirmation-final" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "visual-result-failure-selected" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "result-title-occlusion-before" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "result-title-occlusion-confirmation" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "mission-skill-acquired-one-button" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "loot-two-buttons" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "adventurer-two-buttons" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "battle-no-modal" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "returned-party-manual-stop" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "low-result-title-startup" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "low-result-title-experience" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "low-result-title-loot-after" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "visual-result-latest-experience" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "visual-result-latest-loot-after" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "visual-result-latest-loot-final" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "visual-result-latest-live-loot" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test case passing 1 argument resource → "visual-result-live-unselected-loot" to "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" started.
+◇ Test "Result observation recovery never extends to unrelated controls or retreat" started.
+◇ Test "Application resolution, focus, and unknown results share three total attempts in any order" started.
+◇ Test "Posted input and malformed unknown classifications never enter result recovery" started.
+◇ Test "A focused target covered by another process stays rejected but may retry" started.
+◇ Test "Without obstruction observations only an unposted foreground focus failure retries" started.
+◇ Test "Unknown unposted result controls with benign scaffolding can be observed again" started.
+◇ Test case passing 1 argument page → .experience to "Delayed result OCR cannot restart posted deadlines or spend a success retry" started.
+◇ Test case passing 1 argument page → .loot to "Delayed result OCR cannot restart posted deadlines or spend a success retry" started.
+◇ Test case passing 1 argument page → .experience to "Success-page retry requires the same unique exact action target" started.
+◇ Test case passing 1 argument page → .loot to "Success-page retry requires the same unique exact action target" started.
+◇ Test "The captured 23:00 EXP page retries after timeout, not after focus-only pixel changes" started.
+◇ Test case passing 1 argument marker → .skipControl to "Obscuring either required footer control fails closed" started.
+◇ Test case passing 1 argument marker → .allAutoControl to "Obscuring either required footer control fails closed" started.
+◇ Test case passing 1 argument minimum → 0 to "Thresholds outside 90 through 100 fail closed" started.
+◇ Test case passing 1 argument minimum → 89 to "Thresholds outside 90 through 100 fail closed" started.
+◇ Test case passing 1 argument minimum → 101 to "Thresholds outside 90 through 100 fail closed" started.
+◇ Test case passing 1 argument minimum → 125 to "Thresholds outside 90 through 100 fail closed" started.
+◇ Test case passing 1 argument marker → .pauseControl to "An obscured pause preserves retreat evidence while a missing retreat removes monitoring proof" started.
+◇ Test case passing 1 argument marker → .retreatControl to "An obscured pause preserves retreat evidence while a missing retreat removes monitoring proof" started.
+◇ Test case passing 1 argument fixture → success-exp-two-arrows-top to "Replays captured OCR together with its screen-layout contract" started.
+◇ Test case passing 1 argument fixture → success-loot-top-arrow-read-as-22 to "Replays captured OCR together with its screen-layout contract" started.
+◇ Test case passing 1 argument fixture → success-loot-zero-arrow-ocr-measured-fallback to "Replays captured OCR together with its screen-layout contract" started.
+◇ Test case passing 1 argument fixture → loot-confirmation-low-no-initial-pass to "Replays captured OCR together with its screen-layout contract" started.
+◇ Test case passing 1 argument fixture → retreat-confirmation-two-rows-top to "Replays captured OCR together with its screen-layout contract" started.
+◇ Test case passing 1 argument fixture → adventurer-two-rows-new-policy-top to "Replays captured OCR together with its screen-layout contract" started.
+◇ Test case passing 1 argument fixture → frozen-battle-retreat-not-auto-toggle to "Replays captured OCR together with its screen-layout contract" started.
+◇ Test case passing 1 argument fixture → defeat-prompt-close-top-over-underlay-no to "Replays captured OCR together with its screen-layout contract" started.
+◇ Test case passing 1 argument resource → "active-battle-control-grid" to "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test case passing 1 argument resource → "active-battle-low-retreat-grid" to "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test case passing 1 argument resource → "visual-battle-pause-low-confidence" to "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test case passing 1 argument resource → "visual-battle-low-auto" to "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test case passing 1 argument resource → "visual-battle-five-zero-hp" to "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test case passing 1 argument resource → "visual-battle-native-2x" to "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test case passing 1 argument resource → "battle-no-modal" to "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test case passing 1 argument changedField → "requestID" to "Retreat cancellation requires every field of the pending request to match" started.
+◇ Test case passing 1 argument resource → "visual-battle-progress-before" to "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test case passing 1 argument changedField → "intent" to "Retreat cancellation requires every field of the pending request to match" started.
+◇ Test case passing 1 argument resource → "visual-battle-progress-after" to "Two footer glyphs identify battle and retreat permits temporal monitoring" started.
+◇ Test case passing 1 argument changedField → "target" to "Retreat cancellation requires every field of the pending request to match" started.
+◇ Test case passing 1 argument changedField → "observedState" to "Retreat cancellation requires every field of the pending request to match" started.
+◇ Test case passing 1 argument changedField → "frameFingerprint" to "Retreat cancellation requires every field of the pending request to match" started.
+◇ Test case passing 1 argument changedField → "completedCycles" to "Retreat cancellation requires every field of the pending request to match" started.
+◇ Test case passing 1 argument resource → "battle-event-one-button" to "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" started.
+◇ Test case passing 1 argument resource → "battle-intro-one-button" to "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" started.
+◇ Test case passing 1 argument resource → "battle-prompt-one-button-alt" to "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" started.
+◇ Test case passing 1 argument resource → "retreat-two-buttons" to "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" started.
+◇ Test case passing 1 argument resource → "defeat-one-button" to "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" started.
+◇ Test case passing 1 argument resource → "loot-two-buttons" to "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" started.
+◇ Test case passing 1 argument resource → "mission-repeat-selected-srlected" to "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" started.
+◇ Test case passing 1 argument resource → "returned-party-manual-stop" to "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" started.
+◇ Test case passing 1 argument state → .missionFailed to "A direct failure result does not acknowledge an unposted retreat" started.
+◇ Test case passing 1 argument state → .missionFailedRepeatSelected to "A direct failure result does not acknowledge an unposted retreat" started.
+◇ Test "A partial defeat prompt fails closed" started.
+◇ Test "A conflicting state blocks loot confirmation" started.
+◇ Test "Adventurer recruitment modal overrides the actionable background" started.
+◇ Test "A recruitment title without its prompt fails closed" started.
+◇ Test "Mission failed without a repeat target remains stop-only" started.
+◇ Test "The exact zero-OCR live loot layout requires opt-in and uses tagged measured evidence" started.
+◇ Test "Vision's measured >2 lower glyph is never a success advance" started.
+◇ Test "Fallback battle markers conflict with a mission-complete title" started.
+◇ Test "Duplicate identical successful result-page headers fail closed" started.
+◇ Test "Ambiguous duplicate action targets stop" started.
+◇ Test "A low-confidence optional Battle 2 title falls back to the measured fingerprint" started.
+◇ Test "A low-confidence known marker always stops" started.
+◇ Test "Duplicate mission-failed repeat targets fail closed" started.
+◇ Test "Conflicting battle and mission markers stop" started.
+◇ Test "The measured SALECTED OCR substitution is a selected repeat marker" started.
+◇ Test "A lower mission-complete arrow is never the advance action" started.
+◇ Test case passing 1 argument state → .missionComplete to "A posted retreat still rejects success results and stops on full inventory" started.
+◇ Test case passing 1 argument state → .missionCompleteRepeatSelected to "A posted retreat still rejects success results and stops on full inventory" started.
+◇ Test case passing 1 argument state → .inventoryFull to "A posted retreat still rejects success results and stops on full inventory" started.
+◇ Test "Mission title outside its expected top region stays unknown" started.
+◇ Test "The SALECTED alias remains unique and spatially constrained" started.
+◇ Test "The measured live OCR layout exposes auto and gates retreat" started.
+◇ Test "The exact low-confidence loot counter from the latest live battle remains recognized" started.
+◇ Test "A battle retreat target is policy-gated and never a default action" started.
+◇ Test "Encounter title and close use independent measured confidence floors" started.
+◇ Test "Fallback battle anchors outside their expected regions do not confirm battle" started.
+◇ Test case passing 1 argument allowNewActions → true to "Maximum cycle count reports the last completion before stopping, even on stale pixels" started.
+◇ Test "A recognized battle exposes only its unique auto-battle control" started.
+◇ Test case passing 1 argument allowNewActions → false to "Maximum cycle count reports the last completion before stopping, even on stale pixels" started.
+◇ Test "A low-confidence advance glyph does not hide a clear repeat option" started.
+◇ Test "Duplicate low-confidence optional battle titles still fail closed" started.
+◇ Test "A defeat prompt with a sensitive conflicting control fails closed" started.
+◇ Test case passing 1 argument limit → "cycles" to "A direct failure after retreat retains cycle, runtime, and action limits" started.
+◇ Test case passing 1 argument limit → "runtime" to "A direct failure after retreat retains cycle, runtime, and action limits" started.
+◇ Test case passing 1 argument limit → "actions" to "A direct failure after retreat retains cycle, runtime, and action limits" started.
+◇ Test "The low-confidence loot control-stack fallback remains fail-closed" started.
+◇ Test "The exact live battle-event OCR fixture authorizes only close" started.
+◇ Test "Invalid, truncated, and transparent activity buffers fail closed" started.
+◇ Test "Battle encounter title and close are sufficient when no description is present" started.
+◇ Test "Uniform brightness shifts are not structural changes in HP or combat-log content" started.
+◇ Test "The measured retreat Yes requires an explicit recovery transaction" started.
+◇ Test case passing 1 argument state → .retreatConfirmation to "Fresh observation gating preserves one-shot retreat confirmation until it can issue" started.
+◇ Test case passing 1 argument page → .experience to "An uncertain timeout snapshot cannot authorize a success-page retry" started.
+◇ Test case passing 1 argument state → .wideModalTwoButtons to "Fresh observation gating preserves one-shot retreat confirmation until it can issue" started.
+◇ Test case passing 1 argument page → .loot to "An uncertain timeout snapshot cannot authorize a success-page retry" started.
+◇ Test "Visual and legacy OCR signatures cannot combine to manufacture progress" started.
+◇ Test "Clock, enemy sprite, and right-control changes cannot replace HP/log progress" started.
+◇ Test case passing 1 argument page → .experience to "An unposted success-page request is never converted into a retry" started.
+◇ Test case passing 1 argument page → .loot to "An unposted success-page request is never converted into a retry" started.
+◇ Test "A real local activity change still requires whole-battle pixel corroboration" started.
+◇ Test "A recruitment prompt without its title fails closed" started.
+◇ Test "Footer skill brightness is excluded from both gameplay stability and local progress" started.
+◇ Test "The legacy leave option alone never authorizes an auto-level action" started.
+◇ Test "Two measured top 22 substitutions are ambiguous and fail closed" started.
+◇ Test "A partial battle encounter modal fails closed" started.
+◇ Test "The live EXP-page OCR authorizes only its top arrow" started.
+◇ Test "Unchanged pixels and small pixel noise do not produce acknowledgement-quality activity" started.
+◇ Test "Duplicate, misplaced, low-confidence, or incomplete loot Yes controls fail closed" started.
+◇ Test "A partial retreat confirmation fails closed" started.
+◇ Test "The original consecutive battle captures establish real HP/log progress without parsed numbers" started.
+◇ Test "Mission-complete and mission-failed titles conflict" started.
+◇ Test "An unmatched pause control does not erase battle progress or gated retreat evidence" started.
+◇ Test "The exact live loot page accepts its measured top 22 OCR substitution" started.
+◇ Test "Sensitive or unrelated states cannot borrow the generic battle-close action" started.
+◇ Test "A single battle-like control is not enough to classify battle" started.
+◇ Test "A missing footer or retreat anchor and modal never provide a temporal baseline" started.
+◇ Test "The unique high-confidence recruit option in the measured top ROI is whitelisted" started.
+◇ Test "Visual progress cannot cross session, window, input, or capture-time boundaries" started.
+◇ Test "A low-confidence recruitment option is never whitelisted" started.
+◇ Test "A misplaced recruitment option is never whitelisted" started.
+◇ Test "Battle encounter descriptions accept measured magic-monster variants" started.
+◇ Test case passing 1 argument page → .experience to "A posted success advance retries twice on the same page before the third timeout stops" started.
+◇ Test case passing 1 argument page → .loot to "A posted success advance retries twice on the same page before the third timeout stops" started.
+◇ Test "Generic defeat overrides an otherwise recoverable mission failure" started.
+◇ Test "Mission complete exposes only the observed repeat option" started.
+◇ Test "Measured defeat prompt exposes only its exact close target" started.
+◇ Test "Retreat confirmation markers below their dedicated threshold fail closed" started.
+◇ Test "Battle event prompt takes priority over encounter partial matching" started.
+◇ Test "Any top-ROI text or whole-page arrow-like candidate blocks the zero-OCR fallback" started.
+◇ Test "A spatially unrelated SELECTED marker makes the result unknown" started.
+◇ Test "Zero-OCR measured continuation is never available on EXP or failure pages" started.
+◇ Test "Every title-free battle-background anchor is required" started.
+◇ Test "A title-free central close is actionable only with the measured battle fingerprint" started.
+◇ Test "Ambiguous retreat Yes controls are never exposed as policy candidates" started.
+◇ Test "The live loot page has its own identity and uses the same top arrow" started.
+◇ Test "Malformed and non-positive battle labels are not encounter titles" started.
+◇ Test "Defeat overrides otherwise actionable mission-complete text" started.
+◇ Test "Duplicate encounter title or close anchors fail closed" started.
+◇ Test "A mission-failed top arrow outside the left-side gate is not actionable" started.
+◇ Test "A title-free prompt rejects misplaced or duplicate close markers" started.
+◇ Test "Battle-event description and close use independent measured confidence floors" started.
+◇ Test "Fallback battle confidence thresholds are inclusive and fail closed below them" started.
+◇ Test "The measured top 22 substitution is rejected on EXP and failure pages" started.
+◇ Test "Invalid normalized geometry always stops" started.
+◇ Test case passing 1 argument testCase → .noPending to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .wrongRequestID to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .differentRequest to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .nonSelectIntent to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .observedUnknown to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .observedInventoryFull to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .observedBattle to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .observedDefeat to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .observedMissionComplete to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .observedMissionFailed to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument testCase → .observedSelectedFailure to "Unposted cancellation rejects its complete negative matrix without clearing pending" started.
+◇ Test case passing 1 argument state → .missionFailed to "A direct failure after retreat grants no later OCR confirmation authorization" started.
+◇ Test case passing 1 argument state → .missionFailedRepeatSelected to "A direct failure after retreat grants no later OCR confirmation authorization" started.
+◇ Test "A posted all-auto click times out after 30 seconds of an unchanged battle" started.
+◇ Test "Only genuine progress from the clicked battle validates all-auto" started.
+◇ Test case passing 1 argument state → .missionFailed to "A posted retreat may reach either failure result directly and resume the next cycle" started.
+◇ Test "Rearming after a closed modal starts a fresh 30-second deadline" started.
+◇ Test "A completed mission validates an automatic battle without an HP sample" started.
+◇ Test case passing 1 argument state → .missionFailedRepeatSelected to "A posted retreat may reach either failure result directly and resume the next cycle" started.
+◇ Test "A default-on battle uses the same bounded progress requirement without a click" started.
+◇ Test "A battle modal never counts as automatic-combat progress" started.
+◇ Test "Invalid activation cannot leave a validation pending" started.
+◇ Test case passing 1 argument name → "startup" to "Original saved OCR reproduces the result-title failure without changing the confidence floor" started.
+◇ Test case passing 1 argument name → "experience" to "Original saved OCR reproduces the result-title failure without changing the confidence floor" started.
+◇ Test case passing 1 argument name → "loot-after" to "Original saved OCR reproduces the result-title failure without changing the confidence floor" started.
+◇ Test case passing 1 argument name → "loot-final" to "Original saved OCR reproduces the result-title failure without changing the confidence floor" started.
+◇ Test case passing 2 arguments processIsRunning → false, inputWasPosted → false to "Unconfirmed process liveness and posted input reject resolution recovery without spending attempts" started.
+◇ Test case passing 2 arguments processIsRunning → false, inputWasPosted → true to "Unconfirmed process liveness and posted input reject resolution recovery without spending attempts" started.
+◇ Test case passing 2 arguments processIsRunning → true, inputWasPosted → true to "Unconfirmed process liveness and posted input reject resolution recovery without spending attempts" started.
+◇ Test "Live two-button modal fixtures expose two ordered rows" started.
+◇ Test "Battle and result pages do not produce modal buttons" started.
+◇ Test "Live one-button modal fixtures expose only their foreground row" started.
+◇ Test "Invalid dimensions and short buffers are rejected" started.
+◇ Test case passing 1 argument intent → .advanceMissionSuccess to "Persistent unknown result confirmations allow exactly three total attempts" started.
+◇ Test case passing 1 argument intent → .advanceMissionFailure to "Persistent unknown result confirmations allow exactly three total attempts" started.
+◇ Test case passing 1 argument intent → .selectMissionRepeat to "Persistent unknown result confirmations allow exactly three total attempts" started.
+◇ Test case passing 2 arguments intent → .advanceMissionSuccess, resultFirst → false to "Focus and result observation failures share one total attempt budget" started.
+◇ Test case passing 2 arguments intent → .advanceMissionSuccess, resultFirst → true to "Focus and result observation failures share one total attempt budget" started.
+◇ Test case passing 2 arguments intent → .advanceMissionFailure, resultFirst → false to "Focus and result observation failures share one total attempt budget" started.
+◇ Test case passing 2 arguments intent → .advanceMissionFailure, resultFirst → true to "Focus and result observation failures share one total attempt budget" started.
+◇ Test case passing 2 arguments intent → .selectMissionRepeat, resultFirst → false to "Focus and result observation failures share one total attempt budget" started.
+◇ Test case passing 2 arguments intent → .selectMissionRepeat, resultFirst → true to "Focus and result observation failures share one total attempt budget" started.
+✔ Test "An unarmed or merely assumed-automatic battle cannot issue a confirmation" passed after 6.406 seconds.
+✔ Test "Failure result uses the fixed top target without arrow OCR" passed after 6.406 seconds.
+✔ Test "A weaker configuration cannot lower the five-second and five-sample floor" passed after 6.406 seconds.
+✔ Test "The earliest deadline determines the boundary even when several have elapsed" passed after 6.406 seconds.
+✔ Test "Sudden motion in either comparison permanently revokes even completed evidence" passed after 6.406 seconds.
+✔ Test "Missing, negative and non-finite differences never count as stability" passed after 6.406 seconds.
+✔ Test "Sparse, repeated, reversed and non-finite capture times permanently invalidate" passed after 6.406 seconds.
+✔ Test "A stricter configured duration and sample count remain binding" passed after 6.406 seconds.
+✔ Test "Exactly eight captures fill the buffer without eviction" passed after 6.406 seconds.
+◇ Test case passing 4 arguments activateReturned → false, targetApplicationIsActive → true, frontmostProcessMatches → true, expected → true to "Live AX focus wins over advisory activation and stale AppKit active flags" started.
+◇ Test case passing 4 arguments activateReturned → true, targetApplicationIsActive → true, frontmostProcessMatches → true, expected → true to "Live AX focus wins over advisory activation and stale AppKit active flags" started.
+✔ Test "Action expiry applies both before and after a successful window query" passed after 6.406 seconds.
+◇ Test case passing 4 arguments activateReturned → true, targetApplicationIsActive → false, frontmostProcessMatches → true, expected → true to "Live AX focus wins over advisory activation and stale AppKit active flags" started.
+◇ Test case passing 4 arguments activateReturned → false, targetApplicationIsActive → false, frontmostProcessMatches → true, expected → true to "Live AX focus wins over advisory activation and stale AppKit active flags" started.
+◇ Test case passing 4 arguments activateReturned → true, targetApplicationIsActive → true, frontmostProcessMatches → false, expected → false to "Live AX focus wins over advisory activation and stale AppKit active flags" started.
+◇ Test case passing 4 arguments activateReturned → false, targetApplicationIsActive → true, frontmostProcessMatches → false, expected → false to "Live AX focus wins over advisory activation and stale AppKit active flags" started.
+✔ Test "Both issuing and validating evidence reject modal, paused, unknown or incomplete screens" passed after 6.407 seconds.
+✔ Test "Error-level safety stops and runtime errors retain recent and final evidence" passed after 6.407 seconds.
+◇ Test case passing 4 arguments activateReturned → false, targetApplicationIsActive → false, frontmostProcessMatches → false, expected → false to "Live AX focus wins over advisory activation and stale AppKit active flags" started.
+✔ Test "Success EXP and loot pages use the same fixed top target without arrow OCR" passed after 6.407 seconds.
+✔ Test "Incomplete result identity never gains a fixed target" passed after 6.407 seconds.
+✔ Test "A missing window may recover on the next bounded query" passed after 6.407 seconds.
+✔ Test "The ninth capture evicts only the oldest capture" passed after 6.407 seconds.
+✔ Test "Reprocessing an old image and waiting through a preflight gap cannot refresh proof" passed after 6.407 seconds.
+✔ Test "Dense samples need five seconds and fresh OCR before confirming recovery" passed after 6.407 seconds.
+✔ Test "Window context and input generation remain bound through issuing, pixels and preflight" passed after 6.408 seconds.
+✔ Test "Final OCR confirmation remains valid only while the later retreat preflight is stable" passed after 6.408 seconds.
+✔ Test "Elapsed time alone cannot replace the minimum number of captured samples" passed after 6.408 seconds.
+✔ Test "Invalid geometry and truncated input are rejected before any classifier can authorize an action" passed after 6.408 seconds.
+✔ Test "Controller accepts the measured target for success and failure intents" passed after 6.409 seconds.
+✔ Test "A conflicting mission result keeps the low-retreat frame fail-closed" passed after 6.409 seconds.
+◇ Test case passing 1 argument value → 81 to "Adjacent split rows preserve low and keeper values" started.
+◇ Test case passing 1 argument value → 90 to "Adjacent split rows preserve low and keeper values" started.
+◇ Test case passing 1 argument value → 100 to "Adjacent split rows preserve low and keeper values" started.
+◇ Test case passing 1 argument value → 125 to "Adjacent split rows preserve low and keeper values" started.
+✔ Test "A measured battle accepts a 0.30 retreat marker only with the full corroborating grid" passed after 6.410 seconds.
+✔ Test "Fixed-anchor comparison rejects gradual movement hidden by adjacent comparisons" passed after 6.411 seconds.
+✔ Test "An empty recent-capture buffer has no elements" passed after 6.411 seconds.
+✔ Test "A live battle survives simultaneous title and loot-prefix OCR loss" passed after 6.411 seconds.
+✔ Test "Retries wait at least one second and four missing queries exhaust the budget" passed after 6.411 seconds.
+✔ Test "The right stack and bottom row must keep their measured ordering" passed after 6.412 seconds.
+✔ Test "Equality compares chronological content rather than circular storage layout" passed after 6.412 seconds.
+✔ Test "Fewer than eight captures preserve insertion order" passed after 6.413 seconds.
+✔ Test "Info-level diagnostic terminations retain audit, recent, and final frames" passed after 6.413 seconds.
+✔ Test "Non-finite configuration and observed clocks fail closed" passed after 6.413 seconds.
+✔ Test "The low-retreat grid must preserve both measured control orderings" passed after 6.413 seconds.
+✔ Test "Every low-retreat fallback anchor must remain unique and present" passed after 6.413 seconds.
+✔ Test "Native result captures retain visual state, page identity and their single authorized action" with 8 test cases passed after 6.413 seconds.
+✔ Test "Recognizing the incident image cannot create a temporal stall authorization" passed after 6.413 seconds.
+✔ Test "Masking or dimming any required footer or retreat glyph fails closed" with 6 test cases passed after 6.413 seconds.
+✔ Test "Every low-retreat fallback anchor must remain trusted and layout-bound" passed after 6.416 seconds.
+✔ Test "Captures with no pending action retain session and recovery limits" passed after 6.416 seconds.
+✔ Test "Every control-grid fallback anchor remains unique trusted and layout-bound" passed after 6.416 seconds.
+✔ Test "Copies have independent value semantics after mutation" passed after 6.416 seconds.
+✔ Test "Loot, retreat and recruitment dialogs expose only the upper of two measured rows" with 4 test cases passed after 6.417 seconds.
+✔ Test "A subsecond session wait reaches the deadline without permitting another query" passed after 6.416 seconds.
+✔ Test "Timeout recovery cannot cross page, result-family, or exact target boundaries" passed after 6.417 seconds.
+✔ Test "Captures with the same fingerprint remain distinct temporal samples" passed after 6.417 seconds.
+✔ Test "Clock rollback cannot reset or extend recovery" passed after 6.417 seconds.
+✔ Test "Recovery time starts once and includes slow window queries" passed after 6.417 seconds.
+✔ Test "STOP is honored before a query, after a query, and after a wait" passed after 6.417 seconds.
+✔ Test "Info-level expected limits and user stops retain the audit trail and final frame" passed after 6.417 seconds.
+✔ Test "Red dynamic item rows below the repeat control cannot count as selection ink" with 2 test cases passed after 6.417 seconds.
+✔ Test "Sixteen captures leave captures nine through sixteen in chronological order" passed after 6.417 seconds.
+✔ Test "Error-level expected limits and user stops retain no screenshots" passed after 6.417 seconds.
+✔ Test "Only unique trusted pixel absence, page, and repeat-row evidence prove an unselected toggle" passed after 6.417 seconds.
+✔ Test "A delayed selected stamp acknowledges a posted repeat retry" with 2 test cases passed after 6.418 seconds.
+✔ Test "Both original and current captures must positively prove an absent stamp" with 2 test cases passed after 6.418 seconds.
+✔ Test "The rejected live PNG is Jennie total 67 and its clock overlaps only the former crop" passed after 6.418 seconds.
+✔ Test "Exactly three posted attempts are permitted for each verified result family and page" with 4 test cases passed after 6.418 seconds.
+✔ Test "The captured failure has no selected stamp and receives recovery after twelve seconds" passed after 6.418 seconds.
+✔ Test "An explicit exclusion masks a changing pixel inside the outer region" passed after 6.418 seconds.
+✔ Test "Pixel absence requires valid measured pixels and never a merely subthreshold red stamp" passed after 6.418 seconds.
+✔ Test "An unposted original or retry request cannot obtain another attempt" with 2 test cases passed after 6.419 seconds.
+✔ Test "Repeat recovery preserves cooldown, maximum actions, runtime, and cycle limits" passed after 6.418 seconds.
+✔ Test "A change outside the selected battle region is ignored" passed after 6.418 seconds.
+✔ Test "An exclusion covering the entire region is rejected" passed after 6.419 seconds.
+✔ Test "Native battle captures carry graphical battle evidence and only a gated retreat target" with 3 test cases passed after 6.419 seconds.
+✔ Test "A stamp appearing during retry preflight cancels the stale toggle and preserves its latch" with 2 test cases passed after 6.419 seconds.
+✔ Test "The exact SRLECTED frame resolves to selected and only the upper continuation" passed after 6.419 seconds.
+✔ Test "An ambiguous confirmation reobserves the same unposted request without spending a posted attempt" with 2 test cases passed after 6.419 seconds.
+✔ Test "Brown separator shades cannot become selection ink as capture colors fluctuate" passed after 6.419 seconds.
+✔ Test "Measured target variation inside the existing tolerance can be reauthorized" passed after 6.419 seconds.
+✔ Test "Temporal stall metadata permits only a complete graphical battle proof and its exact retreat target" passed after 6.420 seconds.
+✔ Test "Clear absence uses a separate noise allowance and rejects partial stamp pixels" passed after 6.418 seconds.
+✔ Test "Red pixels cannot promote a non-result screen" passed after 6.419 seconds.
+✔ Test "Live result images distinguish the fixed red stamp without reading its word" passed after 6.419 seconds.
+✔ Test "A supplied measured modal vetoes a matching result before any result action is created" with 3 test cases passed after 6.419 seconds.
+✔ Test "Blank black and white images cannot produce graphical actions" with 2 test cases passed after 6.420 seconds.
+✔ Test "Unchanged low result permits only three complete authorization retries" passed after 6.420 seconds.
+✔ Test "Repeated identical native images cannot establish battle progress" passed after 6.420 seconds.
+✔ Test "A selected confirmation cancels either the initial repeat or an already-issued retry" with 2 test cases passed after 6.419 seconds.
+✔ Test "One-digit low reads must agree below 100, while three digits stop" passed after 6.419 seconds.
+✔ Test "Every cross-boundary OCR disagreement is a terminal conflict" passed after 6.419 seconds.
+✔ Test "A real partially obscured result cannot fall through to battle or authorize any action" passed after 6.420 seconds.
+✔ Test "Both captured unselected failure frames retain the same repeat target after hue filtering" passed after 6.419 seconds.
+✔ Test "Confirmation recovery keeps the request's original twelve-second input deadline" with 2 test cases passed after 6.419 seconds.
+✔ Test "Transparent marker pixels cannot authorize a result even when stored RGB still matches" with 3 test cases passed after 6.420 seconds.
+✔ Test "Freshness waits preserve the posted deadline and do not spend repeat attempts" passed after 6.419 seconds.
+✔ Test "Covering any required result anchor removes all result actions" with 3 test cases passed after 6.419 seconds.
+✔ Test "High, conflicting, and unavailable boundary evidence permanently cancel recovery" passed after 6.420 seconds.
+✔ Test "The untouched captured result has visual evidence and the calibrated upper target" passed after 6.420 seconds.
+✔ Test "Encounter, event, defeat, skill and returned-party dialogs take priority over their background" with 6 test cases passed after 6.419 seconds.
+✔ Test "Invalid configuration fails closed instead of trapping" passed after 6.419 seconds.
+✔ Test "An uncorroborated OCR HP change is not accepted as genuine progress" passed after 6.419 seconds.
+✔ Test "A third stable observation can confirm only after 60 seconds" passed after 6.419 seconds.
+✔ Test "High evidence can never be replaced by low or unavailable OCR" passed after 6.419 seconds.
+✔ Test "Two OCR reads on the high side stop even when their digit values differ" passed after 6.419 seconds.
+✔ Test "An empty measured stamp region wins safely over hallucinated SELECTED OCR" passed after 6.419 seconds.
+✔ Test "The live unselected loot page excludes the first item row from stamp evidence" passed after 6.419 seconds.
+✔ Test "Unselected proof is absent without pixels or a unique trusted result scaffold" passed after 6.419 seconds.
+✔ Test "Target changes beyond the existing tolerance or invalid coordinates are terminal" passed after 6.419 seconds.
+✔ Test "A changed or unrecognized character cannot be replaced by a later low sample" passed after 6.419 seconds.
+✔ Test "Invalid thresholds, ranges, and focused metadata fail closed" passed after 6.419 seconds.
+✔ Test "Restoration must retain the original known result page even when state and coordinates agree" with 3 test cases passed after 6.419 seconds.
+✔ Test "Unselected success and failure pages retain trusted page identity and pixel proof" passed after 6.419 seconds.
+✔ Test "A narrow but complete leading one is counted as the third digit" passed after 6.419 seconds.
+✔ Test "A boundary conflict is immediately terminal" passed after 6.419 seconds.
+✔ Test "Even a sub-threshold narrow mark in the hundreds slot fails closed" passed after 6.420 seconds.
+✔ Test "A two-digit low-side reroll requires exact OCR value agreement" passed after 6.420 seconds.
+✔ Test "The thresholded live total 73 pixel mask is two digits" passed after 6.419 seconds.
+✔ Test "The measured 0.50 pause remains strict and fails below its local floor" passed after 6.420 seconds.
+✔ Test "Invalid pixel metrics cannot authorize retries or appear quiescent" passed after 6.419 seconds.
+◇ Test case passing 1 argument intent → .advanceMissionSuccess to "Recognized preflight state changes keep their existing cancellation or stop handling" started.
+◇ Test case passing 1 argument intent → .advanceMissionFailure to "Recognized preflight state changes keep their existing cancellation or stop handling" started.
+◇ Test case passing 1 argument intent → .selectMissionRepeat to "Recognized preflight state changes keep their existing cancellation or stop handling" started.
+✔ Test "Red ink survives background blending while a partial stamp remains ambiguous" passed after 6.420 seconds.
+✔ Test "Invalid dimensions and short buffers are rejected" passed after 6.420 seconds.
+◇ Test case passing 1 argument intent → .advanceMissionSuccess to "Explicit adverse or unrelated evidence cannot be hidden by a low-confidence marker" started.
+◇ Test case passing 1 argument intent → .selectMissionRepeat to "Explicit adverse or unrelated evidence cannot be hidden by a low-confidence marker" started.
+✔ Test "The measured low-confidence loot anchor remains strict and fails below its floor" passed after 6.420 seconds.
+✔ Test "Malformed dimensions and truncated buffers fail before sampling" passed after 6.420 seconds.
+✔ Test "Visual movement resets the five-second freeze candidate" passed after 6.420 seconds.
+◇ Test case passing 1 argument intent → .advanceMissionFailure to "Explicit adverse or unrelated evidence cannot be hidden by a low-confidence marker" started.
+✔ Test "An armed detector tolerates incomplete HP OCR and can resume without counting the gap" passed after 6.420 seconds.
+✔ Test "Changing the aspect ratio or using a thumbnail cannot authorize calibrated coordinates" passed after 6.421 seconds.
+✔ Test "Marker kind, fixed region, and provenance must agree" passed after 6.420 seconds.
+✔ Test "Duplicate or conflicting visual anchors cannot identify a result" passed after 6.420 seconds.
+✔ Test "Ordinary unavailable and low samples may stabilize before any high evidence" passed after 6.421 seconds.
+✔ Test "Sparse samples cannot be counted as a continuous five-second freeze" passed after 6.420 seconds.
+✔ Test "Invalid byte layouts fail closed" passed after 6.421 seconds.
+✔ Test "The 100 mode still permits different two-digit OCR values" passed after 6.420 seconds.
+✔ Test "Recognizing the incident image cannot create a temporal stall authorization" passed after 6.421 seconds.
+✔ Test "Changing the clock and dynamic result body leaves fixed result evidence unchanged" passed after 6.421 seconds.
+✔ Test "Three or more rows block every actionable background state" passed after 6.420 seconds.
+✔ Test "Any OCR or rendered digit-count disagreement fails closed" passed after 6.421 seconds.
+✔ Test "Missing, oversized, excessive, or shifted components fail closed" passed after 6.421 seconds.
+✔ Test "The measured natural-defeat OCR yields strict, complete evidence" passed after 6.420 seconds.
+✔ Test "Verified normal combat can confirm a dense five-second visual freeze without HP OCR" passed after 6.421 seconds.
+✔ Test "Truncated loot requires its own confidence floor and exact header region" passed after 6.421 seconds.
+✔ Test "Every visual result requires its title, page, repeat row, and positive stamp evidence" passed after 6.421 seconds.
+✔ Test "Evidence kind and complete label text must agree" passed after 6.421 seconds.
+✔ Test "An uncorroborated OCR log change is not accepted as genuine progress" passed after 6.421 seconds.
+✔ Test "The historical returned-party layout follows the one-button rule" passed after 6.421 seconds.
+✔ Test "Visual evidence round-trips without inventing OCR and old evidence still decodes" passed after 6.421 seconds.
+✔ Test "Page labels remain bound to the measured upper-right header" passed after 6.421 seconds.
+✔ Test "Masking or dimming either incident footer glyph fails closed" with 4 test cases passed after 6.421 seconds.
+✔ Test "A recognized OCR modal cannot bypass missing pixel geometry" passed after 6.421 seconds.
+✔ Test "Visual repeat retries require the measured source and unchanged empty-stamp proof" passed after 6.421 seconds.
+✔ Test "An OCR anchor cannot complete an otherwise visual result" passed after 6.421 seconds.
+✔ Test "HP parser accepts complete measured values and rejects guesses" passed after 6.421 seconds.
+✔ Test "Durable live 69, 73, 76, 81, 84, and 97 PNGs remain valid two-digit frames" passed after 6.421 seconds.
+✔ Test "Adjacent measured rows tolerate only floating-point normalization noise" passed after 6.421 seconds.
+✔ Test "Page confidence must be finite and within the trusted probability range" passed after 6.421 seconds.
+✔ Test "An empty stamp supports the same bounded visual repeat retry for both result families" with 4 test cases passed after 6.421 seconds.
+✔ Test "Missing, truncated, or duplicate party HP is incomplete" passed after 6.421 seconds.
+✔ Test "Truncated loot cannot replace any other trusted unique battle control" passed after 6.421 seconds.
+✔ Test "A non-battle frame breaks an armed visual-freeze sequence" passed after 6.421 seconds.
+✔ Test "One button is actionable without OCR text or a recognized state" passed after 6.421 seconds.
+✔ Test "The visual similarity floor is finite and bounded independently of OCR confidence" passed after 6.421 seconds.
+✔ Test "Confirmed defeat evidence cannot cross an input-generation boundary" passed after 6.421 seconds.
+✔ Test "Visual EXP and loot results advance with no OCR observations" with 4 test cases passed after 6.421 seconds.
+✔ Test "Two buttons always select the upper row without OCR text" passed after 6.421 seconds.
+✔ Test "Paused frames reset and require automatic mode to be enabled again" passed after 6.421 seconds.
+✔ Test "Pixel movement prevents a stable HP and log snapshot from accumulating" passed after 6.421 seconds.
+✔ Test "The missed new-skill popup is actionable from its one-button geometry" passed after 6.421 seconds.
+✔ Test "A second nonblocking acquisition for the same window is refused" passed after 6.421 seconds.
+✔ Test "Incomplete battle background can never accumulate stall evidence" passed after 6.421 seconds.
+✔ Test "Tiny texture specks do not invent another digit" passed after 6.421 seconds.
+✔ Test "A frozen battle cannot confirm before normal combat was independently verified" passed after 6.421 seconds.
+✔ Test "One trusted page label identifies EXP or loot including OCR whitespace" passed after 6.421 seconds.
+✔ Test "Total parsing accepts compatibility characters but rejects guesses" passed after 6.421 seconds.
+✔ Test "Lock names are stable and include user, mirror process, and window identities" passed after 6.421 seconds.
+✔ Test "A stalled-looking battle never arms before automatic mode and real progress" passed after 6.421 seconds.
+✔ Test "Native 1x and 2x captures classify without OCR, including obscured and modal negatives" with 21 test cases passed after 6.421 seconds.
+✔ Test "Retreat remains mandatory for monitoring while an obscured pause is tolerated" with 2 test cases passed after 6.421 seconds.
+✔ Test "Measured frames 03 and 04 are suspected after 32 seconds, not confirmed" passed after 6.421 seconds.
+✔ Test "HP or log progress clears an existing stall timer but stays armed" passed after 6.421 seconds.
+✔ Test "Posted retreat accepts the recorded result and continues with repeat selection exactly once" passed after 6.421 seconds.
+✔ Test "The original unstable top edge cannot change footer glyph evidence" passed after 6.422 seconds.
+✔ Test "Every retained incident capture remains a running battle beyond uncertainty grace" passed after 6.423 seconds.
+✔ Test "Modal authorization does not require any recognized text" passed after 6.421 seconds.
+✔ Test "A dimmed result under an overlay cannot pass brightness-invariant correlation alone" with 3 test cases passed after 6.422 seconds.
+✔ Test "The visual corpus covers both native resolutions and all four result states" passed after 6.421 seconds.
+✔ Test "The measured truncated loot header supports freeze detection with or without talismans" passed after 6.421 seconds.
+✔ Test "One, two, and three right-aligned glyphs are counted" with 3 test cases passed after 6.421 seconds.
+✔ Test "Random must stay within its calibrated top-right control" passed after 6.421 seconds.
+✔ Test "Duplicate total observations are ambiguous" passed after 6.421 seconds.
+✔ Test "Modal, generated input, context change, gaps, and out-of-order time reset" passed after 6.421 seconds.
+✔ Test "A measured low-confidence total is provisional without lowering the Random floor" passed after 6.421 seconds.
+✔ Test "Captured 406 by 890 OCR replays as the total 69 roll" passed after 6.421 seconds.
+✔ Test "The preliminary OCR decision supports bounded 90 through 100 thresholds" passed after 6.421 seconds.
+✔ Test "The stopped total 81 and 84 frames resolve split full-frame and focused OCR consistently" passed after 6.421 seconds.
+✔ Test "A live frame with an omitted red stat remains usable because stats are ignored" passed after 6.421 seconds.
+✔ Test "Every required page anchor is mandatory" passed after 6.421 seconds.
+◇ Test case passing 1 argument failureOrder → [0, 1, 2] to "Application resolution, focus, and unknown results share three total attempts in any order" started.
+◇ Test case passing 1 argument failureOrder → [0, 2, 1] to "Application resolution, focus, and unknown results share three total attempts in any order" started.
+◇ Test case passing 1 argument failureOrder → [1, 0, 2] to "Application resolution, focus, and unknown results share three total attempts in any order" started.
+◇ Test case passing 1 argument failureOrder → [1, 2, 0] to "Application resolution, focus, and unknown results share three total attempts in any order" started.
+◇ Test case passing 1 argument failureOrder → [2, 1, 0] to "Application resolution, focus, and unknown results share three total attempts in any order" started.
+◇ Test case passing 1 argument failureOrder → [2, 0, 1] to "Application resolution, focus, and unknown results share three total attempts in any order" started.
+✔ Test "Full and truncated loot readings share one global uniqueness requirement" passed after 6.422 seconds.
+◇ Test case passing 1 argument intent → .advanceMissionSuccess to "Posted input and malformed unknown classifications never enter result recovery" started.
+◇ Test case passing 1 argument intent → .advanceMissionFailure to "Posted input and malformed unknown classifications never enter result recovery" started.
+◇ Test case passing 1 argument intent → .selectMissionRepeat to "Posted input and malformed unknown classifications never enter result recovery" started.
+✔ Test "Anchor, name, and provisional total confidence floors fail closed below their values" passed after 6.422 seconds.
+✔ Test "An explicit EXP-to-loot identity change authorizes the same top arrow once more" passed after 6.422 seconds.
+✔ Test "A supplemental bottom arrow cannot bypass the result classifier" passed after 6.422 seconds.
+◇ Test case passing 1 argument intent → .advanceMissionSuccess to "Unknown unposted result controls with benign scaffolding can be observed again" started.
+◇ Test case passing 1 argument intent → .advanceMissionFailure to "Unknown unposted result controls with benign scaffolding can be observed again" started.
+◇ Test case passing 1 argument intent → .selectMissionRepeat to "Unknown unposted result controls with benign scaffolding can be observed again" started.
+✔ Test "Split total rows preserve threshold stops and the original target" passed after 6.423 seconds.
+✔ Test "Delayed result OCR cannot restart posted deadlines or spend a success retry" with 2 test cases passed after 6.423 seconds.
+✔ Test "An OCR-only external retreat confirmation remains unauthorized without geometry" passed after 6.423 seconds.
+✔ Test "Incomplete or invalid geometry never produces a modal action" passed after 6.423 seconds.
+✔ Test "Action cooldown blocks a second transition click" passed after 6.423 seconds.
+✔ Test "Success-page retry requires the same unique exact action target" with 2 test cases passed after 6.423 seconds.
+✔ Test "The fixed three-digit boundary rerolls 99 and stops at 100 through 125" passed after 6.423 seconds.
+✔ Test "An invalid OCR observation poisons the whole snapshot" passed after 6.423 seconds.
+✔ Test "An unposted repeat action can be cancelled after its exact forward success transition" passed after 6.423 seconds.
+✔ Test "Resume state rejects a changed context or input generation" passed after 6.423 seconds.
+✔ Test "Missing, unobserved, duplicate, and conflicting page labels have no identity" passed after 6.423 seconds.
+✔ Test "Corpus keeps its opt-in and known-mismatch cases explicit" passed after 6.423 seconds.
+✔ Test "Generated-field pixel movement blocks recovery even when name and total match" passed after 6.423 seconds.
+✔ Test "Split and merged name rows resolve to the same semantic roll" passed after 6.423 seconds.
+✔ Test "Profession, race, faith, stats, and remaining points are ignored" passed after 6.423 seconds.
+✔ Test "Thresholds outside 90 through 100 fail closed" with 4 test cases passed after 6.423 seconds.
+✔ Test "The name row must be complete, correctly placed, and unambiguous" passed after 6.423 seconds.
+✔ Test "Extra or malformed fragments cannot authorize a provisional roll" passed after 6.423 seconds.
+✔ Test "Posted actions, reverse transitions, unrelated actions, and stopped sessions cannot cancel" passed after 6.423 seconds.
+✔ Test "Direct failure acknowledgement retains the original fingerprint and deadline guards" passed after 6.423 seconds.
+✔ Test "Missing and duplicate action targets fail closed after grace" passed after 6.423 seconds.
+✔ Test "Result episode is counted once across selected and unselected frames" passed after 6.423 seconds.
+✔ Test "Replays captured OCR together with its screen-layout contract" with 8 test cases passed after 6.423 seconds.
+✔ Test "The measured original and focused confidence floors are independent and bounded" passed after 6.423 seconds.
+✔ Test "An obscured pause preserves retreat evidence while a missing retreat removes monitoring proof" with 2 test cases passed after 6.423 seconds.
+✔ Test "Two footer glyphs identify battle and retreat permits temporal monitoring" with 9 test cases passed after 6.423 seconds.
+✔ Test "Retreat cancellation requires every field of the pending request to match" with 6 test cases passed after 6.423 seconds.
+✔ Test "Closing a battle encounter may reach mission failure before the next poll" passed after 6.423 seconds.
+✔ Test "Serialized visual evidence rejects missing, repeated, weak, displaced or mixed anchors" passed after 6.423 seconds.
+✔ Test "Missing, duplicate, weak, or misplaced repeat and page anchors do not trigger OCR refinement" passed after 6.423 seconds.
+✔ Test "Focused OCR must contain one matching title with agreeing geometry" passed after 6.423 seconds.
+✔ Test "The next battle clears the selected-result latch" passed after 6.423 seconds.
+✔ Test "Obscuring either required footer control fails closed" with 2 test cases passed after 6.423 seconds.
+✔ Test "An actual stronger title read recovers EXP and loot with the same fixed upper target" passed after 6.423 seconds.
+✔ Test "Closing a battle event may reach mission success before the next poll" passed after 6.423 seconds.
+✔ Test "A forward transition acknowledges a bounded loot-page retry" passed after 6.423 seconds.
+✔ Test "A supplemental top arrow cannot bypass missing page identity" passed after 6.423 seconds.
+✔ Test "Inactive or unknown all-auto metadata can never request the toggle" passed after 6.423 seconds.
+✔ Test "The legitimate loot-page sell-all header remains ordinary page content" passed after 6.423 seconds.
+✔ Test "Refinement requires the sole matching low-confidence classification evidence" passed after 6.423 seconds.
+✔ Test "All-auto may reach a failed result before the next poll" passed after 6.423 seconds.
+✔ Test "A longer cooldown preserves the timed-out retry context" passed after 6.423 seconds.
+✔ Test "Capture recovery sees the original posted-action deadline until acknowledgement" passed after 6.423 seconds.
+✔ Test "Reclassifying the intact full frame exposes conflicts hidden by the first weak-title gate" passed after 6.423 seconds.
+✔ Test "A direct failure result does not acknowledge an unposted retreat" with 2 test cases passed after 6.423 seconds.
+✔ Test "Title placement must remain wholly inside the measured region and match its center" passed after 6.423 seconds.
+✔ Test "Result episode survives loot and recruitment until the next battle family" passed after 6.423 seconds.
+✔ Test "An unposted retreat cannot authorize an OCR-only confirmation" passed after 6.423 seconds.
+✔ Test "Success-page cancellation rejects uncertain pages and ambiguous or incompatible targets" passed after 6.423 seconds.
+✔ Test "Unrelated invalid full-frame OCR and suspicious decision controls remain blockers" passed after 6.423 seconds.
+✔ Test "Maximum action count stops before another action" passed after 6.423 seconds.
+✔ Test "A changed frame in the same modal waits for a state transition without replay" passed after 6.423 seconds.
+✔ Test "Only one intact measured title qualifies; fragments and failure variants stay blocked" passed after 6.423 seconds.
+✔ Test "State and action intent must agree" passed after 6.423 seconds.
+✔ Test "All-auto may complete the mission before the next poll" passed after 6.424 seconds.
+✔ Test "A geometry-only two-button modal uses its upper-row rule without equipment metadata" passed after 6.424 seconds.
+✔ Test "A conflicting result still blocks the corroborated battle" passed after 6.424 seconds.
+✔ Test "Invalid policy and session metadata are terminal" passed after 6.424 seconds.
+✔ Test "Loot collection uses yes candidate and never a generic confirmation" passed after 6.424 seconds.
+✔ Test "An action cannot borrow a differently named target" passed after 6.424 seconds.
+✔ Test "A classifier-produced zero-OCR loot fallback advances after the EXP page exactly once" passed after 6.424 seconds.
+✔ Test "Only the exact pending unposted request can start acknowledgement" passed after 6.425 seconds.
+✔ Test "Low-auto classification retains independent confidence floors" passed after 6.425 seconds.
+✔ Test "Invalid target never becomes a click" passed after 6.425 seconds.
+✔ Test "Any raw detector failure is terminal and cannot be erased by a later low sample" passed after 6.425 seconds.
+✔ Test "A geometry-only modal closes and resumes the same result without recounting it" passed after 6.425 seconds.
+✔ Test "A direct failure cannot acknowledge retreat from a different window" passed after 6.425 seconds.
+✔ Test "Low-auto fallback requires ordered and aligned control rows" passed after 6.425 seconds.
+✔ Test "Inconsistent public read metadata is terminal" passed after 6.425 seconds.
+✔ Test "Absent, ambiguous, or invalid rendered stamps cannot be replaced by SELECTED OCR" passed after 6.425 seconds.
+✔ Test "September 9 delayed battle ACK and modal require fresh pixels before the next post" passed after 6.425 seconds.
+✔ Test "A posted retreat still rejects success results and stops on full inventory" with 3 test cases passed after 6.425 seconds.
+✔ Test "Classification conflict stops immediately" passed after 6.425 seconds.
+✔ Test "Geometry-only modals carry the stalled-defeat recovery through its button sequence" passed after 6.425 seconds.
+✔ Test "Success-page preflight cancellation requires every field of the unposted request" passed after 6.425 seconds.
+✔ Test "A default-on battle never toggles the visible all-auto control" passed after 6.425 seconds.
+✔ Test "A supplemental measured fallback cannot bypass its classifier action and evidence" passed after 6.425 seconds.
+✔ Test "The captured sequence remains battle without authorizing low-confidence auto clicks" passed after 6.425 seconds.
+✔ Test "Small OCR box variation preserves threshold and contamination vetoes" passed after 6.425 seconds.
+✔ Test "Contaminated full-frame evidence can veto but never authorize" passed after 6.425 seconds.
+✔ Test "Cross-boundary and unequal low reads conflict at 90" passed after 6.425 seconds.
+✔ Test "Any incomplete credible high source is an immediate conflict" passed after 6.425 seconds.
+✔ Test "Three complete sources distinguish safe low and safe keeper values" passed after 6.425 seconds.
+✔ Test "Focused contamination containing a keeper read is terminal" passed after 6.425 seconds.
+✔ Test "Unexpected known post-action state stops" passed after 6.425 seconds.
+✔ Test "Two-digit-threshold contamination permanently vetoes a later clean low sample" passed after 6.425 seconds.
+✔ Test "Every new default-on battle session remains click-free" passed after 6.425 seconds.
+✔ Test "Retreat cancellation cannot discard an unrelated pending action" passed after 6.425 seconds.
+✔ Test "Verified stalled defeat requests retreat without equipment metadata" passed after 6.425 seconds.
+✔ Test "Incomplete low evidence never authorizes a click" passed after 6.425 seconds.
+✔ Test "A timed-out success advance cannot retry across different result pages" passed after 6.425 seconds.
+✔ Test "Maximum cycle count reports the last completion before stopping, even on stale pixels" with 2 test cases passed after 6.425 seconds.
+✔ Test "Custom positive timing and recapture bounds are honored" passed after 6.425 seconds.
+✔ Test "A possible leading hundreds glyph is terminal even before OCR agrees" passed after 6.426 seconds.
+✔ Test "Visual EXP-to-loot identity acknowledges the posted advance without recounting" passed after 6.426 seconds.
+✔ Test "A direct failure after retreat retains cycle, runtime, and action limits" with 3 test cases passed after 6.426 seconds.
+✔ Test "Persistently slow fresh captures allow only two recaptures before exhaustion" passed after 6.426 seconds.
+✔ Test "Closing a battle event may reach repeat-selected mission success before the next poll" passed after 6.426 seconds.
+✔ Test "All-auto becoming inactive after it was latched stops" passed after 6.426 seconds.
+✔ Test "All five low-auto anchors must be present, unique, and in their measured regions" passed after 6.426 seconds.
+✔ Test "A modal appearing during preflight cancels stale coordinates for fresh authorization" passed after 6.427 seconds.
+✔ Test "An observation at the age limit is stale, while zero age and just under the limit are fresh" passed after 6.427 seconds.
+✔ Test "A loot-to-EXP change cannot replay the shared top arrow" passed after 6.426 seconds.
+✔ Test "A directly observed selected failure keeps the repeat toggle latched" passed after 6.427 seconds.
+✔ Test "The 100 boundary retains its digit-length compatibility rules" passed after 6.427 seconds.
+✔ Test "Runtime limit is hard and inclusive" passed after 6.427 seconds.
+✔ Test "A selected result cannot regress into the repeat toggle within the same episode" passed after 6.427 seconds.
+✔ Test "Fresh observation gating preserves one-shot retreat confirmation until it can issue" with 2 test cases passed after 6.427 seconds.
+✔ Test "An uncertain timeout snapshot cannot authorize a success-page retry" with 2 test cases passed after 6.427 seconds.
+✔ Test "Inventory full stops immediately and can never sell" passed after 6.427 seconds.
+✔ Test "An unposted success-page request is never converted into a retry" with 2 test cases passed after 6.444 seconds.
+✔ Test "Fresh evidence resets even an exhausted consecutive streak" passed after 6.502 seconds.
+✔ Test "Closing a battle encounter may reach repeat-selected mission failure before the next poll" passed after 6.502 seconds.
+✔ Test "A click which never changes the frame stops at the bounded timeout" passed after 6.515 seconds.
+✔ Test "Delayed EXP-to-loot proof acknowledges the old post without issuing loot's new action" passed after 6.515 seconds.
+✔ Test "Reevaluating the same old frame does not rewrite its capture time or restore freshness" passed after 6.515 seconds.
+✔ Test "User input takes over the mirror even when its focused PID never changes" passed after 6.527 seconds.
+✔ Test "Delayed modal OCR waits for fresh pixels without consuming an action or its deadline" passed after 6.697 seconds.
+✔ Test "Focused splits use the same measured overlap allowance for low and keeper totals" passed after 6.713 seconds.
+✔ Test "A malformed or weak focused row is contaminated rather than absent" passed after 6.714 seconds.
+✔ Test "Successful result counts once, selects repeat, then uses success advance" passed after 6.714 seconds.
+✔ Test "Merged and adjacent split Vision rows resolve identically" passed after 6.714 seconds.
+✔ Test "Invalid process identifiers never authorize restoration" passed after 6.714 seconds.
+✔ Test "Recruitment always selects the explicit top recruit action" passed after 6.842 seconds.
+✔ Test "A synthetic loot-page 22 without matching OCR evidence cannot bypass the controller" passed after 6.917 seconds.
+✔ Test "A posted success advance retries twice on the same page before the third timeout stops" with 2 test cases passed after 6.917 seconds.
+✔ Test "A terminated original application cannot become a later restoration target" passed after 6.917 seconds.
+✔ Test "Only exact, in-range, non-padded ASCII totals are accepted" passed after 6.918 seconds.
+✔ Test "Delayed acknowledgement preserves cycle and repeat-selection proof but defers the next input" passed after 6.918 seconds.
+✔ Test "A three-digit split row preserves the digit boundary" passed after 6.917 seconds.
+✔ Test "Unknown state gets bounded count grace then stops" passed after 6.918 seconds.
+✔ Test "A user-selected third application invalidates an otherwise true AX read" passed after 6.918 seconds.
+✔ Test "Missing and incorrectly typed AX values cannot authorize focus borrowing" passed after 6.918 seconds.
+✔ Test "Negative, future, NaN, and infinite timestamps fail closed and do not reset recovery" passed after 6.918 seconds.
+✔ Test "Cancelling an unposted retreat resumes battle observations and preserves limits" passed after 6.918 seconds.
+✔ Test "Leaving the mirror and returning before cleanup still cancels restoration" passed after 6.918 seconds.
+✔ Test "A roughly 55-second analysis delay discards the frame and a fresh capture resets recovery" passed after 6.918 seconds.
+✔ Test "Contaminated crops retain credible merged or split keeper reads as veto evidence" passed after 6.918 seconds.
+✔ Test "A recognized battle prompt requests exactly its close action" passed after 6.918 seconds.
+✔ Test "Starting with the mirror already focused requires no restoration" passed after 6.918 seconds.
+✔ Test "Preflight EXP-to-loot cancellation preserves the action count and cooldown" passed after 6.919 seconds.
+✔ Test "Unknown candidates before or after the live AX read fail closed" passed after 6.919 seconds.
+✔ Test "Unavailable monitoring or a changed setup snapshot must not restore focus" passed after 6.919 seconds.
+✔ Test "Low confidence, gaps, vertical splits, and extra row text fail closed" passed after 6.919 seconds.
+✔ Test "Already returning to the original application consumes restoration" passed after 6.919 seconds.
+✔ Test "A posted recovery transaction may confirm the exact gated yes target once" passed after 6.919 seconds.
+✔ Test "The user's third application is preserved, even if the mirror later regains focus" passed after 6.919 seconds.
+✔ Test "Automation clicks and the expected activation preserve restoration" passed after 6.920 seconds.
+✔ Test "Focus changes after target selection still cancel the Accessibility fallback" passed after 6.920 seconds.
+✔ Test "A fully black opaque image is rejected" passed after 6.920 seconds.
+✔ Test "An identical post-click frame is never clicked twice" passed after 6.920 seconds.
+✔ Test "A transparent image is rejected" passed after 6.920 seconds.
+✔ Test "Invalid identifiers never become focus or restoration destinations" passed after 6.920 seconds.
+✔ Test "Invalid configuration fails closed without issuing a recapture" passed after 6.920 seconds.
+✔ Test "A changed result frame with the same target does not replay advance" passed after 6.920 seconds.
+✔ Test "A posted non-success action never retries after its timeout" passed after 6.921 seconds.
+✔ Test "An unknown original application has no restoration target" passed after 6.921 seconds.
+✔ Test "A live original application receives focus at most once" passed after 6.921 seconds.
+✔ Test "A cancelled retreat does not authorize a later OCR-only confirmation" passed after 6.921 seconds.
+✔ Test "The locked window must still be frontmost and topmost at the click point" passed after 6.921 seconds.
+✔ Test "An unexpected application before the target activates also cancels restoration" passed after 6.921 seconds.
+✔ Test "An acknowledged EXP retry starts a fresh loot-page budget without recounting success" passed after 6.921 seconds.
+✔ Test "Window identity changes stop immediately and permanently" passed after 6.921 seconds.
+✔ Test "Unknown current focus consumes restoration without activating anything" passed after 6.921 seconds.
+✔ Test "A stable AppKit candidate requires a successful live AXFrontmost true" passed after 6.921 seconds.
+✔ Test "The real obscured title remains unknown even with the intact EXP header and red stamp" passed after 6.921 seconds.
+✔ Test "A later borrow independently restores the user's newly selected application" passed after 6.921 seconds.
+✔ Test "Action and session deadlines are strict and fail closed" passed after 6.921 seconds.
+✔ Test "An exact current snapshot remains authorized before both deadlines" passed after 6.921 seconds.
+✔ Test "A STOP request wins at the final input boundary" passed after 6.921 seconds.
+✔ Test "Unavailable live focus never authorizes a click on an otherwise matching window" passed after 6.921 seconds.
+✔ Test "Repeated fresh confirmation checks do not renew the original twelve-second posting deadline" passed after 6.921 seconds.
+✔ Test "Consecutive geometry-only modals remain actionable without OCR identity" passed after 6.921 seconds.
+✔ Test "Unposted cancellation rejects its complete negative matrix without clearing pending" with 11 test cases passed after 6.921 seconds.
+✔ Test "Mean difference reports identical and changed images" passed after 6.921 seconds.
+✔ Test "The unobscured captured EXP page resolves using actual red-stamp pixels" passed after 6.921 seconds.
+✔ Test "The recorded NotificationCenter and Dock stack resolves to the locked mirror" passed after 6.921 seconds.
+✔ Test "User activity after target selection still cancels a pending activation request" passed after 6.921 seconds.
+✔ Test "Primary errors other than noValue cannot be replaced with a candidate" passed after 6.921 seconds.
+✔ Test "External and same-process windows remain occluders beneath the system backdrops" passed after 6.921 seconds.
+✔ Test "Focused observations outside the measured total row are ignored" passed after 6.921 seconds.
+✔ Test "A direct failure after retreat grants no later OCR confirmation authorization" with 2 test cases passed after 6.921 seconds.
+✔ Test "Classifier actions adapt to result-specific neutral intents" passed after 6.921 seconds.
+✔ Test "An unfocused application's covering window is not ignored" passed after 6.921 seconds.
+✔ Test "Only temporal stalled-defeat metadata can request retreat" passed after 6.921 seconds.
+✔ Test "Unavailable, failed, or foreign AX hits never dismiss a system surface" passed after 6.921 seconds.
+✔ Test "Failed result counts once, selects repeat, then uses failure top advance" passed after 6.921 seconds.
+✔ Test "Only the exact system owners and observed layers qualify" passed after 6.921 seconds.
+✔ Test "NotificationCenter requires exact current display bounds" passed after 6.921 seconds.
+✔ Test "Malformed or overflowing geometry cannot qualify as a system backdrop" passed after 6.921 seconds.
+✔ Test "The Dock exception retains its name guard without requiring display discovery" passed after 6.921 seconds.
+✔ Test "Geometry must match exactly at the input boundary" passed after 6.921 seconds.
+✔ Test "A pending unposted result request survives an unknown confirmation and posts only once after restoration" passed after 6.921 seconds.
+✔ Test "A posted retreat cannot be cancelled and retains its confirmation transaction" passed after 6.921 seconds.
+✔ Test "Another window from the focused application still obscures the locked window" passed after 6.921 seconds.
+✔ Test "An unposted repeat action can be cancelled after its exact forward failure transition" passed after 6.921 seconds.
+✔ Test "A live-quality partial HP frame still exposes bounded activity evidence" passed after 6.921 seconds.
+✔ Test "Activity evidence cannot cross battle, context, or input-generation boundaries" passed after 6.921 seconds.
+✔ Test "A full-display surface must contain the whole locked window" passed after 6.921 seconds.
+✔ Test "Process routing permits another app in front but binds the destination window" passed after 6.921 seconds.
+✔ Test "A posted retreat may reach either failure result directly and resume the next cycle" with 2 test cases passed after 6.921 seconds.
+◇ Test case passing 1 argument state → .missionComplete to "A completed mission validates an automatic battle without an HP sample" started.
+◇ Test case passing 1 argument state → .missionCompleteRepeatSelected to "A completed mission validates an automatic battle without an HP sample" started.
+◇ Test case passing 1 argument state → .missionFailed to "A completed mission validates an automatic battle without an HP sample" started.
+◇ Test case passing 1 argument state → .missionFailedRepeatSelected to "A completed mission validates an automatic battle without an HP sample" started.
+◇ Test case passing 1 argument state → .battleEncounterPrompt to "A battle modal never counts as automatic-combat progress" started.
+◇ Test case passing 1 argument state → .battleEventPrompt to "A battle modal never counts as automatic-combat progress" started.
+◇ Test case passing 1 argument state → .defeatPrompt to "A battle modal never counts as automatic-combat progress" started.
+✔ Test "Stable-position HP movement requires a corroborating ROI pixel change" passed after 6.921 seconds.
+✔ Test "A varied opaque UI-like image is accepted" passed after 6.921 seconds.
+✔ Test "Original saved OCR reproduces the result-title failure without changing the confidence floor" with 4 test cases passed after 6.921 seconds.
+✔ Test "A delayed post starts its acknowledgement timeout without extending authorization" passed after 6.921 seconds.
+✔ Test "A panel covering the entire mirror is still an occluder" passed after 6.921 seconds.
+✔ Test "Unposted action cancellation rejects every non-equivalent transition" passed after 6.922 seconds.
+✔ Test "Arbitrary battle animation without an HP or log change is insufficient" passed after 6.921 seconds.
+✔ Test "Unconfirmed process liveness and posted input reject resolution recovery without spending attempts" with 3 test cases passed after 6.921 seconds.
+✔ Test "Non-monotonic observations stop" passed after 6.921 seconds.
+✔ Test "Offset displays use their own full bounds without an origin-zero assumption" passed after 6.921 seconds.
+✔ Test "A bounded log change also requires corroborating pixels" passed after 6.921 seconds.
+✔ Test "Every action starts with a fresh retry budget" passed after 6.950 seconds.
+✔ Test "Mission failed exposes only the observed repeat option" passed after 6.952 seconds.
+✔ Test "Persistent unknown result confirmations allow exactly three total attempts" with 3 test cases passed after 6.952 seconds.
+✔ Test "Focus and result observation failures share one total attempt budget" with 6 test cases passed after 6.952 seconds.
+✔ Test "Focus contention gets exactly three total attempts" passed after 6.952 seconds.
+✔ Test "Inventory full overrides otherwise actionable mission-complete text" passed after 6.951 seconds.
+✔ Test "Live AX focus wins over advisory activation and stale AppKit active flags" with 7 test cases passed after 6.951 seconds.
+✔ Test "The exact live Battle 3 OCR fixture tolerates split narrative text" passed after 6.952 seconds.
+✔ Test "Title-free battle-background anchors use their dedicated measured floors" passed after 6.952 seconds.
+✔ Test "Battle event text keeps its specific state when battle context is also visible" passed after 6.952 seconds.
+✔ Test "Every post-boss narrative fragment is required in the same observation" passed after 6.951 seconds.
+✔ Test "The measured loot collection modal exposes only its unique Yes control" passed after 6.951 seconds.
+✔ Test "Adjacent split rows preserve low and keeper values" with 4 test cases passed after 6.946 seconds.
+✔ Test "Duplicate rows are contaminated but retain credible keeper reads" passed after 6.946 seconds.
+✔ Test "Defeat prompt keeps priority over the generic battle fingerprint" passed after 6.946 seconds.
+✔ Test "A calibrated exact total resolves independently of unrelated page anchors" passed after 6.946 seconds.
+✔ Test "Duplicate, misplaced, or low-confidence auto controls are never actionable" passed after 6.950 seconds.
+✔ Test "Only exact, bounded, non-padded ASCII totals resolve" passed after 6.946 seconds.
+✔ Test "The >2 OCR variant cannot turn the success page's top glyph into an action" passed after 6.946 seconds.
+✔ Test "Subpixel variation around the measured overlap preserves low and keeper digits" passed after 6.946 seconds.
+✔ Test "Conflicting successful result-page identities fail closed" passed after 6.944 seconds.
+✔ Test "Selected mission-failed repeat uses only the measured top advance marker" passed after 6.943 seconds.
+✔ Test "Focused OCR of the first run's intact title enables one selected-loot startup request" passed after 6.953 seconds.
+✔ Test "Every split fragment retains the full-frame confidence floor" passed after 6.943 seconds.
+✔ Test "Split fragments need calibrated geometry and exact numeric grammar" passed after 6.943 seconds.
+✔ Test "The failed live total 81 row resolves despite Vision's small fragment overlap" passed after 6.943 seconds.
+✔ Test "Overlap beyond the subpixel allowance remains contaminated" passed after 6.943 seconds.
+✔ Test "Ambiguous, weak, or misplaced total rows do not become boundary evidence" passed after 6.943 seconds.
+✔ Test "A three-part row can separate the colon from its label" passed after 6.943 seconds.
+✔ Test "Duplicate recruitment options are never whitelisted" passed after 6.943 seconds.
+✔ Test "Extra merged or split row text stays contaminated and retains credible subrows" passed after 6.944 seconds.
+✔ Test "Battle encounter modal is recognized at the measured OCR confidence" passed after 6.478 seconds.
+✔ Test "A partial battle event prompt fails closed" passed after 6.478 seconds.
+✔ Test "A partial modal marker fails closed" passed after 6.466 seconds.
+✔ Test "A misplaced successful result-page header fails closed" passed after 6.466 seconds.
+✔ Test "Defeat prompt markers below their dedicated threshold fail closed" passed after 6.456 seconds.
+✔ Test "Two plausible mission-failed top arrows fail closed" passed after 6.478 seconds.
+✔ Test "Ambiguous battle retreat targets are not exposed to recovery" passed after 6.421 seconds.
+✔ Test "Every fallback battle anchor is required" passed after 6.943 seconds.
+✔ Test "Selected mission-complete state remains stopped without a top advance marker" passed after 6.409 seconds.
+✔ Test "Battle encounter titles accept a positive multi-digit battle number" passed after 6.410 seconds.
+✔ Test "A low-confidence successful result-page header fails closed" passed after 6.352 seconds.
+✔ Test "A lone central close remains unknown" passed after 6.346 seconds.
+✔ Test "The live title-free battle control stack accepts its measured 0.50 pause" passed after 6.352 seconds.
+✔ Test "Encounter anchors cannot hide a conflicting mission-result marker" passed after 6.343 seconds.
+✔ Test "Similar text and dangerous controls do not become actions" passed after 6.305 seconds.
+✔ Test "Natural-defeat frames 03 and 04 remain recognized without Round OCR" passed after 6.345 seconds.
+✔ Test "A generic defeat marker blocks the recruitment action" passed after 6.292 seconds.
+✔ Test "Misplaced encounter anchors fail closed" passed after 6.292 seconds.
+✔ Test "A mission-failed lower arrow is never accepted as its top advance action" passed after 6.292 seconds.
+✔ Test "Every no-Round control-stack anchor is unique, trusted, and layout-bound" passed after 6.345 seconds.
+✔ Test "Only the measured loot-page top 22 substitution is accepted" passed after 6.292 seconds.
+✔ Test "The measured lower-only >2 variant cannot authorize a failure-page top advance" passed after 6.192 seconds.
+✔ Test "A different all-items confirmation cannot borrow the loot Yes action" passed after 6.180 seconds.
+✔ Test "The exact live post-boss narrative is a narrowly recognized battle event" passed after 6.180 seconds.
+✔ Test "A mission-complete top arrow is not actionable without a result-page identity" passed after 6.180 seconds.
+✔ Test "Retreat confirmation never borrows the generic battle-close action" passed after 6.180 seconds.
+✔ Test "Misplaced defeat prompt anchors fail closed" passed after 6.169 seconds.
+✔ Test "Returned-party text alone is non-actionable until geometry resolves its button" passed after 6.169 seconds.
+✔ Test "Encounter close-only and title-only observations fail closed" passed after 6.158 seconds.
+✔ Test "Duplicate battle event close markers fail closed" passed after 6.158 seconds.
+✔ Test "Every measured loot fallback anchor must remain trusted, unique, and tightly placed" passed after 6.192 seconds.
+✔ Test "A low-confidence narrative fragment never vetoes complete encounter anchors" passed after 6.158 seconds.
+✔ Test "Only one measured underlying No label is tolerated by a defeat prompt" passed after 6.105 seconds.
+✔ Test "Unrecognized narrative text cannot veto a complete encounter anchor pair" passed after 4.853 seconds.
+✔ Test "Recognized preflight state changes keep their existing cancellation or stop handling" with 3 test cases passed after 4.791 seconds.
+✔ Test "Obstruction retries require every identity and ordering observation" passed after 4.791 seconds.
+✔ Test "A selected-like marker below its fixed threshold stops" passed after 6.105 seconds.
+✔ Test "Explicit adverse or unrelated evidence cannot be hidden by a low-confidence marker" with 3 test cases passed after 4.782 seconds.
+✔ Test "A covering external window never makes other safety failures retryable" passed after 4.782 seconds.
+✔ Test "A live process with a missing application handle gets exactly three total attempts" passed after 4.782 seconds.
+✔ Test "Only a fresh unobscured snapshot can authorize input after recovery" passed after 4.782 seconds.
+✔ Test "Measured retreat confirmation is recognized but never actionable" passed after 4.591 seconds.
+✔ Test "Focus contention and external obstruction consume one shared budget" passed after 4.781 seconds.
+✔ Test "Selected mission-complete EXP page uses only the fixed top advance marker" passed after 4.591 seconds.
+✔ Test "Persistent external obstruction exhausts the same three-attempt budget" passed after 3.585 seconds.
+✔ Test "Result observation recovery never extends to unrelated controls or retreat" passed after 1.421 seconds.
+✔ Test "Application resolution, focus, and unknown results share three total attempts in any order" with 6 test cases passed after 1.416 seconds.
+✔ Test "Posted input and malformed unknown classifications never enter result recovery" with 3 test cases passed after 1.415 seconds.
+✔ Test "A focused target covered by another process stays rejected but may retry" passed after 1.415 seconds.
+✔ Test "Without obstruction observations only an unposted foreground focus failure retries" passed after 1.415 seconds.
+✔ Test "Unknown unposted result controls with benign scaffolding can be observed again" with 3 test cases passed after 1.414 seconds.
+✔ Test "A partial defeat prompt fails closed" passed after 0.793 seconds.
+✔ Test "A recruitment title without its prompt fails closed" passed after 0.793 seconds.
+✔ Test "Adventurer recruitment modal overrides the actionable background" passed after 0.793 seconds.
+✔ Test "Mission failed without a repeat target remains stop-only" passed after 0.793 seconds.
+✔ Test "The exact zero-OCR live loot layout requires opt-in and uses tagged measured evidence" passed after 0.788 seconds.
+✔ Test "Fallback battle markers conflict with a mission-complete title" passed after 0.788 seconds.
+✔ Test "Duplicate identical successful result-page headers fail closed" passed after 0.788 seconds.
+✔ Test "Ambiguous duplicate action targets stop" passed after 0.788 seconds.
+✔ Test "A low-confidence optional Battle 2 title falls back to the measured fingerprint" passed after 0.787 seconds.
+✔ Test "A low-confidence known marker always stops" passed after 0.787 seconds.
+✔ Test "The captured 23:00 EXP page retries after timeout, not after focus-only pixel changes" passed after 1.411 seconds.
+✔ Test "A conflicting state blocks loot confirmation" passed after 0.794 seconds.
+✔ Test "Duplicate mission-failed repeat targets fail closed" passed after 0.787 seconds.
+✔ Test "Vision's measured >2 lower glyph is never a success advance" passed after 0.788 seconds.
+✔ Test "The measured SALECTED OCR substitution is a selected repeat marker" passed after 0.787 seconds.
+✔ Test "A lower mission-complete arrow is never the advance action" passed after 0.787 seconds.
+✔ Test "Conflicting battle and mission markers stop" passed after 0.788 seconds.
+✔ Test "Mission title outside its expected top region stays unknown" passed after 0.752 seconds.
+✔ Test "The SALECTED alias remains unique and spatially constrained" passed after 0.752 seconds.
+✔ Test "The measured live OCR layout exposes auto and gates retreat" passed after 0.752 seconds.
+✔ Test "The exact low-confidence loot counter from the latest live battle remains recognized" passed after 0.751 seconds.
+✔ Test "Encounter title and close use independent measured confidence floors" passed after 0.751 seconds.
+✔ Test "Fallback battle anchors outside their expected regions do not confirm battle" passed after 0.751 seconds.
+✔ Test "A recognized battle exposes only its unique auto-battle control" passed after 0.751 seconds.
+✔ Test "A low-confidence advance glyph does not hide a clear repeat option" passed after 0.751 seconds.
+✔ Test "Duplicate low-confidence optional battle titles still fail closed" passed after 0.751 seconds.
+✔ Test "A battle retreat target is policy-gated and never a default action" passed after 0.752 seconds.
+✔ Test "The low-confidence loot control-stack fallback remains fail-closed" passed after 0.752 seconds.
+✔ Test "The exact live battle-event OCR fixture authorizes only close" passed after 0.744 seconds.
+✔ Test "Battle encounter title and close are sufficient when no description is present" passed after 0.744 seconds.
+✔ Test "The measured retreat Yes requires an explicit recovery transaction" passed after 0.744 seconds.
+✔ Test "A defeat prompt with a sensitive conflicting control fails closed" passed after 0.752 seconds.
+✔ Test "Dimmed battle controls, modals and nonbattle pages never authorize a battle retreat" with 8 test cases passed after 6.958 seconds.
+✔ Test "A recruitment prompt without its title fails closed" passed after 0.743 seconds.
+✔ Test "Same-image focused loot title acknowledges EXP and issues a fresh loot request without recounting" passed after 6.956 seconds.
+✔ Test "The legacy leave option alone never authorizes an auto-level action" passed after 0.743 seconds.
+✔ Test "Two measured top 22 substitutions are ambiguous and fail closed" passed after 0.743 seconds.
+✔ Test "A partial battle encounter modal fails closed" passed after 0.743 seconds.
+✔ Test "The live EXP-page OCR authorizes only its top arrow" passed after 0.743 seconds.
+✔ Test "Unknown loot after a successful EXP post reproduces the original acknowledgement timeout" passed after 6.956 seconds.
+✔ Test "Duplicate, misplaced, low-confidence, or incomplete loot Yes controls fail closed" passed after 0.743 seconds.
+✔ Test "A partial retreat confirmation fails closed" passed after 0.743 seconds.
+✔ Test "Visual and legacy OCR signatures cannot combine to manufacture progress" passed after 0.744 seconds.
+✔ Test "Mission-complete and mission-failed titles conflict" passed after 0.743 seconds.
+✔ Test "Uniform brightness shifts are not structural changes in HP or combat-log content" passed after 0.744 seconds.
+✔ Test "The exact live loot page accepts its measured top 22 OCR substitution" passed after 0.742 seconds.
+✔ Test "Sensitive or unrelated states cannot borrow the generic battle-close action" passed after 0.742 seconds.
+✔ Test "A single battle-like control is not enough to classify battle" passed after 0.742 seconds.
+✔ Test "Invalid, truncated, and transparent activity buffers fail closed" passed after 0.745 seconds.
+✔ Test "The unique high-confidence recruit option in the measured top ROI is whitelisted" passed after 0.742 seconds.
+✔ Test "Flat white, black, and transparent images provide no result authorization" passed after 6.961 seconds.
+✔ Test "A low-confidence recruitment option is never whitelisted" passed after 0.742 seconds.
+✔ Test "A misplaced recruitment option is never whitelisted" passed after 0.742 seconds.
+✔ Test "Battle encounter descriptions accept measured magic-monster variants" passed after 0.742 seconds.
+✔ Test "Generic defeat overrides an otherwise recoverable mission failure" passed after 0.741 seconds.
+✔ Test "Mission complete exposes only the observed repeat option" passed after 0.741 seconds.
+✔ Test "Measured defeat prompt exposes only its exact close target" passed after 0.740 seconds.
+✔ Test "Retreat confirmation markers below their dedicated threshold fail closed" passed after 0.740 seconds.
+✔ Test "Battle event prompt takes priority over encounter partial matching" passed after 0.740 seconds.
+✔ Test "Any top-ROI text or whole-page arrow-like candidate blocks the zero-OCR fallback" passed after 0.740 seconds.
+✔ Test "A spatially unrelated SELECTED marker makes the result unknown" passed after 0.740 seconds.
+✔ Test "Zero-OCR measured continuation is never available on EXP or failure pages" passed after 0.740 seconds.
+✔ Test "Every title-free battle-background anchor is required" passed after 0.740 seconds.
+✔ Test "A title-free central close is actionable only with the measured battle fingerprint" passed after 0.740 seconds.
+✔ Test "Ambiguous retreat Yes controls are never exposed as policy candidates" passed after 0.740 seconds.
+✔ Test "The live loot page has its own identity and uses the same top arrow" passed after 0.740 seconds.
+✔ Test "Malformed and non-positive battle labels are not encounter titles" passed after 0.740 seconds.
+✔ Test "Defeat overrides otherwise actionable mission-complete text" passed after 0.740 seconds.
+✔ Test "Duplicate encounter title or close anchors fail closed" passed after 0.740 seconds.
+✔ Test "A mission-failed top arrow outside the left-side gate is not actionable" passed after 0.740 seconds.
+✔ Test "A title-free prompt rejects misplaced or duplicate close markers" passed after 0.740 seconds.
+✔ Test "Battle-event description and close use independent measured confidence floors" passed after 0.733 seconds.
+✔ Test "Fallback battle confidence thresholds are inclusive and fail closed below them" passed after 0.730 seconds.
+✔ Test "The measured top 22 substitution is rejected on EXP and failure pages" passed after 0.730 seconds.
+✔ Test "Invalid normalized geometry always stops" passed after 0.730 seconds.
+✔ Test "A posted all-auto click times out after 30 seconds of an unchanged battle" passed after 0.688 seconds.
+✔ Test "Only genuine progress from the clicked battle validates all-auto" passed after 0.688 seconds.
+✔ Test "Rearming after a closed modal starts a fresh 30-second deadline" passed after 0.688 seconds.
+✔ Test "A completed mission validates an automatic battle without an HP sample" with 4 test cases passed after 0.688 seconds.
+✔ Test "A default-on battle uses the same bounded progress requirement without a click" passed after 0.688 seconds.
+✔ Test "A battle modal never counts as automatic-combat progress" with 3 test cases passed after 0.688 seconds.
+✔ Test "Invalid activation cannot leave a validation pending" passed after 0.688 seconds.
+✔ Test "A missing footer or retreat anchor and modal never provide a temporal baseline" passed after 0.744 seconds.
+✔ Test "A real local activity change still requires whole-battle pixel corroboration" passed after 0.745 seconds.
+✔ Test "An unmatched pause control does not erase battle progress or gated retreat evidence" passed after 0.744 seconds.
+✔ Suite "Dense battle visual stability confirmation" passed after 6.965 seconds.
+✔ Test "Invalid dimensions and short buffers are rejected" passed after 0.602 seconds.
+✔ Suite "Fixed result top-action resolver" passed after 6.965 seconds.
+✔ Suite "Window availability recovery budget" passed after 6.965 seconds.
+✔ Suite "Auto-level recognition uses only measured image evidence" passed after 6.965 seconds.
+✔ Suite "Auto-level capture retention" passed after 6.965 seconds.
+✔ Suite "Active battle low-retreat control-grid regression" passed after 6.965 seconds.
+✔ Suite "Active battle control-grid regression" passed after 6.966 seconds.
+✔ Suite "Native battle pause occlusion incident regression" passed after 6.965 seconds.
+✔ Suite "Verified unselected mission-repeat recovery" passed after 6.966 seconds.
+✔ Suite "Repeat-selected stamp detector" passed after 6.966 seconds.
+✔ Suite "Frame region difference" passed after 6.966 seconds.
+✔ Suite "Failure repeat-confirmation regression" passed after 6.966 seconds.
+✔ Suite "Character total boundary corroborator" passed after 6.966 seconds.
+✔ Suite "Natural defeat stall detector" passed after 6.966 seconds.
+✔ Suite "Character total boundary latch" passed after 6.966 seconds.
+✔ Suite "Character total digit pixel detector" passed after 6.966 seconds.
+✔ Suite "Visual result evidence at controller boundaries" passed after 6.966 seconds.
+✔ Suite "Wide modal action resolver" passed after 6.966 seconds.
+✔ Suite "Mission success page identity" passed after 6.966 seconds.
+✔ Suite "Geometry-first modal regression" passed after 6.966 seconds.
+✔ Suite "Per-window automation run lock" passed after 6.966 seconds.
+✔ Suite "Character reroll detector" passed after 6.966 seconds.
+✔ Suite "Native retreat to failure result regression" passed after 6.966 seconds.
+✔ Suite "AutoLevelController" passed after 6.966 seconds.
+✔ Suite "GameStateClassifier live fixture replay" passed after 6.966 seconds.
+✔ Suite "Focused successful-result title refinement" passed after 6.966 seconds.
+✔ Suite "Active battle low-auto OCR regression" passed after 6.966 seconds.
+✔ Suite "Auto-level delayed observation sequence" passed after 6.966 seconds.
+✔ Suite "Observation freshness recovery" passed after 6.966 seconds.
+✔ Suite "Character total boundary evidence resolver" passed after 6.966 seconds.
+✔ Suite "Foreground focus restoration" passed after 6.966 seconds.
+✔ Suite "Focused character total resolver" passed after 6.966 seconds.
+✔ Suite "Foreground focus fallback validation" passed after 6.967 seconds.
+✔ Suite "FrameAnalyzer" passed after 6.966 seconds.
+✔ Suite "AutoLevelInputSafety" passed after 6.967 seconds.
+✔ Suite "Transient result-title occlusion regression" passed after 6.966 seconds.
+✔ Suite "Battle activity progress detector" passed after 6.966 seconds.
+✔ Suite "Captured low-confidence result-title sequences" passed after 6.967 seconds.
+✔ Suite "System backdrop input-point filtering" passed after 6.969 seconds.
+✔ Test "Clock, enemy sprite, and right-control changes cannot replace HP/log progress" passed after 0.750 seconds.
+✔ Suite "GameStateClassifier" passed after 6.969 seconds.
+✔ Suite "Full-frame character total resolver" passed after 6.969 seconds.
+✔ Suite "Unacknowledged experience-page replay" passed after 6.969 seconds.
+✔ Suite "Visual result detector rejects obscured or unrelated pixels" passed after 6.970 seconds.
+✔ Suite "All-auto progress validation" passed after 6.970 seconds.
+✔ Suite "Foreground activation retry" passed after 6.973 seconds.
+✔ Test "The 05:25 run's actual EXP-to-loot image change acknowledges the posted result action" passed after 7.142 seconds.
+✔ Suite "Result-page visual recognition from original captures" passed after 7.146 seconds.
+✔ Test "Footer skill brightness is excluded from both gameplay stability and local progress" passed after 1.033 seconds.
+✔ Test "Visual progress cannot cross session, window, input, or capture-time boundaries" passed after 1.081 seconds.
+✔ Test "Battle and result pages do not produce modal buttons" passed after 0.947 seconds.
+✔ Test "The original consecutive battle captures establish real HP/log progress without parsed numbers" passed after 1.157 seconds.
+✔ Test "Skill brightness and the changing header are irrelevant to battle identity and evidence" passed after 7.453 seconds.
+✔ Suite "Battle visual controls from native captures" passed after 7.457 seconds.
+✔ Test "Unchanged pixels and small pixel noise do not produce acknowledgement-quality activity" passed after 1.242 seconds.
+✔ Suite "Graphical battle progress without OCR" passed after 7.462 seconds.
+✔ Test "Live two-button modal fixtures expose two ordered rows" passed after 1.254 seconds.
+✔ Test "Every retained incident capture remains a running battle beyond uncertainty grace" passed after 7.708 seconds.
+✔ Suite "Native battle footer incident regression" passed after 7.711 seconds.
+✔ Test "The entire measured status bar is excluded at native and scaled dimensions" passed after 7.728 seconds.
+✔ Test "Live one-button modal fixtures expose only their foreground row" passed after 1.444 seconds.
+✔ Suite "WideModalButtonDetector" passed after 7.806 seconds.
+✔ Test "Title, Random, total, Decide, and Reset changes still reject the final guard" passed after 10.251 seconds.
+✔ Suite "Character reroll final pixel guard" passed after 10.253 seconds.
+✔ Test run with 585 tests in 51 suites passed after 10.254 seconds.

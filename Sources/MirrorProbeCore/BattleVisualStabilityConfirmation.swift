@@ -1,6 +1,7 @@
-/// A bounded sequence of pixel comparisons issued only after normal battle activity was verified.
-/// Pixel samples do not claim to contain fresh OCR evidence. A caller must validate a newer,
-/// fully classified battle frame before using the result as recovery evidence.
+/// A bounded sequence of pixel comparisons issued after verified normal battle activity, or by
+/// the separate startup recovery policy after its initial no-progress observation period.
+/// Pixel samples do not establish combat progress. A caller must validate a newer, fully
+/// classified battle frame before using the result as recovery evidence.
 public struct BattleVisualStabilityConfirmation: Sendable {
     private let configuration: BattleStallConfiguration
     private let context: BattleWindowContext
@@ -69,7 +70,7 @@ public struct BattleVisualStabilityConfirmation: Sendable {
         return true
     }
 
-    /// Revalidates fresh OCR and pixels, including during the final retreat preflight.
+    /// Revalidates fresh classification and pixels, including during the final retreat preflight.
     /// This must be a new capture after the latest accepted pixel sample. A changed or unknown
     /// battle state revokes the confirmation; it cannot be reused if the battle later returns.
     public mutating func validate(

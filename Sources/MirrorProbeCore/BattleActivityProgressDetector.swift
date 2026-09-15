@@ -40,22 +40,42 @@ public struct BattleActivityHPReading: Equatable, Sendable {
     }
 }
 
-/// A less brittle ordinary-combat signature than `BattleStallFrameEvidence`. It still requires
-/// the strict battle background, but it can use any complete, stable-position HP reading or the
-/// bounded combat-log region; it never supplies terminal-defeat evidence.
+/// An ordinary-combat signature that requires the strict battle background. The live path uses
+/// measured HP/log pixels; legacy OCR fields remain only for recorded evidence compatibility.
+/// Neither source supplies terminal-defeat evidence.
 public struct BattleActivityFrameEvidence: Equatable, Sendable {
     public let hasStrictBattleBackground: Bool
     public let hpReadings: [BattleActivityHPReading]
     public let combatLogSignature: String
+    public let visualActivity: VisualBattleActivityEvidence?
 
     public init(
         hasStrictBattleBackground: Bool,
         hpReadings: [BattleActivityHPReading],
-        combatLogSignature: String
+        combatLogSignature: String,
+        visualActivity: VisualBattleActivityEvidence? = nil
     ) {
         self.hasStrictBattleBackground = hasStrictBattleBackground
         self.hpReadings = hpReadings
         self.combatLogSignature = combatLogSignature
+        self.visualActivity = visualActivity
+    }
+
+    public static func extractVisual(
+        _ bytes: [UInt8], width: Int, height: Int, bytesPerRow: Int,
+        classification: GameStateClassification
+    ) throws -> BattleActivityFrameEvidence {
+        try VisualBattleActivityEvidence.validateBuffer(bytes, width: width, height: height,
+                                                        bytesPerRow: bytesPerRow)
+        guard classification.state == .battle,
+              VisualBattleEvidence.hasRunningBattleEvidence(in: classification)
+        else {
+            return .init(hasStrictBattleBackground: false, hpReadings: [], combatLogSignature: "")
+        }
+        return .init(hasStrictBattleBackground: true, hpReadings: [], combatLogSignature: "",
+                     visualActivity: try VisualBattleActivityEvidence.extractRGBA(
+                        bytes, width: width, height: height, bytesPerRow: bytesPerRow
+                     ))
     }
 
     public static func extract(
@@ -87,7 +107,7 @@ public struct BattleActivityFrameEvidence: Equatable, Sendable {
 
     fileprivate var hasUsableSignature: Bool {
         hasStrictBattleBackground
-            && (!hpReadings.isEmpty || !combatLogSignature.isEmpty)
+            && (visualActivity != nil || !hpReadings.isEmpty || !combatLogSignature.isEmpty)
     }
 }
 
@@ -125,9 +145,9 @@ public enum BattleActivityProgressAssessment: Equatable, Sendable {
 }
 
 /// Detects acknowledgement-quality activity after a battle is expected to be in `全部自動`
-/// mode, without weakening the much stricter stalled-defeat detector. Pixel movement alone is
-/// insufficient: it must corroborate a changed combat-log signature or an HP value at the same
-/// screen position and maximum HP.
+/// mode. Whole-scene movement must corroborate a significant structural change within measured
+/// HP/log pixels. The legacy path instead uses an OCR log or stable-position HP change; evidence
+/// from the two sources never combines to manufacture progress.
 public struct BattleActivityProgressDetector: Sendable {
     public let configuration: BattleActivityProgressConfiguration
 
@@ -218,15 +238,23 @@ public struct BattleActivityProgressDetector: Sendable {
         let pixelsCorroborateChange = sample.battleROIDifferenceFromPrevious.map {
             $0 > configuration.minimumCorroboratingROIDifference
         } == true
-        let logChanged = !previous.evidence.combatLogSignature.isEmpty
+        let sameOCRProvenance = previous.evidence.visualActivity == nil && sample.evidence.visualActivity == nil
+        let logChanged = sameOCRProvenance && !previous.evidence.combatLogSignature.isEmpty
             && !sample.evidence.combatLogSignature.isEmpty
             && previous.evidence.combatLogSignature != sample.evidence.combatLogSignature
-        let hpChanged = hasStablePositionHPChange(
+        let hpChanged = sameOCRProvenance && hasStablePositionHPChange(
             from: previous.evidence.hpReadings,
             to: sample.evidence.hpReadings
         )
+        let visualChanged: Bool
+        if let previousVisual = previous.evidence.visualActivity,
+           let currentVisual = sample.evidence.visualActivity {
+            visualChanged = currentVisual.hasSignificantChange(from: previousVisual)
+        } else {
+            visualChanged = false
+        }
         previousSample = sample
-        if pixelsCorroborateChange && (logChanged || hpChanged) {
+        if pixelsCorroborateChange && (logChanged || hpChanged || visualChanged) {
             progressObserved = true
             return .progressObserved
         }

@@ -8,8 +8,8 @@ readonly executable_path="$app_path/Contents/MacOS/mirror-probe"
 readonly expected_bundle_id="com.kuanlun.knightdragon.mirrorprobe"
 readonly original_argument_count=$#
 
-max_cycles=20
-max_minutes=120
+max_cycles=""
+max_minutes=""
 window_id=""
 requested_output_dir=""
 capture_level=error
@@ -29,8 +29,8 @@ usage() {
     print -r -- '  ./auto-level.zsh [options]'
     print -r -- ''
     print -r -- '選用參數：'
-    print -r -- '  --max-cycles N       完成 N 場後停止（範圍：1–500）。'
-    print -r -- '  --max-minutes N      執行 N 分鐘後停止（範圍：1–480）。'
+    print -r -- '  --max-cycles N       完成 N 場後停止（正整數；預設不限制）。'
+    print -r -- '  --max-minutes N      執行 N 分鐘後停止（正整數；預設不限制）。'
     print -r -- '  --window-id ID       同時開啟多個鏡像視窗時指定其中一個。'
     print -r -- '  --output-dir PATH    指定尚不存在的新路徑；預設建立於 logs/。'
     print -r -- '  --capture-level LEVEL'
@@ -53,9 +53,8 @@ usage() {
     print -r -- '仍有遮擋時不會點擊；持續遮擋會停止，並在 log 記錄遮擋視窗的所屬程式。'
     print -r -- '原鏡像視窗暫時查不到時會停止輸入，最多查詢四次；恢復後重新辨識畫面。'
     print -r -- ''
-    print -r -- '兩個限制都不指定時，預設為 20 場與 120 分鐘，先到者停止。只指定其中'
-    print -r -- '一個時，另一個會提高到安全上限（500 場或 480 分鐘）。兩個都指定時，'
-    print -r -- '仍是先到者停止，不會等待兩個條件同時成立。'
+    print -r -- '預設不限制場次、執行時間或操作次數，直到手動停止、錯誤或安全檢查停止。'
+    print -r -- '只指定其中一個限制時，另一個仍不限制；兩個都指定時，先到者停止。'
     print -r -- ''
     print -r -- '預設執行報告、stdout、stderr 與錯誤截圖都放在專案的 logs/。確認沒有'
     print -r -- '自動練等程序正在執行後，可以自行清空整個 logs/，不影響程式功能。'
@@ -82,10 +81,12 @@ report_field() {
 
 print_wait_stderr() {
     local stderr_path=$1
+    local heading=${2:-'Mirror Probe 回報 status=error，stderr 內容：'}
+    local error_line
 
-    print -u2 -r -- 'Mirror Probe 回報 status=error，stderr 內容：'
+    print -u2 -r -- "$heading"
     if [[ -s "$stderr_path" ]]; then
-        while IFS= read -r error_line; do
+        while IFS= read -r error_line || [[ -n "$error_line" ]]; do
             print -u2 -r -- "  $error_line"
         done < "$stderr_path"
     else
@@ -98,6 +99,20 @@ is_unsigned_integer() {
         ''|*[!0-9]*) return 1 ;;
         *) return 0 ;;
     esac
+}
+
+normalize_positive_integer_limit() {
+    local option_name=$1 value=$2
+    is_unsigned_integer "$value" || fail "$option_name 必須是正整數"
+    # Normalize decimal text before any arithmetic: zsh otherwise wraps overflowing integers.
+    value=${value#"${value%%[!0]*}"}
+    [[ -n "$value" ]] || fail "$option_name 必須是正整數"
+    if (( ${#value} > 19 )) || {
+        (( ${#value} == 19 )) && [[ "$value" > 9223372036854775807 ]]
+    }; then
+        fail "$option_name 不可超過 9223372036854775807"
+    fi
+    print -r -- "$value"
 }
 
 while (( $# > 0 )); do
@@ -214,21 +229,12 @@ case "$capture_level" in
     *) fail '--capture-level 必須是 error 或 info' ;;
 esac
 
-if (( max_cycles_was_set == 1 && max_minutes_was_set == 0 )); then
-    max_minutes=480
-elif (( max_cycles_was_set == 0 && max_minutes_was_set == 1 )); then
-    max_cycles=500
+if (( max_cycles_was_set == 1 )); then
+    max_cycles=$(normalize_positive_integer_limit --max-cycles "$max_cycles")
 fi
-
-is_unsigned_integer "$max_cycles" || fail '--max-cycles 必須是整數'
-max_cycles_number=$(( 10#$max_cycles ))
-(( max_cycles_number >= 1 && max_cycles_number <= 500 )) || fail \
-    '--max-cycles 必須介於 1 到 500'
-
-is_unsigned_integer "$max_minutes" || fail '--max-minutes 必須是整數'
-max_minutes_number=$(( 10#$max_minutes ))
-(( max_minutes_number >= 1 && max_minutes_number <= 480 )) || fail \
-    '--max-minutes 必須介於 1 到 480'
+if (( max_minutes_was_set == 1 )); then
+    max_minutes=$(normalize_positive_integer_limit --max-minutes "$max_minutes")
+fi
 
 if [[ -n "$window_id" ]]; then
     is_unsigned_integer "$window_id" || fail '--window-id 必須是正整數'
@@ -265,10 +271,14 @@ runner_arguments=(
     run
     --confirm AUTO_LEVEL
     --input-mode foreground
-    --max-cycles "$max_cycles_number"
-    --max-minutes "$max_minutes_number"
     --capture-level "$capture_level"
 )
+if (( max_cycles_was_set == 1 )); then
+    runner_arguments+=(--max-cycles "$max_cycles")
+fi
+if (( max_minutes_was_set == 1 )); then
+    runner_arguments+=(--max-minutes "$max_minutes")
+fi
 if [[ -n "$window_id" ]]; then
     runner_arguments+=(--window-id "$window_id_number")
 fi
@@ -318,12 +328,16 @@ printf '\n'
 open_status=0
 open "${open_arguments[@]}" "$app_path" --args "${runner_arguments[@]}" || open_status=$?
 
+if (( open_status != 0 )); then
+    if (( wait_for_completion == 1 )) && [[ -s "$stderr_log" ]]; then
+        print_wait_stderr "$stderr_log" 'open 未正常完成，stderr 內容：'
+    fi
+    runtime_fail "open 指令失敗（狀態碼 $open_status）；請檢查執行報告與錯誤紀錄"
+fi
+
 if (( wait_for_completion == 1 )) && [[ ! -f "$run_dir/run-report.json" ]]; then
     if [[ -s "$stderr_log" ]]; then
-        print -u2 -r -- 'Mirror Probe 未能建立執行報告，錯誤內容：'
-        while IFS= read -r error_line; do
-            print -u2 -r -- "  $error_line"
-        done < "$stderr_log"
+        print_wait_stderr "$stderr_log" 'Mirror Probe 未能建立執行報告，錯誤內容：'
     fi
     runtime_fail "未建立 $run_dir/run-report.json"
 fi
@@ -336,13 +350,31 @@ if (( wait_for_completion == 1 )); then
         || runtime_fail "執行報告缺少有效的 completedCycles：$report_path"
     report_actions_posted=$(report_field "$report_path" actionsPosted integer) \
         || runtime_fail "執行報告缺少有效的 actionsPosted：$report_path"
-    report_final_reason=$(report_field "$report_path" finalReason string) \
-        || runtime_fail "執行報告缺少有效的 finalReason：$report_path"
 
     is_unsigned_integer "$report_completed_cycles" \
         || runtime_fail "執行報告的 completedCycles 不是非負整數：$report_completed_cycles"
     is_unsigned_integer "$report_actions_posted" \
         || runtime_fail "執行報告的 actionsPosted 不是非負整數：$report_actions_posted"
+
+    # Running reports are checkpoints and intentionally have no finalReason.
+    # open -W does not expose the application's exit status, so a checkpoint
+    # left behind after it returns cannot identify why the run ended.
+    if [[ "$report_status" == running ]]; then
+        print -u2 -r -- "最後執行紀錄：status=running，completedCycles=$report_completed_cycles，actionsPosted=$report_actions_posted"
+        if [[ -s "$stderr_log" ]]; then
+            print -u2 -r -- 'Mirror Probe stderr 最後 20 行：'
+            tail -n 20 "$stderr_log" >&2
+        fi
+        runtime_fail "程序未留下結束報告，無法確認停止原因（可能被中斷或異常終止）：$report_path；請檢查 $stderr_log 及 macOS DiagnosticReports"
+    fi
+
+    case "$report_status" in
+        completed|stopped|error) ;;
+        *) runtime_fail "執行報告的 status 不是 completed、stopped 或 error：$report_status" ;;
+    esac
+
+    report_final_reason=$(report_field "$report_path" finalReason string) \
+        || runtime_fail "執行報告缺少有效的 finalReason：$report_path"
     [[ -n "$report_final_reason" ]] \
         || runtime_fail '執行報告的 finalReason 不可為空'
 
@@ -360,10 +392,5 @@ if (( wait_for_completion == 1 )); then
             print_wait_stderr "$stderr_log"
             runtime_fail "$report_final_reason"
             ;;
-        *)
-            runtime_fail "執行報告的 status 不是 completed、stopped 或 error：$report_status"
-            ;;
     esac
 fi
-
-(( open_status == 0 )) || runtime_fail "open 指令失敗（狀態碼 $open_status）"

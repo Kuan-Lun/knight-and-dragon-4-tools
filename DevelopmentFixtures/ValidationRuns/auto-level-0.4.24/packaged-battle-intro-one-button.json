@@ -1,0 +1,77 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "pressWideModalTopButton",
+        "target" : {
+          "name" : "wideModalTopButton",
+          "point" : {
+            "x" : 0.4995,
+            "y" : 0.56938202247191
+          },
+          "rect" : {
+            "height" : 0.039887640449438204,
+            "width" : 0.783,
+            "x" : 0.108,
+            "y" : 0.549438202247191
+          },
+          "sourceText" : "<measured-wide-modal-primary-button>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "layout=oneButton, underlyingState=unknown, buttonCount=1",
+        "kind" : "wideModalGeometry"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "wideModalOneButton"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.15294117647058825,
+    "luminanceP95" : 0.9333333333333333,
+    "luminanceStandardDeviation" : 0.21338772788497407,
+    "meanLuminance" : 0.5366225494871335,
+    "nearBlackRatio" : 0.0003406783587479389,
+    "quantizedColorCount" : 124,
+    "sampledPixels" : 73383
+  },
+  "image" : {
+    "height" : 890,
+    "orientation" : "up",
+    "pngSHA256" : "bf0d8bea43c3d880ee9f163e941d20fec57d36e2241c054a6e0f66bb197bd74b",
+    "width" : 406
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/Tests/MirrorProbeCoreTests/Fixtures/Images/battle-intro-one-button.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-10T22:13:31Z"
+}

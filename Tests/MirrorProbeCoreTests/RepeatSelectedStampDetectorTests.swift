@@ -14,12 +14,169 @@ struct RepeatSelectedStampDetectorTests {
         ] {
             let detection = try detect(resourceName)
             #expect(detection.isPresent, Comment(rawValue: resourceName))
+            #expect(!detection.isClearlyAbsent, Comment(rawValue: resourceName))
             #expect(detection.redPixelRatio > 0.10, Comment(rawValue: resourceName))
         }
 
         let unselected = try detect("mission-repeat-unselected.png")
         #expect(!unselected.isPresent)
+        #expect(unselected.isClearlyAbsent)
         #expect(unselected.redPixelRatio < 0.005)
+    }
+
+    @Test("The live unselected loot page excludes the first item row from stamp evidence")
+    func liveUnselectedLootExcludesItemText() throws {
+        let detection = try detect("visual-result-live-unselected-loot.png")
+        #expect(detection.redPixelCount == 0)
+        #expect(detection.isClearlyAbsent)
+        #expect(!detection.isPresent)
+    }
+
+    @Test("Red dynamic item rows below the repeat control cannot count as selection ink",
+          arguments: [1, 2])
+    func dynamicItemInkIsExcluded(scale: Int) throws {
+        let width = 406 * scale, height = 890 * scale
+        var bytes = [UInt8](repeating: 255, count: width * height * 4)
+        for y in Int(ceil(0.26 * Double(height)))..<Int(ceil(0.28 * Double(height))) {
+            for x in Int(0.33 * Double(width))..<Int(ceil(0.70 * Double(width))) {
+                let offset = (y * width + x) * 4
+                bytes.replaceSubrange(offset..<(offset + 4), with: [180, 85, 75, 255])
+            }
+        }
+        let detection = try RepeatSelectedStampDetector.detectRGBA(
+            bytes, width: width, height: height, bytesPerRow: width * 4
+        )
+        #expect(detection.redPixelCount == 0)
+        #expect(detection.isClearlyAbsent)
+        #expect(!detection.isPresent)
+    }
+
+    @Test("Brown separator shades cannot become selection ink as capture colors fluctuate")
+    func brownSeparatorHueIsExcluded() throws {
+        // All these pixels were counted by the old red-channel cutoff in the 00:56 preflight.
+        for color in [
+            [152, 134, 118, 255],
+            [164, 146, 131, 255],
+            [156, 137, 121, 255],
+            [126, 106, 88, 255],
+            [147, 127, 112, 255],
+            [144, 126, 111, 255],
+            [161, 142, 126, 255],
+            [133, 114, 94, 255],
+            [143, 125, 110, 255],
+        ] as [[UInt8]] {
+            let detection = try syntheticDetection(background: color)
+            #expect(detection.redPixelCount == 0)
+            #expect(detection.isClearlyAbsent)
+            #expect(!detection.isPresent)
+        }
+    }
+
+    @Test("Red ink survives background blending while a partial stamp remains ambiguous")
+    func redInkHuePreservesFadedAndPartialStamps() throws {
+        for color in [
+            [180, 85, 75, 255],
+            [180, 157, 150, 255],
+        ] as [[UInt8]] {
+            let selected = try syntheticDetection(ink: color, inkPixelCount: 20)
+            #expect(selected.redPixelCount == 20)
+            #expect(selected.isPresent)
+            #expect(!selected.isClearlyAbsent)
+
+            let partial = try syntheticDetection(ink: color, inkPixelCount: 3)
+            #expect(partial.redPixelCount == 3)
+            #expect(!partial.isPresent)
+            #expect(!partial.isClearlyAbsent)
+        }
+    }
+
+    @Test("Clear absence uses a separate noise allowance and rejects partial stamp pixels")
+    func absenceUsesStrictSeparateThreshold() {
+        for count in [0, 1] {
+            let detection = pixelDetection(redPixelCount: count)
+            #expect(detection.isClearlyAbsent)
+            #expect(!detection.isPresent)
+        }
+        for count in [2, 39] {
+            let detection = pixelDetection(redPixelCount: count)
+            #expect(!detection.isClearlyAbsent)
+            #expect(!detection.isPresent)
+            for selectedText in [nil, "SELECTED"] as [String?] {
+                let result = GameStateClassifier.classify(
+                    observations: liveResultObservations(selectedText: selectedText),
+                    repeatSelectedStampDetection: detection
+                )
+                #expect(result.state == .unknown)
+                #expect(result.allowedActions.isEmpty)
+                #expect(!result.evidence.contains { $0.kind == .repeatUnselectedMarker })
+                #expect(result.evidence.contains { $0.kind == .lowConfidenceMarker })
+                #expect(!result.evidence.contains { $0.kind == .conflictingStateMarkers })
+            }
+        }
+        #expect(pixelDetection(redPixelCount: 40).isPresent)
+        #expect(!pixelDetection(redPixelCount: -1).isClearlyAbsent)
+        #expect(!RepeatSelectedStampDetection(
+            region: RepeatSelectedStampDetector.measuredRegion,
+            redPixelCount: 0,
+            sampledPixelCount: 0
+        ).isClearlyAbsent)
+    }
+
+    @Test("Unselected success and failure pages retain trusted page identity and pixel proof")
+    func clearAbsenceRequiresPageScaffold() throws {
+        let detection = try detect("mission-repeat-unselected.png")
+        for (title, state) in [
+            ("任務完成！", GameState.missionComplete),
+            ("任務失敗", GameState.missionFailed),
+        ] {
+            for (page, identity) in [
+                ("獲得經驗值", MissionSuccessPageIdentity.experience),
+                ("獲得拾得物", MissionSuccessPageIdentity.loot),
+            ] {
+                var observations = liveResultObservations(selectedText: nil)
+                observations[0] = observation(title, observations[0].rect, confidence: 1)
+                observations[1] = observation(page, observations[1].rect, confidence: 1)
+                let result = GameStateClassifier.classify(
+                    observations: observations,
+                    repeatSelectedStampDetection: detection
+                )
+                #expect(result.state == state)
+                #expect(result.allowedActions.map(\.name) == [.selectMissionRepeat])
+                #expect(MissionSuccessPageIdentity.resolve(in: result) == identity)
+                let proof = result.evidence.filter { $0.kind == .repeatUnselectedMarker }
+                #expect(proof.count == 1)
+                #expect(proof.first?.observation == nil)
+                #expect(proof.first?.detail == RepeatSelectedStampDetector.absentEvidenceSentinel)
+                #expect(!result.evidence.contains { $0.kind == .repeatSelectedMarker })
+            }
+        }
+    }
+
+    @Test("Unselected proof is absent without pixels or a unique trusted result scaffold")
+    func incompleteScaffoldCannotProveAbsence() throws {
+        let detection = try detect("mission-repeat-unselected.png")
+        let base = liveResultObservations(selectedText: nil)
+        let noPixels = GameStateClassifier.classify(observations: base)
+        #expect(!noPixels.evidence.contains { $0.kind == .repeatUnselectedMarker })
+
+        var lowConfidence = base
+        lowConfidence[1] = observation("獲得經驗值", base[1].rect, confidence: 0.59)
+        var misplaced = base
+        misplaced[1] = observation("獲得經驗值", rect(0.10, 0.60, 0.20, 0.02), confidence: 1)
+        for observations in [
+            base.filter { $0.text != "獲得經驗值" },
+            base + [base[1]],
+            lowConfidence,
+            misplaced,
+            base.filter { $0.text != "重複進行此任務" },
+            base + [base[3]],
+        ] {
+            let result = GameStateClassifier.classify(
+                observations: observations,
+                repeatSelectedStampDetection: detection
+            )
+            #expect(!result.evidence.contains { $0.kind == .repeatUnselectedMarker })
+        }
     }
 
     @Test("The exact SRLECTED frame resolves to selected and only the upper continuation")
@@ -35,6 +192,7 @@ struct RepeatSelectedStampDetectorTests {
 
             #expect(classified.state == .missionCompleteRepeatSelected)
             #expect(classified.evidence.filter { $0.kind == .repeatSelectedMarker }.count == 1)
+            #expect(!classified.evidence.contains { $0.kind == .repeatUnselectedMarker })
             #expect(
                 classified.evidence.first { $0.kind == .repeatSelectedMarker }?.observation == nil
             )
@@ -168,6 +326,35 @@ struct RepeatSelectedStampDetectorTests {
             width: image.width,
             height: image.height,
             bytesPerRow: image.bytesPerRow
+        )
+    }
+
+    private func pixelDetection(redPixelCount: Int) -> RepeatSelectedStampDetection {
+        RepeatSelectedStampDetection(
+            region: RepeatSelectedStampDetector.measuredRegion,
+            redPixelCount: redPixelCount,
+            sampledPixelCount: 1_000
+        )
+    }
+
+    private func syntheticDetection(
+        background: [UInt8] = [126, 106, 88, 255],
+        ink: [UInt8] = [180, 85, 75, 255],
+        inkPixelCount: Int = 0
+    ) throws -> RepeatSelectedStampDetection {
+        let width = 100
+        let height = 100
+        var bytes = Array(repeating: background, count: width * height).flatMap { $0 }
+        // A short row inside the measured region permits both selected and partial coverage.
+        for x in 40..<(40 + inkPixelCount) {
+            let offset = (22 * width + x) * 4
+            bytes.replaceSubrange(offset..<(offset + 4), with: ink)
+        }
+        return try RepeatSelectedStampDetector.detectRGBA(
+            bytes,
+            width: width,
+            height: height,
+            bytesPerRow: width * 4
         )
     }
 

@@ -22,7 +22,7 @@ public struct AutoLevelWindowAvailabilityRetry: Equatable, Sendable {
     public static let maximumRecoveryDuration: TimeInterval = 5
 
     public let startedAt: TimeInterval
-    public let sessionDeadline: TimeInterval
+    public let sessionDeadline: TimeInterval?
     public let actionDeadline: TimeInterval?
     public private(set) var attempt = 1
 
@@ -31,7 +31,7 @@ public struct AutoLevelWindowAvailabilityRetry: Equatable, Sendable {
 
     public init(
         startedAt: TimeInterval,
-        sessionDeadline: TimeInterval,
+        sessionDeadline: TimeInterval? = nil,
         actionDeadline: TimeInterval? = nil
     ) {
         self.startedAt = startedAt
@@ -42,8 +42,8 @@ public struct AutoLevelWindowAvailabilityRetry: Equatable, Sendable {
 
     /// `nil` means the query boundary is valid. All terminal decisions remain terminal.
     /// Omit the action deadline only when no action is pending. After posting input, callers
-    /// pass the original posted-at time plus its acknowledgement timeout. Session and recovery
-    /// deadlines still apply unchanged.
+    /// pass the original posted-at time plus its acknowledgement timeout. An unlimited session
+    /// omits its deadline; the fixed recovery deadline and attempt cap still apply unchanged.
     public mutating func validateBoundary(
         at time: TimeInterval,
         stopRequested: Bool = false
@@ -53,8 +53,10 @@ public struct AutoLevelWindowAvailabilityRetry: Equatable, Sendable {
         let recoveryDeadline = startedAt + Self.maximumRecoveryDuration
         guard startedAt.isFinite,
               startedAt >= 0,
-              sessionDeadline.isFinite,
+              sessionDeadline?.isFinite != false,
+              sessionDeadline.map({ $0 >= 0 }) != false,
               actionDeadline?.isFinite != false,
+              actionDeadline.map({ $0 >= 0 }) != false,
               recoveryDeadline.isFinite,
               recoveryDeadline > startedAt,
               time.isFinite,
@@ -92,14 +94,14 @@ public struct AutoLevelWindowAvailabilityRetry: Equatable, Sendable {
         reason: AutoLevelWindowAvailabilityRetryStopReason
     ) {
         var result: (time: TimeInterval, reason: AutoLevelWindowAvailabilityRetryStopReason) = (
-            sessionDeadline, .sessionExpired
+            startedAt + Self.maximumRecoveryDuration, .recoveryExpired
         )
-        if let actionDeadline, actionDeadline < result.time {
+        if let actionDeadline, actionDeadline <= result.time {
             result = (actionDeadline, .actionExpired)
         }
-        let recoveryDeadline = startedAt + Self.maximumRecoveryDuration
-        if recoveryDeadline < result.time {
-            result = (recoveryDeadline, .recoveryExpired)
+        // Preserve session-before-action-before-recovery precedence when deadlines coincide.
+        if let sessionDeadline, sessionDeadline <= result.time {
+            result = (sessionDeadline, .sessionExpired)
         }
         return result
     }

@@ -1,0 +1,57 @@
+{
+  "version": "0.4.20",
+  "build": 43,
+  "swiftTesting": {
+    "passed": 480,
+    "suites": 38
+  },
+  "xctest": {
+    "passed": 2
+  },
+  "launcherTests": {
+    "passed": 12,
+    "appLaunched": false
+  },
+  "releaseBuild": "passed",
+  "signatureVerification": "passed",
+  "launcherDryRun": "passed",
+  "packagedDoctor": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-09T17:05:28Z",
+    "windows": []
+  },
+  "offlineReplay": [
+    {
+      "fixture": "before",
+      "state": "missionFailed",
+      "pngSHA256": "a9516cecc2e2f9f7b9e54c92018dda546a0434357489ce81ae11b2bbf9064eeb",
+      "hasUnselectedPixelProof": true,
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    },
+    {
+      "fixture": "final",
+      "state": "missionFailed",
+      "pngSHA256": "f766c7b9cee4b90b781e7ed59410193e4e781ce3a48092d9fead7306732c89aa",
+      "hasUnselectedPixelProof": true,
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    }
+  ],
+  "colorCorpus": {
+    "frames": 70,
+    "selectedRetained": 63,
+    "unselectedNowZeroRedPixels": 7,
+    "lowestSelectedRedPixelRatio": 0.1068242640499554
+  },
+  "liveAutomationRun": false,
+  "recoveryValidation": "Saved screenshot pair, original unknown classification replay, and bounded preflight/controller simulations; no live game input or long-duration soak."
+}

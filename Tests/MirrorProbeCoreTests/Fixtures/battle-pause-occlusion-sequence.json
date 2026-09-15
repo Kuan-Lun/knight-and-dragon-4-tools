@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "sourceRun": "logs/auto-level-20260914-030707.5S7Z3g",
+  "note": "Original native captures from the pause-control occlusion incident, copied byte-for-byte. Identical PNGs share one resource; all eight recorded capture positions remain in chronological order. Footer and retreat markers identify the battle layout; a single image does not establish battle progress or a temporal stall.",
+  "sequence": [
+    {
+      "resource": "battle-pause-occlusion-capture-7542",
+      "sourceImage": "logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7542.png",
+      "captureSequence": 7542,
+      "capturedAtElapsedSeconds": 9181.733556666644,
+      "timestamp": "2026-09-13T21:40:09Z",
+      "originalState": "unknown",
+      "frameFingerprint": "d30d44e229f054a0fad1f68de0cb2b4dc666eb46df4920cc75c495d32a0be6e7",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "69a2c0f0b863f065fe13f708a650f39be1caddbcc00c9744772df089c4e14604"
+    },
+    {
+      "resource": "battle-pause-occlusion-capture-7543",
+      "sourceImage": "logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7543.png",
+      "captureSequence": 7543,
+      "capturedAtElapsedSeconds": 9183.388146833284,
+      "timestamp": "2026-09-13T21:40:11Z",
+      "originalState": "unknown",
+      "frameFingerprint": "f64092bd9f13f50a34f07e96bc4676c1a6b63ba7801f2a9816b39da46e16f7ff",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "93e027965a8a4a97fade1fafbfc079a0c7c7222bc32c26f23c1c0a26dd3d5fcf"
+    },
+    {
+      "resource": "battle-pause-occlusion-capture-7544",
+      "sourceImage": "logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7544.png",
+      "captureSequence": 7544,
+      "capturedAtElapsedSeconds": 9185.034901499981,
+      "timestamp": "2026-09-13T21:40:13Z",
+      "originalState": "unknown",
+      "frameFingerprint": "c0115d224ecabfcb61c229e099e746f42bc71a3ac3571310d5c7f23066193b50",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "e42b02634907904b72826241351f91eef6c38ba28e379d234763677bdba2710d"
+    },
+    {
+      "resource": "battle-pause-occlusion-capture-7545",
+      "sourceImage": "logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7545.png",
+      "captureSequence": 7545,
+      "capturedAtElapsedSeconds": 9186.687691166764,
+      "timestamp": "2026-09-13T21:40:14Z",
+      "originalState": "unknown",
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "364cfb80e6bb7e8bb1dfe49e04b830e509d5402de4d4d1702cf2a3211d75bd56"
+    },
+    {
+      "resource": "battle-pause-occlusion-capture-7545",
+      "sourceImage": "logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7546.png",
+      "captureSequence": 7546,
+      "capturedAtElapsedSeconds": 9188.327285458334,
+      "timestamp": "2026-09-13T21:40:16Z",
+      "originalState": "unknown",
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "364cfb80e6bb7e8bb1dfe49e04b830e509d5402de4d4d1702cf2a3211d75bd56"
+    },
+    {
+      "resource": "battle-pause-occlusion-capture-7545",
+      "sourceImage": "logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7547.png",
+      "captureSequence": 7547,
+      "capturedAtElapsedSeconds": 9189.930373125011,
+      "timestamp": "2026-09-13T21:40:17Z",
+      "originalState": "unknown",
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "364cfb80e6bb7e8bb1dfe49e04b830e509d5402de4d4d1702cf2a3211d75bd56"
+    },
+    {
+      "resource": "battle-pause-occlusion-capture-7545",
+      "sourceImage": "logs/auto-level-20260914-030707.5S7Z3g/diagnostics/capture-7548.png",
+      "captureSequence": 7548,
+      "capturedAtElapsedSeconds": 9191.614641000051,
+      "timestamp": "2026-09-13T21:40:19Z",
+      "originalState": "unknown",
+      "frameFingerprint": "39c8113cb563975385e56f7a953a376f50879f95d9670f5dd0f70a41b65a71d2",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "364cfb80e6bb7e8bb1dfe49e04b830e509d5402de4d4d1702cf2a3211d75bd56"
+    },
+    {
+      "resource": "battle-pause-occlusion-final",
+      "sourceImage": "logs/auto-level-20260914-030707.5S7Z3g/final.png",
+      "captureSequence": 7549,
+      "capturedAtElapsedSeconds": 9193.234027666738,
+      "timestamp": "2026-09-13T21:40:21Z",
+      "originalState": "unknown",
+      "frameFingerprint": "505b816be39a7e73fb1e42da760e589f879f8a12af5d1a669d4738c26f74a189",
+      "width": 406,
+      "height": 890,
+      "pngSHA256": "76fe7cf181969f645250c1726529a05a54191d8ac1b91c7f782d5fb97b3f6d63"
+    }
+  ]
+}

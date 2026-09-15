@@ -1,0 +1,123 @@
+{
+  "classification" : {
+    "allowedActions" : [
+      {
+        "name" : "advanceMissionComplete",
+        "target" : {
+          "name" : "missionCompleteAdvance",
+          "point" : {
+            "x" : 0.04679802898193762,
+            "y" : 0.20337078632958805
+          },
+          "rect" : {
+            "height" : 0.011235955056179803,
+            "width" : 0.04433497536945812,
+            "x" : 0.024630541297208562,
+            "y" : 0.19775280880149815
+          },
+          "sourceText" : "<measured-result-top-advance>"
+        }
+      }
+    ],
+    "evidence" : [
+      {
+        "detail" : "source=resultVisualV1, marker=successTitle, similarity=0.9984356326734976, minimumSimilarity=0.94",
+        "kind" : "missionCompleteTitle",
+        "visualMatch" : {
+          "marker" : "successTitle",
+          "region" : {
+            "height" : 0.034,
+            "width" : 0.24,
+            "x" : 0.38,
+            "y" : 0.1
+          },
+          "similarity" : 0.9984356326734976
+        }
+      },
+      {
+        "detail" : "source=resultVisualV1, marker=lootHeader, similarity=0.9974579092638454, minimumSimilarity=0.94",
+        "kind" : "missionLootPage",
+        "visualMatch" : {
+          "marker" : "lootHeader",
+          "region" : {
+            "height" : 0.026,
+            "width" : 0.2,
+            "x" : 0.775,
+            "y" : 0.145
+          },
+          "similarity" : 0.9974579092638454
+        }
+      },
+      {
+        "detail" : "source=resultVisualV1, marker=repeatOption, similarity=0.997577435775709, minimumSimilarity=0.94",
+        "kind" : "missionRepeatOption",
+        "visualMatch" : {
+          "marker" : "repeatOption",
+          "region" : {
+            "height" : 0.025,
+            "width" : 0.29,
+            "x" : 0.022,
+            "y" : 0.234
+          },
+          "similarity" : 0.997577435775709
+        }
+      },
+      {
+        "detail" : "<measured-repeat-selected-red-stamp>; redPixelRatio=0.12258345039801993",
+        "kind" : "repeatSelectedMarker"
+      },
+      {
+        "detail" : "<measured-result-top-advance>",
+        "kind" : "missionResultAdvanceMeasuredFallback"
+      }
+    ],
+    "policyGatedActions" : [
+
+    ],
+    "state" : "missionCompleteRepeatSelected"
+  },
+  "command" : "analyze-file",
+  "frameMetrics" : {
+    "alphaCoverage" : 1,
+    "luminanceP05" : 0.24313725490196078,
+    "luminanceP95" : 0.9254901960784314,
+    "luminanceStandardDeviation" : 0.21548129796103951,
+    "meanLuminance" : 0.8169702589696863,
+    "nearBlackRatio" : 0.0009286547553263339,
+    "quantizedColorCount" : 185,
+    "sampledPixels" : 130296
+  },
+  "image" : {
+    "height" : 1780,
+    "orientation" : "up",
+    "pngSHA256" : "e9663ae34f3a3293b5a815e6860e518a17ed53902a7f41d6d912b3eaab03fa59",
+    "width" : 812
+  },
+  "ocr" : {
+    "coordinateSpace" : "normalizedTopLeft",
+    "engine" : "none",
+    "languages" : [
+
+    ],
+    "observations" : [
+
+    ],
+    "recognitionLevel" : "notUsed",
+    "requestRevision" : 0,
+    "usesLanguageCorrection" : false
+  },
+  "profile" : "zh-Hant-v1",
+  "recognitionMode" : "visualRegions",
+  "safety" : {
+    "actionAuthorization" : "none",
+    "inputEventsPosted" : 0,
+    "readOnly" : true
+  },
+  "schemaVersion" : 2,
+  "source" : {
+    "kind" : "file",
+    "path" : "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/DevelopmentFixtures/ClassifierReplaySources/result-visual-20260911/loot-final.png"
+  },
+  "status" : "classified",
+  "timestamp" : "2026-09-10T22:13:30Z"
+}

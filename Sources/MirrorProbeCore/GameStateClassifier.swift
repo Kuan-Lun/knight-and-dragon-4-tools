@@ -81,6 +81,8 @@ public enum GameEvidenceKind: String, Codable, Equatable, Sendable {
     case missionFailedTitle
     case missionRepeatOption
     case repeatSelectedMarker
+    /// Pixel proof that the calibrated selection-stamp region is empty apart from measured noise.
+    case repeatUnselectedMarker
     /// Identifies the successful result page whose body lists earned EXP.
     case missionExperiencePage
     /// Identifies the successful result page whose body lists collected loot.
@@ -120,15 +122,21 @@ public struct GameStateEvidence: Codable, Equatable, Sendable {
     public let kind: GameEvidenceKind
     public let observation: OCRTextObservation?
     public let detail: String
+    public let visualMatch: VisualResultMatch?
+    public let battleVisualMatch: VisualBattleMatch?
 
     public init(
         kind: GameEvidenceKind,
         observation: OCRTextObservation?,
-        detail: String
+        detail: String,
+        visualMatch: VisualResultMatch? = nil,
+        battleVisualMatch: VisualBattleMatch? = nil
     ) {
         self.kind = kind
         self.observation = observation
         self.detail = detail
+        self.visualMatch = visualMatch
+        self.battleVisualMatch = battleVisualMatch
     }
 }
 
@@ -1021,7 +1029,7 @@ public enum GameStateClassifier {
         let hasMeasuredSelectedStamp = repeatSelectedStampDetection?.isPresent == true
         let usesOCRSelectedMarker = repeatSelectedStampDetection == nil && !selectedMarkers.isEmpty
 
-        if repeatSelectedStampDetection?.isPresent == false, !selectedMarkers.isEmpty {
+        if repeatSelectedStampDetection?.isClearlyAbsent == true, !selectedMarkers.isEmpty {
             return conflict(
                 baseEvidence + selectedMarkers.map { evidence(.repeatSelectedMarker, $0) },
                 detail: "OCR reported SELECTED but the fixed red-stamp region was empty"
@@ -1164,6 +1172,39 @@ public enum GameStateClassifier {
                 evidence: baseEvidence,
                 allowedActions: actions
             )
+        }
+
+        // A partially rendered stamp must never be treated as an unselected toggle. In
+        // particular, retry authorization cannot be inferred from failing the selected cutoff.
+        if let repeatSelectedStampDetection,
+           !repeatSelectedStampDetection.isClearlyAbsent
+        {
+            return GameStateClassification(
+                state: .unknown,
+                evidence: baseEvidence + [GameStateEvidence(
+                    kind: .lowConfidenceMarker,
+                    observation: nil,
+                    detail: "The repeat-selection stamp pixels were ambiguous; redPixelRatio="
+                        + "\(repeatSelectedStampDetection.redPixelRatio)"
+                )],
+                allowedActions: []
+            )
+        }
+
+        if repeatOptions.count == 1,
+           successPageMarkers.count == 1,
+           let pageMarker = successPageMarkers.first,
+           pageMarker.observation.confidence >= minimumMarkerConfidence,
+           isMissionSuccessPageMarkerRegion(pageMarker.observation.rect)
+        {
+            baseEvidence.append(successPageEvidence(pageMarker))
+            if repeatSelectedStampDetection?.isClearlyAbsent == true {
+                baseEvidence.append(GameStateEvidence(
+                    kind: .repeatUnselectedMarker,
+                    observation: nil,
+                    detail: RepeatSelectedStampDetector.absentEvidenceSentinel
+                ))
+            }
         }
 
         let actions: [AllowedGameAction]
@@ -1804,6 +1845,9 @@ public enum GameStateClassifier {
     /// A measured 0.30 `撤退` is accepted only when a fifth, independently trusted `戰利品`
     /// header is also unique and correctly placed. This classification-only exception never
     /// relaxes the higher confidence required to expose the retreat control as a click target.
+    /// Likewise, a measured 0.50 `全部自動` can establish battle identity with the trusted loot
+    /// header and a retreat marker at its normal target floor. It cannot authorize an auto click,
+    /// and the two classification-only confidence exceptions cannot be combined.
     /// Modal geometry is resolved separately before the background classification can be used.
     private static func confirmedBattleControlGridFallback(
         in indexed: [IndexedObservation]
@@ -1851,10 +1895,15 @@ public enum GameStateClassifier {
         let retreatMeetsCorroboratedClassificationFloor = retreat.observation.confidence
             >= minimumBattleControlGridRetreatConfidence
             && trustedLootSupport != nil
+        let autoMeetsActionTargetFloor = auto.observation.confidence >= minimumMarkerConfidence
+        let autoMeetsCorroboratedClassificationFloor = auto.observation.confidence
+            >= minimumBattleControlGridAutoConfidence
+            && trustedLootSupport != nil
+            && retreatMeetsActionTargetFloor
         guard pause.observation.confidence >= minimumBattleControlStackPauseConfidence,
               retreatMeetsActionTargetFloor || retreatMeetsCorroboratedClassificationFloor,
               skip.observation.confidence >= minimumMarkerConfidence,
-              auto.observation.confidence >= minimumMarkerConfidence,
+              autoMeetsActionTargetFloor || autoMeetsCorroboratedClassificationFloor,
               isBattleRightStackRegion(pause.observation.rect),
               isBattleRetreatRegion(retreat.observation.rect),
               isBattleSkipRegion(skip.observation.rect),
@@ -1867,7 +1916,8 @@ public enum GameStateClassifier {
             return nil
         }
 
-        if !retreatMeetsActionTargetFloor, let trustedLootSupport {
+        if !retreatMeetsActionTargetFloor || !autoMeetsActionTargetFloor,
+           let trustedLootSupport {
             return [trustedLootSupport, pause, retreat, skip, auto]
         }
         return [pause, retreat, skip, auto]
@@ -2077,6 +2127,7 @@ public enum GameStateClassifier {
     // This measured floor is classification-only and is accepted solely inside the five-anchor
     // battle grid above. Retreat click targeting continues to require the independent 0.50 floor.
     private static let minimumBattleControlGridRetreatConfidence = 0.30
+    private static let minimumBattleControlGridAutoConfidence = 0.50
     private static let minimumBattleRoundConfidence = 0.50
     private static let minimumBattleRetreatTargetConfidence = 0.50
     private static let minimumDecisionControlConfidence = 0.60

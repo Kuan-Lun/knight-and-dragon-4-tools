@@ -1,0 +1,53 @@
+mirror-probe — iPhone Mirroring game automation and diagnostics
+
+Usage:
+  mirror-probe doctor [--request-permissions] [--output report.json]
+  mirror-probe focus-check [--window-id ID] [--output report.json]
+  mirror-probe capture [--window-id ID] [--output captures/mirror-probe.png]
+    [--report captures/capture-report.json]
+  mirror-probe analyze [--window-id ID] [--output captures/analysis.png]
+    [--report captures/analysis-report.json] [--profile zh-Hant-v1]
+  mirror-probe analyze-file --input IMAGE.png [--report REPORT.json]
+    [--profile zh-Hant-v1]
+  mirror-probe click --window-id ID --x 0..1 --y 0..1 \
+    --confirm SINGLE_CLICK [--output-dir captures/click-test]
+    [--report captures/click-report.json]
+  mirror-probe reroll-character [--window-id ID]
+    --confirm CHARACTER_REROLL [--minimum-total 90]
+    [--max-rerolls 500] [--max-minutes 10]
+    [--stop-file /absolute/path/to/STOP] [--report REPORT.json]
+  mirror-probe run [--window-id ID] --confirm AUTO_LEVEL
+    [--input-mode foreground|process]
+    [--max-cycles N] [--max-minutes N]
+    [--capture-level error|info]
+    --output-dir /absolute/path/to/auto-level-RUN_ID
+
+Safety:
+  focus-check temporarily switches to the mirror and back without posting any
+  mouse or keyboard events; its report verifies both observed foreground states.
+  capture, analyze, and analyze-file are read-only; analysis reports always set
+  actionAuthorization to none. click is a supervised diagnostic that sends exactly
+  one left mouse-down/up pair and refuses blank captures, changed window geometry,
+  an inactive/non-frontmost mirror, or any visible window above the exact requested
+  window at the click point. reroll-character requires two stable custom-character
+  snapshots, requires full-frame and focused total OCR to agree with the rendered
+  one/two/three-digit glyph count, applies a terminal veto to threshold conflicts,
+  and only presses the measured top-right Random control while both OCR reads safely
+  establish that total is below the selected 90...100 threshold. After a click it
+  waits at least 1.5 seconds and
+  requires the generated-result pixels to be changed and stable in two snapshots
+  before another click. run has no default cycle, runtime or action-count limits;
+  --max-cycles and --max-minutes apply only when supplied. A STOP file or Ctrl-C
+  in the launcher's --wait mode stops the run. run assumes the user has already entered a stage and
+  enabled the game's persistent/default 全部自動 setting. It never presses that
+  toggle, and each new battle must show verified progress within 30 seconds. Other
+  input uses only state-specific named targets. Process input routes only to the locked
+  iPhone Mirroring PID and never falls back to a global click. Foreground input requests
+  a return to the previous application after the first post-click capture or a cancelled preflight, unless
+  another application is already frontmost. Keep the mirror open and unminimized in
+  the current Space; other windows may cover it between actions. It stops on
+  inventory-full, conflicting or persistently unknown states, window/geometry
+  changes, limits, or a STOP file in its output directory. Talisman use does not
+  restrict automation or retreat. Screenshot level error (the default) keeps
+  up to the final eight captures only after an error or safety stop; normal limits and
+  STOP retain no PNG. Level info also retains initial, action-pair, and final images.

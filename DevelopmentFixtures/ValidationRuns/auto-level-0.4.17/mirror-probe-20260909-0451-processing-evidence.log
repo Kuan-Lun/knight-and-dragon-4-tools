@@ -1,0 +1,39 @@
+2026-09-09 04:51:45.755 Df mirror-probe[67174:3be3f15] [com.apple.SkyLight:default] New connection 0xab607 secondary
+2026-09-09 04:51:45.755 Df mirror-probe[67174:3be3f15] [com.apple.xpc:connection] [0xc55064280] Connection returned listener port: 0x5203
+2026-09-09 04:51:45.805 Df mirror-probe[67174:3be3f40] [com.apple.coremedia:] <<<< FADC >>>> CMAudioDeviceClockCreate: PID 67174 create standalone audio device clock for HDMI route, 3669A83B-0000-0000-021F-010380341D78
+2026-09-09 04:51:45.847 Df mirror-probe[67174:3be44d5] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:47.577 Df mirror-probe[67174:3be44d5] [com.apple.coremedia:] <<<< FADC >>>> CMAudioDeviceClockCreate: PID 67174 create standalone audio device clock for HDMI route, 3669A83B-0000-0000-021F-010380341D78
+2026-09-09 04:51:47.604 Df mirror-probe[67174:3be3f2c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:47.762 Df mirror-probe[67174:3be3f15] [com.apple.SkyLight:default] New connection 0x1d7aef secondary
+2026-09-09 04:51:47.762 Df mirror-probe[67174:3be3f15] [com.apple.xpc:connection] [0xc55064280] Connection returned listener port: 0x5203
+2026-09-09 04:51:47.785 Df mirror-probe[67174:3bf1be9] [com.apple.coremedia:] <<<< FADC >>>> CMAudioDeviceClockCreate: PID 67174 create standalone audio device clock for HDMI route, 3669A83B-0000-0000-021F-010380341D78
+2026-09-09 04:51:47.817 Df mirror-probe[67174:3be3f2c] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:49.505 Df mirror-probe[67174:3be3f40] [com.apple.coremedia:] <<<< FADC >>>> CMAudioDeviceClockCreate: PID 67174 create standalone audio device clock for HDMI route, 3669A83B-0000-0000-021F-010380341D78
+2026-09-09 04:51:49.687 Df mirror-probe[67174:3bf1be9] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:50.089 Df mirror-probe[67174:3be3f15] [com.apple.SkyLight:default] New connection 0xadcf3 secondary
+2026-09-09 04:51:50.089 Df mirror-probe[67174:3be3f15] [com.apple.xpc:connection] [0xc55064280] Connection returned listener port: 0x5203
+2026-09-09 04:51:50.129 Df mirror-probe[67174:3be47fd] [com.apple.coremedia:] <<<< FADC >>>> CMAudioDeviceClockCreate: PID 67174 create standalone audio device clock for HDMI route, 3669A83B-0000-0000-021F-010380341D78
+2026-09-09 04:51:50.180 Df mirror-probe[67174:3bf1be9] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:51:56.192 Df mirror-probe[67174:3bf1be7] [com.apple.coremedia:] <<<< FADC >>>> CMAudioDeviceClockCreate: PID 67174 create standalone audio device clock for HDMI route, 3669A83B-0000-0000-021F-010380341D78
+2026-09-09 04:51:59.605 Df mirror-probe[67174:3bf1be7] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:52:00.087 Df kernel[0:3ad] (AppleH16ANEInterface) ANE0: processANECPULoadUpdate: fANEFirmwareCpuLoadScore: 10, fwCpuThrottled: 0, Enabling ANE CPU throttle, numRequestsWithFW: 1
+2026-09-09 04:52:00.088 Df kernel[0:3ad] (AppleH16ANEInterface) ANE0: processTargetToHostIOCommand: CPULOAD_NOTIFICATION: fANEFirmwareCpuLoadScore: 0 numPendingRequests: 0 pendingRequestsWithFirmware: 0 fwCpuThrottled: 1
+2026-09-09 04:52:00.088 Df kernel[0:3af] (AppleH16ANEInterface) : ANE_CheckForPendingRequests_gated: fANEFirmwareCpuLoadScore: 0, fwCpuThrottled: 1, reqSentCount: 0, Disabling ANE CPU throttle
+2026-09-09 04:52:40.129 Df mirror-probe[67174:3bf1be7] [com.apple.coremedia:] <<<< FADC >>>> CMAudioDeviceClockCreate: PID 67174 create standalone audio device clock for HDMI route, 3669A83B-0000-0000-021F-010380341D78
+2026-09-09 04:52:40.855 Df mirror-probe[67174:3bf1be7] [com.apple.TextRecognition:General] results(for:roi:options:withProgressHandler:): image={w:406,h:890} roi={x:0.000000,y:0.000000,w:1.000000,h:1.000000} options=<private>
+2026-09-09 04:52:49.507 Df kernel[0:3ad] (AppleH16ANEInterface) ANE0: processANECPULoadUpdate: fANEFirmwareCpuLoadScore: 10, fwCpuThrottled: 0, Enabling ANE CPU throttle, numRequestsWithFW: 1
+2026-09-09 04:52:49.508 Df kernel[0:3ad] (AppleH16ANEInterface) ANE0: processTargetToHostIOCommand: CPULOAD_NOTIFICATION: fANEFirmwareCpuLoadScore: 0 numPendingRequests: 0 pendingRequestsWithFirmware: 0 fwCpuThrottled: 1
+2026-09-09 04:52:49.508 Df kernel[0:3af] (AppleH16ANEInterface) : ANE_CheckForPendingRequests_gated: fANEFirmwareCpuLoadScore: 0, fwCpuThrottled: 1, reqSentCount: 0, Disabling ANE CPU throttle
+2026-09-09 04:52:52.295 Df kernel[0:3ad] (AppleH16ANEInterface) ANE0: processANECPULoadUpdate: fANEFirmwareCpuLoadScore: 10, fwCpuThrottled: 0, Enabling ANE CPU throttle, numRequestsWithFW: 1
+2026-09-09 04:52:52.297 Df kernel[0:3ad] (AppleH16ANEInterface) ANE0: processTargetToHostIOCommand: CPULOAD_NOTIFICATION: fANEFirmwareCpuLoadScore: 0 numPendingRequests: 0 pendingRequestsWithFirmware: 0 fwCpuThrottled: 1
+2026-09-09 04:52:52.297 Df kernel[0:3af] (AppleH16ANEInterface) : ANE_CheckForPendingRequests_gated: fANEFirmwareCpuLoadScore: 0, fwCpuThrottled: 1, reqSentCount: 0, Disabling ANE CPU throttle
+2026-09-09 04:53:04.259 Df kernel[0:3ad] (AppleH16ANEInterface) ANE0: processANECPULoadUpdate: fANEFirmwareCpuLoadScore: 10, fwCpuThrottled: 0, Enabling ANE CPU throttle, numRequestsWithFW: 1
+2026-09-09 04:53:04.259 Df kernel[0:3bf5e8c] (AppleH16ANEInterface) ANE0: firmwareResourceIsAvailable: fANEFirmwareCpuThrottled: 1, fANEFirmwareCpuLoadScore: 10, numSlowPathOutstandingCmds: 0, isPoweredByISP: 0, isPoweredByPearlSEP: 0
+2026-09-09 04:53:04.261 Df kernel[0:3ad] (AppleH16ANEInterface) ANE0: processTargetToHostIOCommand: CPULOAD_NOTIFICATION: fANEFirmwareCpuLoadScore: 0 numPendingRequests: 1 pendingRequestsWithFirmware: 0 fwCpuThrottled: 1
+2026-09-09 04:53:04.261 Df kernel[0:3af] (AppleH16ANEInterface) : ANE_CheckForPendingRequests_gated: fANEFirmwareCpuLoadScore: 0, fwCpuThrottled: 1, reqSentCount: 0, Disabling ANE CPU throttle
+2026-09-09 04:53:41.534 Df mirror-probe[67174:3be3f15] [com.apple.CoreAnalytics:client] Entering exit handler.
+2026-09-09 04:53:41.534 Df mirror-probe[67174:3be3f15] [com.apple.CoreAnalytics:client] Queueing exit procedure onto XPC queue. Any further messages sent will be discarded. activeSendTransactions=0
+2026-09-09 04:53:41.534 Df mirror-probe[67174:3bf1be9] [com.apple.CoreAnalytics:client] Cancelling XPC connection. Any further reply handler invocations will not retry messages
+2026-09-09 04:53:41.534 Df mirror-probe[67174:3bf1be9] [com.apple.xpc:connection] [0xc550643c0] invalidated because the current process cancelled the connection by calling xpc_connection_cancel()
+2026-09-09 04:53:41.534 Df mirror-probe[67174:3bf1be9] [com.apple.CoreAnalytics:client] XPC connection invalidated (daemon unloaded/disabled)
+2026-09-09 04:53:41.534 Df mirror-probe[67174:3be3f15] [com.apple.CoreAnalytics:client] Exiting exit handler.

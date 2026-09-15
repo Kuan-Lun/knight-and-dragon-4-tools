@@ -1,0 +1,187 @@
+{
+  "sessionID": "20260911-051405-5aee4b75",
+  "startedAt": "2026-09-10T21:14:05Z",
+  "endedAt": "2026-09-10T21:14:21Z",
+  "status": "stopped",
+  "completedCycles": 0,
+  "actionsPosted": 0,
+  "finalReason": "uncertainStateExceededGrace(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown)",
+  "diagnosticScreenshots": [
+    {
+      "captureSequence": 2,
+      "capturedAtElapsedSeconds": 2.084112458396703,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051405.MSkXSb/diagnostics/capture-0002.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 3,
+      "capturedAtElapsedSeconds": 4.098137666704133,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051405.MSkXSb/diagnostics/capture-0003.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 4,
+      "capturedAtElapsedSeconds": 6.039263958344236,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051405.MSkXSb/diagnostics/capture-0004.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 5,
+      "capturedAtElapsedSeconds": 7.978142875013873,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051405.MSkXSb/diagnostics/capture-0005.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 6,
+      "capturedAtElapsedSeconds": 9.926973041612655,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051405.MSkXSb/diagnostics/capture-0006.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 7,
+      "capturedAtElapsedSeconds": 11.88720504171215,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051405.MSkXSb/diagnostics/capture-0007.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 8,
+      "capturedAtElapsedSeconds": 13.826059625018388,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051405.MSkXSb/diagnostics/capture-0008.png",
+      "role": "recent",
+      "state": "unknown"
+    },
+    {
+      "captureSequence": 9,
+      "capturedAtElapsedSeconds": 15.765833416720852,
+      "frameFingerprint": "5fd02a89ffb4fa8192b4cae794cefa666a3d0ad3e6aca36213e6281f698b56d2",
+      "path": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051405.MSkXSb/final.png",
+      "role": "final",
+      "state": "unknown"
+    }
+  ],
+  "sourceReport": "logs/auto-level-20260911-051405.MSkXSb/run-report.json",
+  "events": [
+    {
+      "detail": "User entered the stage manually; automation acquired and locked the mirror window; inputMode=foreground, captureLevel=error, activity=userInitiatedAllowingIdleSystemSleep.",
+      "elapsedSeconds": 0.06341808335855603,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "kind": "sessionStarted",
+      "sequence": 1,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:05Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 1))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.4557423333171755, recognitionDurationSeconds=0.4478899999521673, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 0.06341808335855603,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "kind": "observation",
+      "sequence": 2,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:05Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 2))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.37752654147334397, recognitionDurationSeconds=0.36500600003637373, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 2.084112458396703,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "kind": "observation",
+      "sequence": 3,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:07Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 3))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.3676565831992775, recognitionDurationSeconds=0.3547151666134596, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 4.098137666704133,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "kind": "observation",
+      "sequence": 4,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:09Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 4))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.37051845830865204, recognitionDurationSeconds=0.3604488749988377, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 6.039263958344236,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "kind": "observation",
+      "sequence": 5,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:11Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 5))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.3823537500575185, recognitionDurationSeconds=0.37055816664360464, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 7.978142875013873,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "kind": "observation",
+      "sequence": 6,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:13Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 6))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.36652370844967663, recognitionDurationSeconds=0.3574561250861734, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 9.926973041612655,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "kind": "observation",
+      "sequence": 7,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:15Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 7))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.38000362482853234, recognitionDurationSeconds=0.3682888331823051, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 11.88720504171215,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "kind": "observation",
+      "sequence": 8,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:17Z"
+    },
+    {
+      "decision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 8))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.3662016249727458, recognitionDurationSeconds=0.35242870822548866, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 13.826059625018388,
+      "frameFingerprint": "c3693ec33ba0cb5548873088c2b7030b71768186e12ac5ff986a9807346e3d17",
+      "kind": "observation",
+      "sequence": 9,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:19Z"
+    },
+    {
+      "decision": "stop(MirrorProbeCore.AutoLevelStopReason.uncertainStateExceededGrace(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown))",
+      "detail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, zeroParty=0, enemyHP=none, reset=none, captureAgeSeconds=0.3358841666486114, recognitionDurationSeconds=0.32633704179897904, classificationEvidence=[lowConfidenceMarker(text=\"任務完成！\", confidence=0.5): A known state marker was below the fixed confidence threshold]",
+      "elapsedSeconds": 15.765833416720852,
+      "frameFingerprint": "5fd02a89ffb4fa8192b4cae794cefa666a3d0ad3e6aca36213e6281f698b56d2",
+      "kind": "observation",
+      "sequence": 10,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:21Z"
+    },
+    {
+      "detail": "uncertainStateExceededGrace(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown)",
+      "elapsedSeconds": 16.43373095826246,
+      "frameFingerprint": "5fd02a89ffb4fa8192b4cae794cefa666a3d0ad3e6aca36213e6281f698b56d2",
+      "kind": "sessionEnded",
+      "screenshotPath": "/Users/kuanlun_wang/Desktop/git-repo/knight and dragon 4/logs/auto-level-20260911-051405.MSkXSb/final.png",
+      "sequence": 11,
+      "state": "unknown",
+      "timestamp": "2026-09-10T21:14:21Z"
+    }
+  ]
+}

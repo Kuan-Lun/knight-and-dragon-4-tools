@@ -43,6 +43,258 @@ struct AutoLevelForegroundActivationRetryTests {
         #expect(second.settleDelayMilliseconds == 350)
     }
 
+    @Test("A live process with a missing application handle gets exactly three total attempts")
+    func applicationResolutionExhaustsSharedBudget() {
+        var state = AutoLevelForegroundActivationRetryState()
+        let expectedDecisions: [AutoLevelForegroundActivationRetryDecision] = [
+            .retry(nextAttempt: 2, delayMilliseconds: 1_000),
+            .retry(nextAttempt: 3, delayMilliseconds: 1_000),
+            .exhausted(attempts: 3),
+            .exhausted(attempts: 3),
+        ]
+        for expected in expectedDecisions {
+            #expect(state.recordUnpostedApplicationResolutionFailure(
+                processIsRunning: true,
+                inputWasPosted: false
+            ) == expected)
+        }
+        #expect(state.currentAttempt == 3)
+        #expect(state.recordUnpostedFocusFailure() == .exhausted(attempts: 3))
+
+        var nextAction = AutoLevelForegroundActivationRetryState()
+        #expect(nextAction.currentAttempt == 1)
+        #expect(nextAction.recordUnpostedApplicationResolutionFailure(
+            processIsRunning: true,
+            inputWasPosted: false
+        ) == .retry(nextAttempt: 2, delayMilliseconds: 1_000))
+        #expect(state.currentAttempt == 3)
+    }
+
+    @Test("Unconfirmed process liveness and posted input reject resolution recovery without spending attempts",
+          arguments: [(false, false), (false, true), (true, true)])
+    func applicationResolutionRequiresLiveProcessAndUnpostedInput(
+        processIsRunning: Bool,
+        inputWasPosted: Bool
+    ) {
+        var state = AutoLevelForegroundActivationRetryState()
+        _ = state.recordUnpostedFocusFailure()
+        #expect(state.currentAttempt == 2)
+        #expect(state.recordUnpostedApplicationResolutionFailure(
+            processIsRunning: processIsRunning,
+            inputWasPosted: inputWasPosted
+        ) == nil)
+        #expect(state.currentAttempt == 2)
+        #expect(state.recordUnpostedApplicationResolutionFailure(
+            processIsRunning: true,
+            inputWasPosted: false
+        ) == .retry(nextAttempt: 3, delayMilliseconds: 1_000))
+    }
+
+    @Test("Application resolution, focus, and unknown results share three total attempts in any order",
+          arguments: [
+            [0, 1, 2], [0, 2, 1], [1, 0, 2],
+            [1, 2, 0], [2, 0, 1], [2, 1, 0],
+          ])
+    func mixedApplicationResolutionFailuresNeverRenewBudget(failureOrder: [Int]) {
+        var state = AutoLevelForegroundActivationRetryState()
+        let expectedDecisions: [AutoLevelForegroundActivationRetryDecision] = [
+            .retry(nextAttempt: 2, delayMilliseconds: 1_000),
+            .retry(nextAttempt: 3, delayMilliseconds: 1_000),
+            .exhausted(attempts: 3),
+        ]
+        for (failure, expected) in zip(failureOrder, expectedDecisions) {
+            let decision: AutoLevelForegroundActivationRetryDecision?
+            switch failure {
+            case 0:
+                decision = state.recordUnpostedApplicationResolutionFailure(
+                    processIsRunning: true,
+                    inputWasPosted: false
+                )
+            case 1:
+                decision = state.recordUnpostedFocusFailure()
+            default:
+                decision = state.recordUnpostedResultObservationFailure(
+                    intent: .advanceMissionSuccess,
+                    classification: unknownResult(),
+                    inputWasPosted: false
+                )
+            }
+            #expect(decision == expected)
+        }
+        #expect(state.currentAttempt == 3)
+        #expect(state.recordUnpostedApplicationResolutionFailure(
+            processIsRunning: true,
+            inputWasPosted: false
+        ) == .exhausted(attempts: 3))
+    }
+
+    @Test("Unknown unposted result controls with benign scaffolding can be observed again",
+          arguments: [AutoLevelActionIntent.advanceMissionSuccess, .advanceMissionFailure, .selectMissionRepeat])
+    func transientUnknownResultPermitsFreshObservation(intent: AutoLevelActionIntent) {
+        let benignKinds: [GameEvidenceKind] = [
+            .missionCompleteTitle, .missionFailedTitle, .missionRepeatOption,
+            .repeatSelectedMarker, .repeatUnselectedMarker, .missionExperiencePage, .missionLootPage,
+        ]
+        let evidenceSets: [[GameStateEvidence]] = [[], [lowConfidenceEvidence]] + benignKinds.map {
+            [lowConfidenceEvidence, GameStateEvidence(kind: $0, observation: nil, detail: "result scaffold")]
+        }
+        for evidence in evidenceSets {
+            var state = AutoLevelForegroundActivationRetryState()
+            let classification = unknownResult(evidence: evidence)
+            #expect(state.recordUnpostedResultObservationFailure(
+                intent: intent,
+                classification: classification,
+                inputWasPosted: false
+            ) == .retry(nextAttempt: 2, delayMilliseconds: 1_000))
+            #expect(state.currentAttempt == 2)
+            #expect(state.settleDelayMilliseconds == 600)
+            // A retry decision never turns the rejected observation into an input target.
+            #expect(classification.state == .unknown)
+            #expect(classification.allowedActions.isEmpty)
+            #expect(classification.policyGatedActions.isEmpty)
+        }
+    }
+
+    @Test("Result observation recovery never extends to unrelated controls or retreat")
+    func otherActionIntentsDoNotRetryUnknownResults() {
+        let ineligibleIntents: [AutoLevelActionIntent] = [
+            .closeBattlePrompt, .pressWideModalTopButton, .enableAllAuto,
+            .confirmLootCollection, .recruitAdventurer, .leaveAdventurer,
+            .requestRetreat, .confirmRetreatWithoutTalisman,
+        ]
+        var state = AutoLevelForegroundActivationRetryState()
+        for intent in ineligibleIntents {
+            #expect(state.recordUnpostedResultObservationFailure(
+                intent: intent,
+                classification: unknownResult(),
+                inputWasPosted: false
+            ) == nil)
+            #expect(state.currentAttempt == 1)
+        }
+    }
+
+    @Test("Recognized preflight state changes keep their existing cancellation or stop handling",
+          arguments: [AutoLevelActionIntent.advanceMissionSuccess, .advanceMissionFailure, .selectMissionRepeat])
+    func recognizedStatesDoNotEnterUnknownResultRecovery(intent: AutoLevelActionIntent) {
+        let recognizedStates: [GameState] = [
+            .missionComplete, .missionCompleteRepeatSelected, .wideModalOneButton,
+            .wideModalTwoButtons, .missionFailed, .missionFailedRepeatSelected,
+            .lootCollectionConfirmation, .adventurerRecruitment, .defeatPrompt,
+            .retreatConfirmation, .battleEventPrompt, .battleEncounterPrompt,
+            .battle, .defeat, .inventoryFull,
+        ]
+        var retry = AutoLevelForegroundActivationRetryState()
+        for state in recognizedStates {
+            #expect(retry.recordUnpostedResultObservationFailure(
+                intent: intent,
+                classification: .init(state: state, evidence: [], allowedActions: []),
+                inputWasPosted: false
+            ) == nil)
+            #expect(retry.currentAttempt == 1)
+        }
+    }
+
+    @Test("Explicit adverse or unrelated evidence cannot be hidden by a low-confidence marker",
+          arguments: [AutoLevelActionIntent.advanceMissionSuccess, .advanceMissionFailure, .selectMissionRepeat])
+    func adverseAndUnrelatedEvidenceNeverRetries(intent: AutoLevelActionIntent) {
+        let disallowedKinds: [GameEvidenceKind] = [
+            .invalidObservation, .conflictingStateMarkers, .inventoryFullMarker,
+            .defeatMarker, .wideModalGeometry, .battleMarker, .retreatConfirmationPrompt,
+            .lootCollectionPrompt, .missionCompleteAdvance,
+        ]
+        var state = AutoLevelForegroundActivationRetryState()
+        for kind in disallowedKinds {
+            let adverse = GameStateEvidence(kind: kind, observation: nil, detail: "must remain terminal")
+            for evidence in [[adverse], [lowConfidenceEvidence, adverse]] {
+                #expect(state.recordUnpostedResultObservationFailure(
+                    intent: intent,
+                    classification: unknownResult(evidence: evidence),
+                    inputWasPosted: false
+                ) == nil)
+                #expect(state.currentAttempt == 1)
+            }
+        }
+    }
+
+    @Test("Posted input and malformed unknown classifications never enter result recovery",
+          arguments: [AutoLevelActionIntent.advanceMissionSuccess, .advanceMissionFailure, .selectMissionRepeat])
+    func postedInputAndUnexpectedActionsRejectRecovery(intent: AutoLevelActionIntent) {
+        var state = AutoLevelForegroundActivationRetryState()
+        #expect(state.recordUnpostedResultObservationFailure(
+            intent: intent,
+            classification: unknownResult(),
+            inputWasPosted: true
+        ) == nil)
+        let rect = NormalizedRect(x: 0.02, y: 0.19, width: 0.05, height: 0.02)
+        let target = NamedGameTarget(
+            name: .missionCompleteAdvance,
+            sourceText: "unexpected-target",
+            rect: rect,
+            point: rect.center
+        )
+        let malformed = [
+            GameStateClassification(state: .unknown, evidence: [], allowedActions: [
+                .init(name: .advanceMissionComplete, target: target),
+            ]),
+            GameStateClassification(state: .unknown, evidence: [], allowedActions: [], policyGatedActions: [
+                .init(name: .openBattleRetreatConfirmation, target: target, requirement: .temporalDefeatRecovery),
+            ]),
+        ]
+        for classification in malformed {
+            #expect(state.recordUnpostedResultObservationFailure(
+                intent: intent,
+                classification: classification,
+                inputWasPosted: false
+            ) == nil)
+        }
+        #expect(state.currentAttempt == 1)
+    }
+
+    @Test("Persistent unknown result confirmations allow exactly three total attempts",
+          arguments: [AutoLevelActionIntent.advanceMissionSuccess, .advanceMissionFailure, .selectMissionRepeat])
+    func persistentUnknownResultIsBounded(intent: AutoLevelActionIntent) {
+        var state = AutoLevelForegroundActivationRetryState()
+        let expectedDecisions: [AutoLevelForegroundActivationRetryDecision] = [
+            .retry(nextAttempt: 2, delayMilliseconds: 1_000),
+            .retry(nextAttempt: 3, delayMilliseconds: 1_000),
+            .exhausted(attempts: 3),
+            .exhausted(attempts: 3),
+        ]
+        for expected in expectedDecisions {
+            #expect(state.recordUnpostedResultObservationFailure(
+                intent: intent,
+                classification: unknownResult(),
+                inputWasPosted: false
+            ) == expected)
+        }
+        #expect(state.currentAttempt == 3)
+        #expect(state.recordUnpostedFocusFailure() == .exhausted(attempts: 3))
+    }
+
+    @Test("Focus and result observation failures share one total attempt budget",
+          arguments: [AutoLevelActionIntent.advanceMissionSuccess, .advanceMissionFailure, .selectMissionRepeat],
+          [false, true])
+    func focusAndUnknownResultShareBudget(intent: AutoLevelActionIntent, resultFirst: Bool) {
+        var state = AutoLevelForegroundActivationRetryState()
+        for (index, isResultFailure) in [resultFirst, !resultFirst].enumerated() {
+            let decision: AutoLevelForegroundActivationRetryDecision? = isResultFailure
+                ? state.recordUnpostedResultObservationFailure(
+                    intent: intent,
+                    classification: unknownResult(),
+                    inputWasPosted: false
+                )
+                : state.recordUnpostedFocusFailure()
+            #expect(decision == .retry(nextAttempt: index + 2, delayMilliseconds: 1_000))
+        }
+        #expect(state.currentAttempt == 3)
+        #expect(state.recordUnpostedResultObservationFailure(
+            intent: intent,
+            classification: unknownResult(),
+            inputWasPosted: false
+        ) == .exhausted(attempts: 3))
+        #expect(state.recordUnpostedFocusFailure() == .exhausted(attempts: 3))
+    }
+
     @Test("Live AX focus wins over advisory activation and stale AppKit active flags", arguments: [
         (false, true, true, true),
         (true, true, true, true),
@@ -261,6 +513,14 @@ struct AutoLevelForegroundActivationRetryTests {
     private let identity = AutoLevelWindowIdentity(processID: 99, windowID: 7)
     private let otherWindow = AutoLevelWindowIdentity(processID: 98, windowID: 8)
     private let geometry = AutoLevelWindowGeometry(x: 40, y: 80, width: 300, height: 650)
+
+    private var lowConfidenceEvidence: GameStateEvidence {
+        .init(kind: .lowConfidenceMarker, observation: nil, detail: "result marker confidence is temporarily low")
+    }
+
+    private func unknownResult(evidence: [GameStateEvidence] = []) -> GameStateClassification {
+        .init(state: .unknown, evidence: evidence, allowedActions: [])
+    }
 
     private func obstructionSnapshot(
         windowIdentity: AutoLevelWindowIdentity? = AutoLevelWindowIdentity(processID: 99, windowID: 7),
