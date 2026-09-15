@@ -37,12 +37,20 @@ It uses only public APIs:
 
 ## Build and test
 
-The machine's active developer directory currently points at Command Line Tools, so commands explicitly select the installed Xcode toolchain:
+Run all offline unit, runtime, launcher and release CLI integration checks:
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun swift test
-zsh scripts/build-app.sh
+zsh Scripts/test.sh
+# Optional Swift coverage:
+zsh Scripts/test.sh --coverage
+# Package the app separately:
+zsh Scripts/build-app.sh
 ```
+
+The test script selects the installed Xcode toolchain unless `DEVELOPER_DIR` is
+already set. It saves logs under `.build/validation/` and leaves the packaged app
+untouched. See [testing instructions](docs/testing.md) and the
+[architecture review and optimization plan](docs/architecture.md).
 
 The packaged app is written to `.build/Mirror Probe.app` with a fixed bundle identifier so it is recognizable in the privacy panes. Its current ad-hoc signature is not a stable TCC identity: rebuilding may invalidate the grants. A maintained app should use a stable Development or Developer ID certificate.
 

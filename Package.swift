@@ -12,9 +12,20 @@ let package = Package(
     ],
     targets: [
         .target(name: "MirrorProbeCore"),
+        .target(
+            name: "MirrorProbeRuntime",
+            dependencies: ["MirrorProbeCore"]
+        ),
         .executableTarget(
             name: "MirrorProbe",
-            dependencies: ["MirrorProbeCore"]
+            dependencies: ["MirrorProbeRuntime"]
+        ),
+        .testTarget(
+            name: "MirrorProbeRuntimeTests",
+            dependencies: ["MirrorProbeRuntime", "MirrorProbeCore"],
+            resources: [
+                .process("Fixtures"),
+            ]
         ),
         .testTarget(
             name: "MirrorProbeCoreTests",
