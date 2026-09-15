@@ -14,6 +14,15 @@ public struct AutoLevelWindowGeometry: Equatable, Sendable {
         self.width = width
         self.height = height
     }
+
+    /// WindowServer uses global display coordinates, so negative origins are valid. Dimensions
+    /// and computed edges must remain finite and describe a nonempty window.
+    public var isValid: Bool {
+        x.isFinite && y.isFinite
+            && width.isFinite && height.isFinite
+            && width > 0 && height > 0
+            && (x + width).isFinite && (y + height).isFinite
+    }
 }
 
 public enum AutoLevelInputMode: String, Codable, Equatable, Sendable {
@@ -95,10 +104,16 @@ public enum AutoLevelInputSafety {
         else {
             return .windowUnavailable
         }
-        guard windowIdentity == expectedWindowIdentity else {
+        guard expectedWindowIdentity.processID > 0,
+              expectedWindowIdentity.windowID > 0,
+              windowIdentity == expectedWindowIdentity
+        else {
             return .windowIdentityChanged
         }
-        guard windowGeometry == expectedWindowGeometry else {
+        guard expectedWindowGeometry.isValid,
+              windowGeometry.isValid,
+              windowGeometry == expectedWindowGeometry
+        else {
             return .windowGeometryChanged
         }
         switch inputMode {

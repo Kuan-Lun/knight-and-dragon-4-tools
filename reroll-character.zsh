@@ -12,7 +12,9 @@ minimum_total=90
 max_rerolls=500
 max_minutes=10
 window_id=""
+window_id_was_set=0
 dry_run=0
+typeset -A seen_value_options
 
 usage() {
     print -r -- '騎士與龍 IV 自訂創角自動重擲'
@@ -49,9 +51,17 @@ is_unsigned_integer() {
 }
 
 while (( $# > 0 )); do
+    case "${1%%=*}" in
+        --minimum-total|--max-rerolls|--max-minutes|--window-id)
+            option_name=${1%%=*}
+            [[ -z "${seen_value_options[$option_name]-}" ]] || fail "$option_name 不可重複"
+            seen_value_options[$option_name]=1
+            ;;
+    esac
     case "$1" in
         --minimum-total)
             (( $# >= 2 )) || fail '--minimum-total 需要一個數值'
+            [[ "$2" != --* ]] || fail '--minimum-total 需要一個數值'
             minimum_total=$2
             shift 2
             ;;
@@ -61,6 +71,7 @@ while (( $# > 0 )); do
             ;;
         --max-rerolls)
             (( $# >= 2 )) || fail '--max-rerolls 需要一個數值'
+            [[ "$2" != --* ]] || fail '--max-rerolls 需要一個數值'
             max_rerolls=$2
             shift 2
             ;;
@@ -70,6 +81,7 @@ while (( $# > 0 )); do
             ;;
         --max-minutes)
             (( $# >= 2 )) || fail '--max-minutes 需要一個數值'
+            [[ "$2" != --* ]] || fail '--max-minutes 需要一個數值'
             max_minutes=$2
             shift 2
             ;;
@@ -79,11 +91,14 @@ while (( $# > 0 )); do
             ;;
         --window-id)
             (( $# >= 2 )) || fail '--window-id 需要一個數值'
+            [[ "$2" != --* ]] || fail '--window-id 需要一個數值'
             window_id=$2
+            window_id_was_set=1
             shift 2
             ;;
         --window-id=*)
             window_id=${1#*=}
+            window_id_was_set=1
             shift
             ;;
         --dry-run)
@@ -116,7 +131,7 @@ max_minutes_number=$(( 10#$max_minutes ))
 (( max_minutes_number >= 1 && max_minutes_number <= 60 )) || fail \
     '--max-minutes 必須介於 1 到 60'
 
-if [[ -n "$window_id" ]]; then
+if (( window_id_was_set == 1 )); then
     is_unsigned_integer "$window_id" || fail '--window-id 必須是正整數'
     window_id_number=$(( 10#$window_id ))
     (( window_id_number >= 1 && window_id_number <= 4294967295 )) || fail \
@@ -192,7 +207,13 @@ fi
 if (( signal_stop_requested == 1 && open_wait_complete == 0 )); then
     for _ in {1..60}; do
         if ! kill -0 "$open_pid" 2>/dev/null; then
-            wait "$open_pid" || open_status=$?
+            # The first wait may have been interrupted by our STOP signal.
+            # Only the reaped child's exit code describes the open command.
+            if wait "$open_pid"; then
+                open_status=0
+            else
+                open_status=$?
+            fi
             open_wait_complete=1
             break
         fi
@@ -215,6 +236,11 @@ fi
 if [[ -s "$stderr_path" ]]; then
     print -u2 -r -- '錯誤：'
     sed 's/^/  /' "$stderr_path" >&2
+fi
+
+if (( open_status != 0 )); then
+    print -u2 -r -- "open 指令失敗（狀態碼 $open_status）"
+    exit "$open_status"
 fi
 
 if [[ -f "$report_path" ]]; then
@@ -259,5 +285,4 @@ if [[ -f "$report_path" ]]; then
     exit 1
 fi
 
-(( open_status == 0 )) || exit "$open_status"
 fail '程式結束但沒有產生執行報告'

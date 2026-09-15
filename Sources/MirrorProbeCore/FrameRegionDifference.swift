@@ -16,20 +16,16 @@ public extension FrameAnalyzer {
         excluding exclusionRegions: [NormalizedRect] = [],
         maximumSamples: Int = 1_000_000
     ) throws -> Double {
-        guard width > 0,
-              height > 0,
-              width <= Int.max / 4,
-              bytesPerRow >= width * 4,
-              bytesPerRow <= Int.max / height,
-              maximumSamples > 0
-        else {
+        let requiredCount = try requiredRGBAByteCount(
+            width: width, height: height, bytesPerRow: bytesPerRow
+        )
+        guard maximumSamples > 0 else {
             throw FrameAnalyzerError.invalidDimensions
         }
         guard region.isValid, exclusionRegions.allSatisfy(\.isValid) else {
             throw FrameAnalyzerError.invalidCropFraction
         }
 
-        let requiredCount = bytesPerRow * height
         guard lhs.count >= requiredCount, rhs.count >= requiredCount else {
             throw FrameAnalyzerError.insufficientBytes
         }

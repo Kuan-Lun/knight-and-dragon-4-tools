@@ -37,13 +37,13 @@ public enum FrameAnalyzer {
         cropFraction: Double = 0.05,
         maximumSamples: Int = 200_000
     ) throws -> FrameMetrics {
-        guard width > 0, height > 0, bytesPerRow >= width * 4 else {
-            throw FrameAnalyzerError.invalidDimensions
-        }
+        let requiredCount = try requiredRGBAByteCount(
+            width: width, height: height, bytesPerRow: bytesPerRow
+        )
         guard cropFraction >= 0, cropFraction < 0.5 else {
             throw FrameAnalyzerError.invalidCropFraction
         }
-        guard bytes.count >= bytesPerRow * height else {
+        guard bytes.count >= requiredCount else {
             throw FrameAnalyzerError.insufficientBytes
         }
 
@@ -123,10 +123,9 @@ public enum FrameAnalyzer {
         height: Int,
         bytesPerRow: Int
     ) throws -> Double {
-        guard width > 0, height > 0, bytesPerRow >= width * 4 else {
-            throw FrameAnalyzerError.invalidDimensions
-        }
-        let requiredCount = bytesPerRow * height
+        let requiredCount = try requiredRGBAByteCount(
+            width: width, height: height, bytesPerRow: bytesPerRow
+        )
         guard lhs.count >= requiredCount, rhs.count >= requiredCount else {
             throw FrameAnalyzerError.insufficientBytes
         }
@@ -143,6 +142,20 @@ public enum FrameAnalyzer {
             }
         }
         return difference / (Double(channelCount) * 255.0)
+    }
+
+    /// Validate the layout before multiplying caller-supplied dimensions. Shared by whole-frame
+    /// and regional analysis so malformed images produce an error instead of an overflow trap.
+    static func requiredRGBAByteCount(width: Int, height: Int, bytesPerRow: Int) throws -> Int {
+        guard width > 0,
+              height > 0,
+              width <= Int.max / 4,
+              bytesPerRow >= width * 4,
+              bytesPerRow <= Int.max / height
+        else {
+            throw FrameAnalyzerError.invalidDimensions
+        }
+        return bytesPerRow * height
     }
 
     private static func percentile(
