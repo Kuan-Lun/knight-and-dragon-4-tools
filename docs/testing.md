@@ -79,6 +79,28 @@ python3 Tests/IntegrationTests/cli-tests.py .build/release/mirror-probe
 restricted development environment can compile; it does not grant the app input
 or screen-capture permissions.
 
+## Zoom-level captures
+
+iPhone Mirroring keeps a fixed-point border around the phone content (38 above, 8
+below, 7.5 each side at 1x), so only the 406x890 zoom level is proportional to the
+calibrated regions. `MirrorContentLayout` detects that border and places the content
+on a reference-proportioned canvas before recognition; `analyze-file` and `capture`
+reports describe it under `contentLayout`, and a run logs `mirrorContentLayout:` to
+stderr whenever it changes.
+
+To collect calibration or regression captures at every zoom level on this Mac:
+
+```sh
+ANALYZE_BIN=.build/debug/mirror-probe zsh Scripts/zoom-sweep-capture.zsh captures/zoom-sweep loot
+```
+
+The script only clicks 顯示方式 > 放大／縮小 through System Events (Accessibility) and
+captures through the packaged App; it never posts input to the phone and restores the
+initial zoom level. Zoom-level template sources are listed with the `zoom` placement in
+`Scripts/generate-result-visual-templates.py` and `Scripts/generate-battle-visual-templates.py`,
+which sample them through the same canvas (`Scripts/mirror_content_layout.py`). Sources
+captured earlier remain sampled raw so their bytes never change.
+
 ## CI
 
 `.github/workflows/test.yml` runs the same coverage-enabled offline command for

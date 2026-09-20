@@ -1,0 +1,274 @@
+[
+  {
+    "kind": "lootResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-211x468.png",
+    "sourceCapture": "sweep/run1/run1-L1.png",
+    "capturedAt": "2026-09-20T05:57:57Z",
+    "window": {
+      "x": 5,
+      "y": 30,
+      "width": 211,
+      "height": 468,
+      "windowID": 102,
+      "processID": 1624
+    },
+    "imageWidth": 211,
+    "imageHeight": 468,
+    "sha256": "a4967f96a47bb65db6417ea4e69f879892c970b9899f8b38b9abf6f4eb84217c"
+  },
+  {
+    "kind": "lootResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-250x553.png",
+    "sourceCapture": "sweep/run1/run1-L2.png",
+    "capturedAt": "2026-09-20T05:58:00Z",
+    "window": {
+      "x": 5,
+      "y": 30,
+      "width": 250,
+      "height": 553,
+      "windowID": 102,
+      "processID": 1624
+    },
+    "imageWidth": 250,
+    "imageHeight": 553,
+    "sha256": "cb2dc55400148743d7b3014c7f46e20bd91eeb5ec5f884ed9749b3c1bcdbc6b3"
+  },
+  {
+    "kind": "lootResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-289x637.png",
+    "sourceCapture": "sweep/run1/run1-L3.png",
+    "capturedAt": "2026-09-20T05:58:03Z",
+    "window": {
+      "x": 5,
+      "y": 30,
+      "width": 289,
+      "height": 637,
+      "windowID": 102,
+      "processID": 1624
+    },
+    "imageWidth": 289,
+    "imageHeight": 637,
+    "sha256": "064a1adc3991678ee5ed1f89dd9c05374229599ddb64bcd3b13a77f378eb2c4a"
+  },
+  {
+    "kind": "lootResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-328x722.png",
+    "sourceCapture": "sweep/run1/run1-L4.png",
+    "capturedAt": "2026-09-20T05:58:06Z",
+    "window": {
+      "x": 5,
+      "y": 30,
+      "width": 328,
+      "height": 722,
+      "windowID": 102,
+      "processID": 1624
+    },
+    "imageWidth": 328,
+    "imageHeight": 722,
+    "sha256": "d36a5a4abb835b588d78f338478e582bc157a92dcd2e2e6e38027c5082535e7e"
+  },
+  {
+    "kind": "lootResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-367x806.png",
+    "sourceCapture": "sweep/run1/run1-L5.png",
+    "capturedAt": "2026-09-20T05:58:09Z",
+    "window": {
+      "x": 5,
+      "y": 30,
+      "width": 367,
+      "height": 806,
+      "windowID": 102,
+      "processID": 1624
+    },
+    "imageWidth": 367,
+    "imageHeight": 806,
+    "sha256": "c20e1ce669fbff846881434058a265db46d9c47a1c1b61ad916c699fa12bcacd"
+  },
+  {
+    "kind": "lootResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-406x890.png",
+    "sourceCapture": "sweep/run1/run1-L6.png",
+    "capturedAt": "2026-09-20T05:58:12Z",
+    "window": {
+      "x": 5,
+      "y": 30,
+      "width": 406,
+      "height": 890,
+      "windowID": 102,
+      "processID": 1624
+    },
+    "imageWidth": 406,
+    "imageHeight": 890,
+    "sha256": "cb5d3d872c27b8e7504a70dae9009f0844f24255be4b5331ceff576e6197642c"
+  },
+  {
+    "kind": "lootResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-439x960.png",
+    "sourceCapture": "sweep/run1/run1-L7.png",
+    "capturedAt": "2026-09-20T05:58:15Z",
+    "window": {
+      "x": 5,
+      "y": 30,
+      "width": 439,
+      "height": 960,
+      "windowID": 102,
+      "processID": 1624
+    },
+    "imageWidth": 439,
+    "imageHeight": 960,
+    "sha256": "3c88379c20c35d71344f02785004b867c1083a9b4ce6c5add36fb247906a234f"
+  },
+  {
+    "kind": "battleDialog",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-modal-211x468.png",
+    "sourceCapture": "sweep/battle1/battle-L1-211x468.png",
+    "capturedAt": "2026-09-20T06:17:33Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 211,
+      "height": 468,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 211,
+    "imageHeight": 468,
+    "sha256": "8e714641f20bb926e346b61b5156b6aee682c06f6253b6b4555c1397a666aba8"
+  },
+  {
+    "kind": "battleDialog",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-modal-328x722.png",
+    "sourceCapture": "sweep/battle1/battle-L4-328x722.png",
+    "capturedAt": "2026-09-20T06:17:43Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 328,
+      "height": 722,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 328,
+    "imageHeight": 722,
+    "sha256": "09293aca61d252ecf03eba79364c456878caba2ac75f768e623d1c5d6c0b6eec"
+  },
+  {
+    "kind": "battleDialog",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-modal-439x960.png",
+    "sourceCapture": "sweep/battle1/battle-L7-439x960.png",
+    "capturedAt": "2026-09-20T06:17:53Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 439,
+      "height": 960,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 439,
+    "imageHeight": 960,
+    "sha256": "c8dc4d117f0031f12df80572847fb784579ce73e06612b4cce5dc07dbd082572"
+  },
+  {
+    "kind": "battle",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-211x468.png",
+    "sourceCapture": "harvest/battle-L1-211x468.png",
+    "capturedAt": "2026-09-20T06:24:44Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 211,
+      "height": 468,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 211,
+    "imageHeight": 468,
+    "sha256": "9c80d178f382c0b695f8f0c9098e7c9d14d24d7c726541a0b25cbed87a3e4062"
+  },
+  {
+    "kind": "battle",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-250x553.png",
+    "sourceCapture": "harvest/battle-L2-250x553.png",
+    "capturedAt": "2026-09-20T06:25:28Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 250,
+      "height": 553,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 250,
+    "imageHeight": 553,
+    "sha256": "d11a15c1332d82e86eef172f3a7330d730da2b89e79fbbfd33c0df5df151e40b"
+  },
+  {
+    "kind": "battle",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-289x637.png",
+    "sourceCapture": "harvest/battle-L3-289x637.png",
+    "capturedAt": "2026-09-20T06:26:14Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 289,
+      "height": 637,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 289,
+    "imageHeight": 637,
+    "sha256": "14a8877c943e13f85333595df7afe94a72b73ddf5016739e002c81020aa21df9"
+  },
+  {
+    "kind": "battle",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-328x722.png",
+    "sourceCapture": "harvest/battle-L4-328x722.png",
+    "capturedAt": "2026-09-20T06:27:03Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 328,
+      "height": 722,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 328,
+    "imageHeight": 722,
+    "sha256": "c593383157add0225be990163750c4a3fa3ffde22a83229cca59cb848fabe375"
+  },
+  {
+    "kind": "battle",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-367x806.png",
+    "sourceCapture": "harvest/battle-L5-367x806.png",
+    "capturedAt": "2026-09-20T06:27:56Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 367,
+      "height": 806,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 367,
+    "imageHeight": 806,
+    "sha256": "d681c8aa7d311a6b487ebd331302f42fe4a163d81fbb231b33be27ae29a80ae9"
+  },
+  {
+    "kind": "battle",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-439x960.png",
+    "sourceCapture": "harvest/battle-L7-439x960.png",
+    "capturedAt": "2026-09-20T06:28:50Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 439,
+      "height": 960,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 439,
+    "imageHeight": 960,
+    "sha256": "d74ef9689368dd011803ffd6a8524b090af49dda2c7cdc7b4519261f2bb759c1"
+  }
+]

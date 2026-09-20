@@ -22,6 +22,7 @@ struct CaptureReport: Codable {
     let imageWidth: Int
     let imageHeight: Int
     let metrics: FrameMetrics
+    let contentLayout: ContentLayoutReport?
 }
 
 struct DoctorReport: Codable {

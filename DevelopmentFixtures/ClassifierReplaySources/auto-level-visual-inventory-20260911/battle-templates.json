@@ -8,6 +8,7 @@
       0.023
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png",
+    "placement": "raw",
     "sourceSHA256": "fb7690605db038fa95930cbd03ac965273afee1253731fdf0b16c23b3c0897cc",
     "sampleSHA256": "323b7aac74e44752ebaa19bc9b72811a41335aab58fc8037e063e9d3e3c854d3"
   },
@@ -20,6 +21,7 @@
       0.023
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png",
+    "placement": "raw",
     "sourceSHA256": "050b00147f867e64c0fd4c442ccd8e7594f7a1eedfe9fd81b0cba8f728676ca4",
     "sampleSHA256": "8823eb26a6d8ffe3b28cae7f6b485be5fc1b6ddc87d1e3cc72831db33661ecde"
   },
@@ -32,8 +34,74 @@
       0.023
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/native-402-battle-capture-0013.png",
+    "placement": "raw",
     "sourceSHA256": "8d48edffb9c0a507dd002469b020692408711dcc93a740511ca78adf906abc22",
     "sampleSHA256": "4b2ae080aadb52366edbbc9b0d9fde84fdb46907ae6dcb52887dc84dfb8a8c1b"
+  },
+  {
+    "marker": "skipControl",
+    "region": [
+      0.075,
+      0.87,
+      0.09,
+      0.023
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-211x468.png",
+    "placement": "zoom",
+    "sourceSHA256": "9c80d178f382c0b695f8f0c9098e7c9d14d24d7c726541a0b25cbed87a3e4062",
+    "sampleSHA256": "356a4c374ef48edfe4bc38c9cce2d7242ab373f59c8d8c0e566b1285d55f6ad6"
+  },
+  {
+    "marker": "skipControl",
+    "region": [
+      0.075,
+      0.87,
+      0.09,
+      0.023
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-250x553.png",
+    "placement": "zoom",
+    "sourceSHA256": "d11a15c1332d82e86eef172f3a7330d730da2b89e79fbbfd33c0df5df151e40b",
+    "sampleSHA256": "4c50eed81a084f85740d2eb80a8114a5fa438d4e6212ee3a3645de1ad9538ed3"
+  },
+  {
+    "marker": "skipControl",
+    "region": [
+      0.075,
+      0.87,
+      0.09,
+      0.023
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-289x637.png",
+    "placement": "zoom",
+    "sourceSHA256": "14a8877c943e13f85333595df7afe94a72b73ddf5016739e002c81020aa21df9",
+    "sampleSHA256": "6866e48828d428da8a3cc060992fa5f108fa1b7f39fd48312f17f059c2da5281"
+  },
+  {
+    "marker": "skipControl",
+    "region": [
+      0.075,
+      0.87,
+      0.09,
+      0.023
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-328x722.png",
+    "placement": "zoom",
+    "sourceSHA256": "c593383157add0225be990163750c4a3fa3ffde22a83229cca59cb848fabe375",
+    "sampleSHA256": "9dbbcaa596ca7ff12142f10a938f09c60469e3ef134538169066079dd88ee8ac"
+  },
+  {
+    "marker": "skipControl",
+    "region": [
+      0.075,
+      0.87,
+      0.09,
+      0.023
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-367x806.png",
+    "placement": "zoom",
+    "sourceSHA256": "d681c8aa7d311a6b487ebd331302f42fe4a163d81fbb231b33be27ae29a80ae9",
+    "sampleSHA256": "2aeabbe1979edc96c325c95d324d4d61de1ea815d59f54fbfe180a048b5ddb3c"
   },
   {
     "marker": "allAutoControl",
@@ -44,6 +112,7 @@
       0.021
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png",
+    "placement": "raw",
     "sourceSHA256": "fb7690605db038fa95930cbd03ac965273afee1253731fdf0b16c23b3c0897cc",
     "sampleSHA256": "db5d0873546b25a66b6172ec6766e030b601e72c5f3a6eb586daf467fca952e1"
   },
@@ -56,8 +125,74 @@
       0.021
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png",
+    "placement": "raw",
     "sourceSHA256": "050b00147f867e64c0fd4c442ccd8e7594f7a1eedfe9fd81b0cba8f728676ca4",
     "sampleSHA256": "cd1d00bb76dcc4066ecf862984c9e20dbf158651bfde491f830d97ba128412d4"
+  },
+  {
+    "marker": "allAutoControl",
+    "region": [
+      0.225,
+      0.87,
+      0.14,
+      0.021
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-211x468.png",
+    "placement": "zoom",
+    "sourceSHA256": "9c80d178f382c0b695f8f0c9098e7c9d14d24d7c726541a0b25cbed87a3e4062",
+    "sampleSHA256": "6765df03b421ad06cca7c473af3302703969fcec2e5f792b9381d73ea35eeecc"
+  },
+  {
+    "marker": "allAutoControl",
+    "region": [
+      0.225,
+      0.87,
+      0.14,
+      0.021
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-250x553.png",
+    "placement": "zoom",
+    "sourceSHA256": "d11a15c1332d82e86eef172f3a7330d730da2b89e79fbbfd33c0df5df151e40b",
+    "sampleSHA256": "53723bbadd6324145f3013e98bdabd3216af57549d40eabe7545121fa3e8810c"
+  },
+  {
+    "marker": "allAutoControl",
+    "region": [
+      0.225,
+      0.87,
+      0.14,
+      0.021
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-289x637.png",
+    "placement": "zoom",
+    "sourceSHA256": "14a8877c943e13f85333595df7afe94a72b73ddf5016739e002c81020aa21df9",
+    "sampleSHA256": "e95a468e5fc458067c9071086d66ec4068da6d9b1bf592cbe8c1a225a5255eb6"
+  },
+  {
+    "marker": "allAutoControl",
+    "region": [
+      0.225,
+      0.87,
+      0.14,
+      0.021
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-328x722.png",
+    "placement": "zoom",
+    "sourceSHA256": "c593383157add0225be990163750c4a3fa3ffde22a83229cca59cb848fabe375",
+    "sampleSHA256": "4c9ee16dc124f032919f6b54e3aac1892607bf018590aa06be8114e6dba4854c"
+  },
+  {
+    "marker": "allAutoControl",
+    "region": [
+      0.225,
+      0.87,
+      0.14,
+      0.021
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-367x806.png",
+    "placement": "zoom",
+    "sourceSHA256": "d681c8aa7d311a6b487ebd331302f42fe4a163d81fbb231b33be27ae29a80ae9",
+    "sampleSHA256": "3f64e8ab33fe2ba8b1ab2bc3e35c1189a3f6683ebe0447c71678ca17d6793891"
   },
   {
     "marker": "pauseControl",
@@ -68,6 +203,7 @@
       0.024
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png",
+    "placement": "raw",
     "sourceSHA256": "fb7690605db038fa95930cbd03ac965273afee1253731fdf0b16c23b3c0897cc",
     "sampleSHA256": "1997f08265b6b2fa36dc5a4544ad9a6d476d2ac90ae438285aa5f31a3cdf35bf"
   },
@@ -80,8 +216,74 @@
       0.024
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png",
+    "placement": "raw",
     "sourceSHA256": "050b00147f867e64c0fd4c442ccd8e7594f7a1eedfe9fd81b0cba8f728676ca4",
     "sampleSHA256": "3636cec1cf8a9bc8ce0b9ea37a134741c1d2941e02d34fe1db93eb380099df5a"
+  },
+  {
+    "marker": "pauseControl",
+    "region": [
+      0.84,
+      0.626,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-211x468.png",
+    "placement": "zoom",
+    "sourceSHA256": "9c80d178f382c0b695f8f0c9098e7c9d14d24d7c726541a0b25cbed87a3e4062",
+    "sampleSHA256": "893e5beb38f80b099181da665d1be4fc3fb74bf3760c9001655278ef8710cdbd"
+  },
+  {
+    "marker": "pauseControl",
+    "region": [
+      0.84,
+      0.626,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-250x553.png",
+    "placement": "zoom",
+    "sourceSHA256": "d11a15c1332d82e86eef172f3a7330d730da2b89e79fbbfd33c0df5df151e40b",
+    "sampleSHA256": "4ee971759ca2976eaf98298da5c0375011b266db885b124d37bb21c1af272f65"
+  },
+  {
+    "marker": "pauseControl",
+    "region": [
+      0.84,
+      0.626,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-289x637.png",
+    "placement": "zoom",
+    "sourceSHA256": "14a8877c943e13f85333595df7afe94a72b73ddf5016739e002c81020aa21df9",
+    "sampleSHA256": "5c69e3a90defc330d467761496b45e3e17fc1413733a63ed129b817cede766cc"
+  },
+  {
+    "marker": "pauseControl",
+    "region": [
+      0.84,
+      0.626,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-328x722.png",
+    "placement": "zoom",
+    "sourceSHA256": "c593383157add0225be990163750c4a3fa3ffde22a83229cca59cb848fabe375",
+    "sampleSHA256": "0cce95e5b0420c99fc7af5adaac6f1e748467259cf239a2255a4852aef84df5a"
+  },
+  {
+    "marker": "pauseControl",
+    "region": [
+      0.84,
+      0.626,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-367x806.png",
+    "placement": "zoom",
+    "sourceSHA256": "d681c8aa7d311a6b487ebd331302f42fe4a163d81fbb231b33be27ae29a80ae9",
+    "sampleSHA256": "44b93295110e65666461005c1b3baaefc22e04837920efd2d8407f506303c3b7"
   },
   {
     "marker": "retreatControl",
@@ -92,6 +294,7 @@
       0.024
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png",
+    "placement": "raw",
     "sourceSHA256": "fb7690605db038fa95930cbd03ac965273afee1253731fdf0b16c23b3c0897cc",
     "sampleSHA256": "c95041aa0bf6723adb170b4bc0d9c3edb298e984a23a18bfceccf183ac6ea942"
   },
@@ -104,7 +307,73 @@
       0.024
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png",
+    "placement": "raw",
     "sourceSHA256": "050b00147f867e64c0fd4c442ccd8e7594f7a1eedfe9fd81b0cba8f728676ca4",
     "sampleSHA256": "88b461ec2ba7486cba41fd7ee0a1e06c66cbb5dd0286373897dff3ddbcf01b25"
+  },
+  {
+    "marker": "retreatControl",
+    "region": [
+      0.84,
+      0.655,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-211x468.png",
+    "placement": "zoom",
+    "sourceSHA256": "9c80d178f382c0b695f8f0c9098e7c9d14d24d7c726541a0b25cbed87a3e4062",
+    "sampleSHA256": "60512d59253a322b5f538d14b31d0cc1c7a53720a4d338748e9544eb88939888"
+  },
+  {
+    "marker": "retreatControl",
+    "region": [
+      0.84,
+      0.655,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-250x553.png",
+    "placement": "zoom",
+    "sourceSHA256": "d11a15c1332d82e86eef172f3a7330d730da2b89e79fbbfd33c0df5df151e40b",
+    "sampleSHA256": "8963b691002b9c281628c3ed642bac8da249a67b7f3a23da7ec78272cd833193"
+  },
+  {
+    "marker": "retreatControl",
+    "region": [
+      0.84,
+      0.655,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-289x637.png",
+    "placement": "zoom",
+    "sourceSHA256": "14a8877c943e13f85333595df7afe94a72b73ddf5016739e002c81020aa21df9",
+    "sampleSHA256": "a9732a2138e14a1c44a30617360ec5b1a12c24a7e61fdac43cda98af4fdb95ae"
+  },
+  {
+    "marker": "retreatControl",
+    "region": [
+      0.84,
+      0.655,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-328x722.png",
+    "placement": "zoom",
+    "sourceSHA256": "c593383157add0225be990163750c4a3fa3ffde22a83229cca59cb848fabe375",
+    "sampleSHA256": "902798e765f22d03e0f7522085aab56744e5dcd898229e28b235a78ccedb9465"
+  },
+  {
+    "marker": "retreatControl",
+    "region": [
+      0.84,
+      0.655,
+      0.085,
+      0.024
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-367x806.png",
+    "placement": "zoom",
+    "sourceSHA256": "d681c8aa7d311a6b487ebd331302f42fe4a163d81fbb231b33be27ae29a80ae9",
+    "sampleSHA256": "c037c635b7ca948233be4bf396bda2fa2ab8f8b0a7bf2b029e374fb6dd9368bf"
   }
 ]

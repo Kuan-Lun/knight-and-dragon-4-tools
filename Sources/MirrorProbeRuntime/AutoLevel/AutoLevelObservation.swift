@@ -54,10 +54,13 @@ extension MirrorProbeRuntime {
         let image = try await capture(window: window)
         try recovery.checkSessionBoundary()
         let capturedAt = ProcessInfo.processInfo.systemUptime
-        let rgba = try rgbaFrame(from: image)
+        let normalized = try normalizedMirrorFrame(from: image)
         recovery.recordCaptureLayout(
-            width: rgba.width, height: rgba.height, bytesPerRow: rgba.bytesPerRow
+            width: normalized.sourceWidth, height: normalized.sourceHeight,
+            bytesPerRow: normalized.sourceWidth * 4
         )
+        recovery.recordContentLayout(normalized.layout)
+        let rgba = normalized.rgba
         let frameMetrics = try FrameAnalyzer.analyzeRGBA(
             rgba.bytes,
             width: rgba.width,
@@ -71,8 +74,9 @@ extension MirrorProbeRuntime {
             capturedAt: capturedAt,
             windowContinuityGeneration: recovery.generation,
             window: window,
-            image: image,
+            image: normalized.image,
             rgba: rgba,
+            layout: normalized.layout,
             metrics: frameMetrics
         )
     }
@@ -96,6 +100,7 @@ extension MirrorProbeRuntime {
             window: frame.window,
             image: frame.image,
             rgba: frame.rgba,
+            layout: frame.layout,
             metrics: frame.metrics,
             stallEvidence: stallEvidence,
             activityEvidence: activityEvidence,

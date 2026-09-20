@@ -4,8 +4,12 @@ from pathlib import Path
 import base64
 import hashlib
 import json
+import sys
 import cv2
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from mirror_content_layout import canvas  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 ONE = "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png"
@@ -21,8 +25,24 @@ REGIONS = {
 }
 
 
-def sample(path, region, dx=0, dy=0):
-    bgr = cv2.imread(str(path), cv2.IMREAD_COLOR).astype(np.int32)
+# Sources sampled before the zoom-level canvas existed stay raw so their bytes never change;
+# the runtime canvas differs from a raw 2x capture by at most one pixel, inside the
+# registration search. Zoom-level captures (smaller window sizes from 顯示方式 > 縮小) are
+# placed on the reference canvas first, exactly as the runtime does.
+RAW = "raw"
+ZOOM = "zoom"
+ZOOM_BATTLE = ["Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-211x468.png",
+               "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-250x553.png",
+               "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-289x637.png",
+               "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-328x722.png",
+               "Tests/MirrorProbeCoreTests/Fixtures/zoom-battle-367x806.png"]
+
+
+def sample(path, region, dx=0, dy=0, placement=RAW):
+    bgr = cv2.imread(str(path), cv2.IMREAD_COLOR)
+    if placement == ZOOM:
+        bgr = canvas(bgr)
+    bgr = bgr.astype(np.int32)
     gray = ((77*bgr[:, :, 2]+150*bgr[:, :, 1]+29*bgr[:, :, 0]) >> 8).astype(float)
     height, width = gray.shape
     x, y, w, h = region
@@ -41,7 +61,9 @@ def sources(marker):
     # Later incident frames remain replay inputs, not template calibration sources.
     if marker == "skipControl":
         paths.append(NATIVE_402)
-    return [(path, REGIONS[marker][0]) for path in paths]
+    sources = [(RAW, path, REGIONS[marker][0]) for path in paths]
+    sources += [(ZOOM, path, REGIONS[marker][0]) for path in ZOOM_BATTLE]
+    return sources
 
 
 def main():
@@ -54,14 +76,15 @@ def main():
     manifest = []
     for marker in REGIONS:
         lines.append(f"        .{marker}: [")
-        for path, region in sources(marker):
-            raw = np.floor(sample(ROOT/path, region)+.5).astype(np.uint8).tobytes()
+        for placement, path, region in sources(marker):
+            raw = np.floor(sample(ROOT/path, region, placement=placement)+.5).astype(np.uint8).tobytes()
             encoded = base64.b64encode(raw).decode()
             x, y, w, h = region
-            lines.extend([f"            // {path}",
+            note = " (placed on the reference canvas)" if placement == ZOOM else ""
+            lines.extend([f"            // {path}{note}",
                           f"            .init(region: .init(x: {x}, y: {y}, width: {w}, height: {h}),",
                           f'                  pixels: Array(Data(base64Encoded: "{encoded}")!)),'])
-            manifest.append(dict(marker=marker, region=region, source=path,
+            manifest.append(dict(marker=marker, region=region, source=path, placement=placement,
                                  sourceSHA256=hashlib.sha256((ROOT/path).read_bytes()).hexdigest(),
                                  sampleSHA256=hashlib.sha256(raw).hexdigest()))
         lines.append("        ],")

@@ -129,6 +129,10 @@ extension MirrorProbeRuntime {
         let metrics = try metrics(for: image)
         let imageOutputURL = try outputURL(for: output)
         try writePNG(image, to: imageOutputURL)
+        let source = try rgbaFrame(from: image)
+        let detectedLayout = MirrorContentLayout.detect(
+            source.bytes, width: source.width, height: source.height, bytesPerRow: source.bytesPerRow
+        )
 
         let report = CaptureReport(
             timestamp: ISO8601DateFormatter().string(from: Date()),
@@ -136,7 +140,11 @@ extension MirrorProbeRuntime {
             outputPath: imageOutputURL.path,
             imageWidth: image.width,
             imageHeight: image.height,
-            metrics: metrics
+            metrics: metrics,
+            contentLayout: ContentLayoutReport(
+                detectedLayout ?? .identity(width: source.width, height: source.height),
+                detected: detectedLayout != nil
+            )
         )
         try printJSON(report)
 

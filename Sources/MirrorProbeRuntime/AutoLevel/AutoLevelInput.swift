@@ -214,9 +214,8 @@ extension MirrorProbeRuntime {
         else {
             throw ProbeError.unsafeWindow("the confirmed action target was outside the safe content area")
         }
-        let clickPoint = CGPoint(
-            x: expectedFrame.minX + expectedFrame.width * point.x,
-            y: expectedFrame.minY + expectedFrame.height * point.y
+        let clickPoint = automationClickPoint(
+            canvasPoint: point, layout: observation.layout, windowFrame: expectedFrame
         )
         let expectedGeometry = automationWindowGeometry(expectedFrame)
         let previousMouseLocation = inputMode == .foreground ? CGEvent(source: nil)?.location : nil
@@ -396,5 +395,17 @@ extension MirrorProbeRuntime {
             && abs(lhs.point.y - rhs.point.y) <= 0.02
             && abs(lhs.rect.width - rhs.rect.width) <= 0.05
             && abs(lhs.rect.height - rhs.rect.height) <= 0.05
+    }
+
+    /// Action targets are canvas-normalized (MirrorContentLayout). The click lands on the
+    /// same content pixel inside the captured window, whatever its zoom level.
+    static func automationClickPoint(
+        canvasPoint: NormalizedPoint, layout: MirrorContentLayout, windowFrame: CGRect
+    ) -> CGPoint {
+        let source = layout.sourceNormalizedPoint(forCanvas: canvasPoint)
+        return CGPoint(
+            x: windowFrame.minX + windowFrame.width * source.x,
+            y: windowFrame.minY + windowFrame.height * source.y
+        )
     }
 }

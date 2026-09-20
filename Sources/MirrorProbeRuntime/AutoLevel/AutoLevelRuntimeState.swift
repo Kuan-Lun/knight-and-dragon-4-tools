@@ -8,8 +8,10 @@ struct AutomationCapturedFrame {
     let capturedAt: TimeInterval
     let windowContinuityGeneration: UInt64
     let window: SCWindow
+    /// Recognition canvas (see MirrorContentLayout); identical to the capture at 406x890.
     let image: CGImage
     let rgba: RGBAFrame
+    let layout: MirrorContentLayout
     let metrics: FrameMetrics
 }
 
@@ -18,8 +20,10 @@ struct AutomationObservation {
     let recognitionDurationSeconds: TimeInterval
     let windowContinuityGeneration: UInt64
     let window: SCWindow
+    /// Recognition canvas; action targets are canvas-normalized (see MirrorContentLayout).
     let image: CGImage
     let rgba: RGBAFrame
+    let layout: MirrorContentLayout
     let metrics: FrameMetrics
     let stallEvidence: BattleStallFrameEvidence
     let activityEvidence: BattleActivityFrameEvidence
@@ -34,6 +38,7 @@ final class AutomationWindowRecoveryContext {
     private(set) var generation: UInt64 = 0
     private(set) var currentFrame: CGRect?
     private var captureLayout: CaptureLayout?
+    private(set) var contentLayout: MirrorContentLayout?
 
     private struct CaptureLayout: Equatable {
         let width: Int
@@ -57,6 +62,14 @@ final class AutomationWindowRecoveryContext {
         let layout = CaptureLayout(width: width, height: height, bytesPerRow: bytesPerRow)
         if let captureLayout, captureLayout != layout { interruptContinuity() }
         captureLayout = layout
+    }
+
+    /// The window zoom level determines where the phone content sits inside the capture.
+    /// Log the geometry once per change so run diagnostics explain canvas coordinates.
+    func recordContentLayout(_ layout: MirrorContentLayout) {
+        guard contentLayout != layout else { return }
+        contentLayout = layout
+        FileHandle.standardError.write(Data("mirrorContentLayout: \(layout.summary)\n".utf8))
     }
 
     /// Called only after the same window has returned a stable frame during bounded recovery.

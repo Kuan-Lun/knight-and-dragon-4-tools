@@ -78,13 +78,23 @@ extension MirrorProbeRuntime {
         command: String,
         source: AnalysisSourceReport
     ) throws -> AnalysisReport {
-        let frameMetrics = try metrics(for: image)
+        // Recognition runs on the reference-proportioned canvas; the report keeps the captured
+        // dimensions and describes where the content was found.
+        let normalized = try normalizedMirrorFrame(from: image)
+        let frameMetrics = try FrameAnalyzer.analyzeRGBA(
+            normalized.rgba.bytes, width: normalized.rgba.width, height: normalized.rgba.height,
+            bytesPerRow: normalized.rgba.bytesPerRow
+        )
         let classification: GameStateClassification
         if frameMetrics.isBlank {
             classification = .init(state: .unknown, evidence: [], allowedActions: [])
         } else {
-            classification = try recognizeGameState(in: image)
+            classification = try recognizeGameState(in: normalized.image, rgba: normalized.rgba)
         }
+        let detectedLayout = MirrorContentLayout.detect(
+            normalized.rgba.bytes, width: normalized.rgba.width, height: normalized.rgba.height,
+            bytesPerRow: normalized.rgba.bytesPerRow
+        ) != nil
         let status: String
         if frameMetrics.isBlank {
             status = "rejected"
@@ -108,6 +118,7 @@ extension MirrorProbeRuntime {
                 orientation: "up",
                 pngSHA256: pngSHA256
             ),
+            contentLayout: ContentLayoutReport(normalized.layout, detected: detectedLayout),
             frameMetrics: frameMetrics,
             ocr: AnalysisOCRReport(
                 engine: "none",
