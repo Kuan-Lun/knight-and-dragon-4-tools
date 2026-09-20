@@ -74,6 +74,12 @@ and the existing retry posted it again 11 seconds later; the remaining ten actio
 acknowledged on the next capture. Earlier the same day the 0.4.36 App at the same size
 stopped after 13 seconds without recognizing any page.
 
+A second live run from the failure page, `logs/auto-level-20260920-150457.N8EbqE` with the
+packaged App carrying the failure samples, completed 2 failure cycles with 4 actions in
+14 seconds at 211×468: missionFailed, missionFailedRepeatSelected, the battle-start dialog,
+battle and the defeat dialog were all recognized and every action was acknowledged on the
+next capture.
+
 Offline:
 See `docs/testing.md` (zoom-level captures) and the regression suites
 `ZoomLevelResultRegressionTests`, `ZoomLevelBattleRegressionTests`,
