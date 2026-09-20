@@ -1270,14 +1270,27 @@ extension MirrorProbeRuntime {
                             phase: "afterPost",
                             deadline: .actionAcknowledgement(postedAt + policy.postActionTimeout)
                         )
-                        // A tap lost to a concurrent mouse movement leaves the confirmed page
-                        // byte-identical. Re-post it now, through the same input boundary, on the
-                        // same confirmed target; the controller's timeout retry stays as backstop.
+                        // A tap lost to a concurrent mouse movement leaves the confirmed page in
+                        // place. Re-post it now, through the same input boundary, on the same
+                        // confirmed target; the controller's timeout retry stays as backstop.
                         var disturbed = cursorDisturbed
                         var reposts = 0
+                        var comparison = try compareAutomationPageAfterClick(
+                            request: request, confirmedTarget: confirmedTarget,
+                            preflight: preflight, after: afterPost, identity: identity,
+                            battleSessionID: battleID, allAutoStatus: allAutoStatus,
+                            battleStatus: battleStatus
+                        )
                         while AutomationClickRepostPolicy.shouldRepost(
                             cursorDisturbed: disturbed,
-                            frameUnchanged: afterPost.fingerprint == preflight.fingerprint,
+                            frameUnchanged: AutomationClickRepostPolicy.frameUnchanged(
+                                intent: request.intent,
+                                fingerprintsEqual: comparison.fingerprintsEqual,
+                                sameState: comparison.sameState,
+                                samePage: comparison.samePage,
+                                sameTarget: comparison.sameTarget,
+                                meanAbsoluteDifference: comparison.meanAbsoluteDifference
+                            ),
                             repostsSoFar: reposts
                         ) {
                             reposts += 1
@@ -1288,7 +1301,8 @@ extension MirrorProbeRuntime {
                                 action: request.intent,
                                 target: request.target,
                                 frameFingerprint: preflight.fingerprint,
-                                detail: "cursorDisturbed=true, frameUnchanged=true, repost=\(reposts), "
+                                detail: "cursorDisturbed=true, frameUnchanged=true, \(comparison.detail), "
+                                    + "repost=\(reposts), "
                                     + "maximumReposts=\(AutomationClickRepostPolicy.maximumReposts)",
                                 screenshotPath: nil,
                                 elapsed: afterPost.capturedAt - startedAt,
@@ -1337,6 +1351,12 @@ extension MirrorProbeRuntime {
                                 recovery: windowRecovery,
                                 phase: "afterRepost",
                                 deadline: .actionAcknowledgement(postedAt + policy.postActionTimeout)
+                            )
+                            comparison = try compareAutomationPageAfterClick(
+                                request: request, confirmedTarget: confirmedTarget,
+                                preflight: preflight, after: afterPost, identity: identity,
+                                battleSessionID: battleID, allAutoStatus: allAutoStatus,
+                                battleStatus: battleStatus
                             )
                         }
                         postedAfter = afterPost

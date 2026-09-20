@@ -304,6 +304,95 @@ struct AutoLevelControllerTests {
         #expect(controller.actionsIssued == 3)
     }
 
+    @Test("A continuation first captured after the acknowledgement timeout acknowledges the posted advance")
+    func lateContinuationAcknowledgesTimedOutAdvance() throws {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let experience: (Double, String) -> AutoLevelSnapshot = { time, fingerprint in
+            self.makeSnapshot(
+                state: .missionCompleteRepeatSelected, time: time, fingerprint: fingerprint,
+                actions: [self.gameAction(.advanceMissionComplete)]
+            )
+        }
+        #expect(controller.consume(experience(1, "exp")) == .completedCycle(.init(count: 1, outcome: .success)))
+        let advance = try #require(requireAction(controller.consume(experience(1.5, "exp"))))
+        #expect(advance.intent == .advanceMissionSuccess)
+        let posted = controller.markActionPosted(advance, at: 2)
+        #expect(posted)
+        // The page keeps settling single pixels, so its fingerprint differs from the origin.
+        #expect(controller.consume(experience(3, "exp-settled"))
+            == .wait(.awaitingStateChange(intent: .advanceMissionSuccess)))
+
+        // logs/auto-level-20260920-200804: the dialog the arrow opens was first captured 11 s
+        // after the tap, past the timeout, and the run stopped with actionDidNotAdvance.
+        let dialog = makeSnapshot(
+            state: .wideModalTwoButtons, time: 13, fingerprint: "dialog",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )
+        let next = try #require(requireAction(controller.consume(dialog)))
+        #expect(next.intent == .pressWideModalTopButton)
+        #expect(next.requestID == advance.requestID + 1)
+        #expect(controller.completedCycles == 1)
+        #expect(controller.actionsIssued == 2)
+    }
+
+    @Test("A dialog dismissed only after the timeout acknowledges the press instead of stopping",
+          arguments: [GameState.wideModalOneButton, .wideModalTwoButtons])
+    func lateDismissalAcknowledgesTimedOutWideModalPress(state: GameState) throws {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let dialog: (Double, String) -> AutoLevelSnapshot = { time, fingerprint in
+            self.makeSnapshot(
+                state: state, time: time, fingerprint: fingerprint,
+                actions: [self.gameAction(.pressWideModalTopButton)]
+            )
+        }
+        let press = try #require(requireAction(controller.consume(dialog(1, "dialog"))))
+        let posted = controller.markActionPosted(press, at: 2)
+        #expect(posted)
+        #expect(controller.consume(dialog(3, "dialog"))
+            == .wait(.awaitingFrameChange(intent: .pressWideModalTopButton)))
+
+        let result = makeSnapshot(
+            state: .missionCompleteRepeatSelected, time: 9, fingerprint: "result",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        #expect(controller.consume(result) == .completedCycle(.init(count: 1, outcome: .success)))
+        #expect(controller.pendingActionAcknowledgementDeadline == nil)
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("A page that is not the requested continuation still stops after the timeout")
+    func unexpectedPageAfterTimeoutStillStops() throws {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let experience = makeSnapshot(
+            state: .missionCompleteRepeatSelected, time: 1, fingerprint: "exp",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        _ = controller.consume(experience)
+        let advance = try #require(requireAction(controller.consume(experience)))
+        let posted = controller.markActionPosted(advance, at: 2)
+        #expect(posted)
+        #expect(controller.consume(makeSnapshot(
+            state: .missionFailed, time: 9, fingerprint: "failure"
+        )) == .stop(.actionDidNotAdvance(intent: .advanceMissionSuccess)))
+        #expect(controller.completedCycles == 1)
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("An unposted request is not acknowledged by a late continuation")
+    func unpostedRequestKeepsItsPostingDeadline() throws {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let experience = makeSnapshot(
+            state: .missionCompleteRepeatSelected, time: 1, fingerprint: "exp",
+            actions: [gameAction(.advanceMissionComplete)]
+        )
+        _ = controller.consume(experience)
+        _ = try #require(requireAction(controller.consume(experience)))
+        #expect(controller.consume(makeSnapshot(
+            state: .wideModalTwoButtons, time: 9, fingerprint: "dialog",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )) == .stop(.actionDidNotAdvance(intent: .advanceMissionSuccess)))
+    }
+
     @Test("A retried dialog press that finally dismisses the dialog resumes normally")
     func retriedWideModalPressAcknowledgedByDismissal() {
         var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
@@ -746,39 +835,35 @@ struct AutoLevelControllerTests {
     }
 
     @Test("A timed-out success advance cannot retry across different result pages")
-    func successAdvanceRetryRequiresSameOriginAndCurrentPage() {
-        let scenarios: [(GameEvidenceKind, String, GameEvidenceKind, String)] = [
-            (.missionExperiencePage, "獲得經驗值", .missionLootPage, "獲得拾得物"),
-            (.missionLootPage, "獲得拾得物", .missionExperiencePage, "獲得經驗值"),
-        ]
+    func successAdvanceRetryRequiresSameOriginAndCurrentPage() throws {
+        // EXP -> loot is the arrow's requested continuation: a late loot page acknowledges the
+        // EXP tap and gets loot's own fresh arrow request, never a retry of the EXP post.
+        var forward = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let experience = measuredSuccessFallbackSnapshot(page: .experience, time: 1, fingerprint: "exp")
+        _ = forward.consume(experience)
+        let experienceRequest = try #require(requireAction(forward.consume(experience)))
+        let experiencePosted = forward.markActionPosted(experienceRequest, at: 2)
+        #expect(experiencePosted)
+        let lootRequest = try #require(requireAction(forward.consume(
+            measuredSuccessFallbackSnapshot(page: .loot, time: 5, fingerprint: "loot")
+        )))
+        #expect(lootRequest.requestID == experienceRequest.requestID + 1)
+        #expect(lootRequest.target == experienceRequest.target)
+        #expect(forward.pendingActionAcknowledgementDeadline == nil)
+        #expect(forward.completedCycles == 1)
+        #expect(forward.actionsIssued == 2)
 
-        for (index, scenario) in scenarios.enumerated() {
-            var controller = makeController(policy: policy(
-                actionCooldown: 0,
-                postActionTimeout: 3
-            ))
-            let origin = measuredResultFallbackSnapshot(
-                pageKind: scenario.0,
-                pageText: scenario.1,
-                time: 1,
-                fingerprint: "page-origin-\(index)"
-            )
-            _ = controller.consume(origin)
-            let request = requireAction(controller.consume(origin))!
-            let marked = controller.markActionPosted(request, at: 2)
-            #expect(marked)
-
-            let current = measuredResultFallbackSnapshot(
-                pageKind: scenario.2,
-                pageText: scenario.3,
-                time: 5,
-                fingerprint: "page-current-\(index)"
-            )
-            #expect(controller.consume(current) == .stop(.actionDidNotAdvance(
-                intent: .advanceMissionSuccess
-            )))
-            #expect(controller.actionsIssued == 1)
-        }
+        // Loot -> EXP is not a continuation of the loot arrow, so it neither retries nor resumes.
+        var backward = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let loot = measuredSuccessFallbackSnapshot(page: .loot, time: 1, fingerprint: "loot")
+        _ = backward.consume(loot)
+        let request = try #require(requireAction(backward.consume(loot)))
+        let marked = backward.markActionPosted(request, at: 2)
+        #expect(marked)
+        #expect(backward.consume(
+            measuredSuccessFallbackSnapshot(page: .experience, time: 5, fingerprint: "exp")
+        ) == .stop(.actionDidNotAdvance(intent: .advanceMissionSuccess)))
+        #expect(backward.actionsIssued == 1)
     }
 
     @Test("An acknowledged EXP retry starts a fresh loot-page budget without recounting success")

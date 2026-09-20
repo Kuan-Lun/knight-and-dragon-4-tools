@@ -267,13 +267,69 @@ struct AutomationBattleTracker {
 }
 
 /// A tap posted while the user moves the mouse becomes a drag and is never received. When the
-/// cursor was found away from the click point and the next capture is byte-identical to the
-/// page the action was confirmed on, nothing happened: re-post right away instead of waiting
-/// for the controller's acknowledgement timeout, which remains the bounded backstop.
+/// cursor was found away from the click point and the next capture still shows the page the
+/// action was confirmed on, nothing happened: re-post right away instead of waiting for the
+/// controller's acknowledgement timeout, which remains the bounded backstop.
 enum AutomationClickRepostPolicy {
     static let maximumReposts = 2
 
+    /// Largest mean absolute RGBA difference (0...1) between the confirmed page and the capture
+    /// after the tap that still counts as the same page. A result page keeps changing single
+    /// pixels for a few seconds after a dialog closes (one page, three fingerprints in
+    /// logs/auto-level-20260920-200804), so byte identity alone misses a lost tap there. A
+    /// received tap moved these pages by 0.07 or more; the lost one measured 0.00008.
+    static let unchangedPageMaximumMeanAbsoluteDifference = 0.002
+
     static func shouldRepost(cursorDisturbed: Bool, frameUnchanged: Bool, repostsSoFar: Int) -> Bool {
         cursorDisturbed && frameUnchanged && repostsSoFar >= 0 && repostsSoFar < maximumReposts
+    }
+
+    /// Only a tap that merely advances or dismisses the page it was confirmed on may treat a
+    /// settling page as unchanged. A repeat row toggles, a retreat confirmation is one-shot, and
+    /// the stalled-battle retreat is confirmed on a static frame: those keep byte identity.
+    static func toleratesSettlingPage(_ intent: AutoLevelActionIntent) -> Bool {
+        switch intent {
+        case .advanceMissionSuccess, .advanceMissionFailure, .pressWideModalTopButton,
+             .closeBattlePrompt:
+            return true
+        case .selectMissionRepeat, .confirmLootCollection, .recruitAdventurer, .leaveAdventurer,
+             .requestRetreat, .confirmRetreatWithoutTalisman, .enableAllAuto:
+            return false
+        }
+    }
+
+    /// Byte identity always counts. Otherwise the same classified state, the same result page
+    /// identity, the confirmed target as the only candidate, and a mean absolute difference at
+    /// or below the settling bound count only for the intents above.
+    static func frameUnchanged(
+        intent: AutoLevelActionIntent,
+        fingerprintsEqual: Bool,
+        sameState: Bool,
+        samePage: Bool,
+        sameTarget: Bool,
+        meanAbsoluteDifference: Double?
+    ) -> Bool {
+        if fingerprintsEqual { return true }
+        guard toleratesSettlingPage(intent), sameState, samePage, sameTarget,
+              let difference = meanAbsoluteDifference,
+              difference.isFinite, difference >= 0,
+              difference <= unchangedPageMaximumMeanAbsoluteDifference
+        else { return false }
+        return true
+    }
+}
+
+/// What the capture after a posted tap shares with the page the tap was confirmed on.
+struct AutomationRepostPageComparison {
+    let fingerprintsEqual: Bool
+    let sameState: Bool
+    let samePage: Bool
+    let sameTarget: Bool
+    let meanAbsoluteDifference: Double?
+
+    var detail: String {
+        "fingerprintsEqual=\(fingerprintsEqual), sameState=\(sameState), samePage=\(samePage), "
+            + "sameTarget=\(sameTarget), meanAbsoluteDifference="
+            + (meanAbsoluteDifference.map { String($0) } ?? "unavailableAfterWindowChange")
     }
 }

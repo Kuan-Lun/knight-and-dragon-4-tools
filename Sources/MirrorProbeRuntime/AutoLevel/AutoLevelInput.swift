@@ -181,6 +181,45 @@ extension MirrorProbeRuntime {
         )
     }
 
+    /// Compares the capture after a posted tap with the confirmed page, using the same
+    /// candidate matching as the preflight so a moved or ambiguous target never re-posts.
+    static func compareAutomationPageAfterClick(
+        request: AutoLevelActionRequest,
+        confirmedTarget: AutoLevelActionTarget,
+        preflight: AutomationObservation,
+        after: AutomationObservation,
+        identity: AutoLevelWindowIdentity,
+        battleSessionID: String?,
+        allAutoStatus: AutoLevelAllAutoStatus,
+        battleStatus: AutoLevelBattleStatus
+    ) throws -> AutomationRepostPageComparison {
+        let difference = try automationActionFrameDifference(
+            before: preflight.rgba, after: after.rgba,
+            continuityUnchanged: preflight.windowContinuityGeneration
+                == after.windowContinuityGeneration
+        )
+        let candidates = AutoLevelSnapshot(
+            classification: after.classification,
+            runtime: AutoLevelRuntimeMetadata(
+                observedAt: after.capturedAt,
+                windowIdentity: identity,
+                frameFingerprint: after.fingerprint,
+                battleSessionID: battleSessionID,
+                allAutoStatus: allAutoStatus,
+                battleStatus: battleStatus
+            )
+        ).actionCandidates.filter { $0.intent == request.intent }
+        return AutomationRepostPageComparison(
+            fingerprintsEqual: after.fingerprint == preflight.fingerprint,
+            sameState: after.classification.state == preflight.classification.state,
+            samePage: MissionSuccessPageIdentity.resolve(in: after.classification)
+                == MissionSuccessPageIdentity.resolve(in: preflight.classification),
+            sameTarget: candidates.count == 1
+                && automationTargetsMatch(confirmedTarget, candidates[0].target),
+            meanAbsoluteDifference: difference
+        )
+    }
+
     static func postAutomationClick(
         _ request: AutoLevelActionRequest,
         confirmedTarget: AutoLevelActionTarget,

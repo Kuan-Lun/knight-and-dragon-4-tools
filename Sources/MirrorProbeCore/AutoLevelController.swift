@@ -888,6 +888,20 @@ public struct AutoLevelController: Sendable {
         }
         let elapsed = now - acknowledgementStartedAt
         if elapsed >= policy.postActionTimeout {
+            // A posted tap's requested continuation acknowledges it whenever it first appears.
+            // The same state after the deadline belongs to the bounded same-page retries below,
+            // so a drifting dialog cannot bypass their attempt limit; an unposted request keeps
+            // its posting deadline, and the retreat recovery transaction keeps its deadline guard.
+            if pendingAction.postedAt != nil,
+               pendingAction.request.intent != .requestRetreat,
+               pendingAction.request.intent != .confirmRetreatWithoutTalisman,
+               uncertainKind(for: snapshot.classification) == nil,
+               acknowledgeAdvancedPendingAction(
+                   pendingAction, with: snapshot, acceptingSameState: false
+               )
+            {
+                return nil
+            }
             if let retry = retryTimedOutMissionRepeatSelection(
                 pendingAction,
                 with: snapshot,
@@ -939,6 +953,32 @@ public struct AutoLevelController: Sendable {
             return .wait(.allAutoAlreadyEnabled)
         }
 
+        if acknowledgeAdvancedPendingAction(pendingAction, with: snapshot) {
+            return nil
+        }
+
+        if snapshot.classification.state == pendingAction.originState {
+            return .wait(.awaitingStateChange(intent: pendingAction.request.intent))
+        }
+
+        return stop(.unexpectedTransition(
+            intent: pendingAction.request.intent,
+            from: pendingAction.originState,
+            to: snapshot.classification.state
+        ))
+    }
+
+    /// The page an action was expected to produce acknowledges it whenever that page is first
+    /// captured. Acknowledgement posts no input, so the acknowledgement timeout does not bound
+    /// it: a continuation the mirror shows only after the deadline is still the requested
+    /// outcome, and calling it a failed action would stop the run on the correct page.
+    /// `acceptingSameState` also lets a changed frame in the origin state count where the
+    /// intent allows it, such as one dialog replacing another; EXP -> loot is always accepted.
+    private mutating func acknowledgeAdvancedPendingAction(
+        _ pendingAction: PendingAction,
+        with snapshot: AutoLevelSnapshot,
+        acceptingSameState: Bool = true
+    ) -> Bool {
         if pendingAction.request.intent == .advanceMissionSuccess,
            snapshot.classification.state == pendingAction.originState,
            let previousPage = pendingAction.originMissionSuccessPage,
@@ -956,39 +996,32 @@ public struct AutoLevelController: Sendable {
                classification: snapshot.classification
            )
         {
-            // Before timeout, an explicit EXP -> loot transition acknowledges the previous
-            // advance and permits fresh authorization for loot's shared arrow. A fingerprint
-            // change alone does not acknowledge it; timed-out same-page retries are separate.
+            // An explicit EXP -> loot transition acknowledges the previous advance and permits
+            // fresh authorization for loot's shared arrow. A fingerprint change alone does not
+            // acknowledge it; timed-out same-page retries are separate.
             self.pendingAction = nil
             uncertainty = nil
-            return nil
+            return true
         }
 
-        if transitionIsAccepted(
-            after: pendingAction.request.intent,
-            from: pendingAction.originState,
-            to: snapshot.classification.state,
-            actionWasPosted: pendingAction.postedAt != nil
-        ) {
-            if pendingAction.request.intent == .requestRetreat {
-                recoveryConfirmationAuthorized = pendingAction.postedAt != nil
-                    && (snapshot.classification.state == .retreatConfirmation
-                        || snapshot.classification.state == .wideModalTwoButtons)
-            }
-            self.pendingAction = nil
-            uncertainty = nil
-            return nil
+        guard acceptingSameState || snapshot.classification.state != pendingAction.originState,
+              transitionIsAccepted(
+                  after: pendingAction.request.intent,
+                  from: pendingAction.originState,
+                  to: snapshot.classification.state,
+                  actionWasPosted: pendingAction.postedAt != nil
+              )
+        else {
+            return false
         }
-
-        if snapshot.classification.state == pendingAction.originState {
-            return .wait(.awaitingStateChange(intent: pendingAction.request.intent))
+        if pendingAction.request.intent == .requestRetreat {
+            recoveryConfirmationAuthorized = pendingAction.postedAt != nil
+                && (snapshot.classification.state == .retreatConfirmation
+                    || snapshot.classification.state == .wideModalTwoButtons)
         }
-
-        return stop(.unexpectedTransition(
-            intent: pendingAction.request.intent,
-            from: pendingAction.originState,
-            to: snapshot.classification.state
-        ))
+        self.pendingAction = nil
+        uncertainty = nil
+        return true
     }
 
     /// A repeat row is a toggle, so retry only with explicit empty-stamp evidence on the same
