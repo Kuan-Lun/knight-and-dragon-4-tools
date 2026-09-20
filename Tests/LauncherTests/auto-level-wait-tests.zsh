@@ -99,15 +99,85 @@ assert_omits 'stderr 最後 20 行'
 run_case completed 0 '{"status":"completed","completedCycles":20,"actionsPosted":100,"finalReason":"maximumCyclesReached"}'
 assert_contains 'status: completed'
 assert_contains 'finalReason: maximumCyclesReached'
+assert_contains '尚無時間統計（舊版報告或未提供）'
+assert_omits 'averageCycleSeconds'
+
+run_case decimal_timing 0 '{"status":"stopped","completedCycles":2,"actionsPosted":10,"finalReason":"applicationQuitRequested","startedAt":"2026-09-17T10:00:00Z","endedAt":"2026-09-17T11:01:01Z","timing":{"elapsedSeconds":3661.25,"completedCycleCount":2,"completedCycleTotalSeconds":3640.5,"averageCycleSeconds":1820.25,"medianCycleSeconds":1820.25,"fastestCycleSeconds":60.25,"slowestCycleSeconds":3580.25,"lastCycleSeconds":3580.25,"secondsSinceLastCycle":20.75,"cyclesPerHour":1.96654}}'
+assert_contains 'status: stopped'
+assert_contains 'startedAt (開始時間): 2026-09-17T10:00:00Z'
+assert_contains 'endedAt (結束時間): 2026-09-17T11:01:01Z'
+assert_contains 'elapsedSeconds (總執行時間): 1 小時 1 分 1.25 秒'
+assert_contains 'completedCycleTotalSeconds (已完成場次合計耗時): 1 小時 0 分 40.50 秒'
+assert_contains 'averageCycleSeconds (平均每場耗時): 30 分 20.25 秒'
+assert_contains 'medianCycleSeconds (每場耗時中位數): 30 分 20.25 秒'
+assert_contains 'fastestCycleSeconds (最快一場耗時): 1 分 0.25 秒'
+assert_contains 'slowestCycleSeconds (最慢一場耗時): 59 分 40.25 秒'
+assert_contains 'lastCycleSeconds (最後一場耗時): 59 分 40.25 秒'
+assert_contains 'secondsSinceLastCycle (最後一場完成後經過時間): 20.75 秒'
+assert_contains 'cyclesPerHour (每小時完成場次): 1.97 場／小時'
+assert_contains '首場由本次程序開始時計算，可能是不完整的一場'
+assert_contains '平均與中位數只計已完成場次，不含最後尚未完成的時間'
+assert_omits '尚無資料'
+
+run_case integer_timing 0 '{"status":"completed","completedCycles":2,"actionsPosted":10,"finalReason":"maximumCyclesReached","timing":{"elapsedSeconds":120,"completedCycleCount":2,"completedCycleTotalSeconds":120,"averageCycleSeconds":60,"medianCycleSeconds":60,"fastestCycleSeconds":60,"slowestCycleSeconds":60,"lastCycleSeconds":60,"secondsSinceLastCycle":0,"cyclesPerHour":60}}'
+assert_contains 'elapsedSeconds (總執行時間): 2 分 0.00 秒'
+assert_contains 'averageCycleSeconds (平均每場耗時): 1 分 0.00 秒'
+assert_contains 'medianCycleSeconds (每場耗時中位數): 1 分 0.00 秒'
+assert_contains 'secondsSinceLastCycle (最後一場完成後經過時間): 0.00 秒'
+assert_contains 'cyclesPerHour (每小時完成場次): 60.00 場／小時'
+assert_omits '尚無資料'
+
+run_case legacy_timing_without_median 0 '{"status":"completed","completedCycles":2,"actionsPosted":10,"finalReason":"maximumCyclesReached","timing":{"elapsedSeconds":120,"completedCycleCount":2,"completedCycleTotalSeconds":120,"averageCycleSeconds":60,"fastestCycleSeconds":60,"slowestCycleSeconds":60,"lastCycleSeconds":60,"secondsSinceLastCycle":0,"cyclesPerHour":60}}'
+assert_contains 'averageCycleSeconds (平均每場耗時): 1 分 0.00 秒'
+assert_contains 'medianCycleSeconds (每場耗時中位數): 尚無資料'
+assert_contains 'fastestCycleSeconds (最快一場耗時): 1 分 0.00 秒'
+assert_omits '尚無時間統計（舊版報告或未提供）'
+
+run_case zero_cycles_timing 0 '{"status":"stopped","completedCycles":0,"actionsPosted":0,"finalReason":"stopFileDetected","timing":{"elapsedSeconds":12.5,"completedCycleCount":0,"completedCycleTotalSeconds":0,"averageCycleSeconds":null,"medianCycleSeconds":null,"fastestCycleSeconds":null,"slowestCycleSeconds":null,"lastCycleSeconds":null,"secondsSinceLastCycle":null,"cyclesPerHour":0}}'
+assert_contains 'elapsedSeconds (總執行時間): 12.50 秒'
+assert_contains 'completedCycleTotalSeconds (已完成場次合計耗時): 0.00 秒'
+assert_contains 'averageCycleSeconds (平均每場耗時): 尚無資料'
+assert_contains 'medianCycleSeconds (每場耗時中位數): 尚無資料'
+assert_contains 'fastestCycleSeconds (最快一場耗時): 尚無資料'
+assert_contains 'slowestCycleSeconds (最慢一場耗時): 尚無資料'
+assert_contains 'lastCycleSeconds (最後一場耗時): 尚無資料'
+assert_contains 'secondsSinceLastCycle (最後一場完成後經過時間): 尚無資料'
+assert_contains 'cyclesPerHour (每小時完成場次): 0.00 場／小時'
+
+run_case zero_elapsed_timing 0 '{"status":"stopped","completedCycles":0,"actionsPosted":0,"finalReason":"stopFileDetected","timing":{"elapsedSeconds":0,"completedCycleCount":0,"completedCycleTotalSeconds":0}}'
+assert_contains 'elapsedSeconds (總執行時間): 0.00 秒'
+assert_contains 'averageCycleSeconds (平均每場耗時): 尚無資料'
+assert_contains 'medianCycleSeconds (每場耗時中位數): 尚無資料'
+assert_contains 'cyclesPerHour (每小時完成場次): 尚無資料'
+
+run_case rounded_duration_timing 0 '{"status":"completed","completedCycles":1,"actionsPosted":1,"finalReason":"maximumCyclesReached","timing":{"elapsedSeconds":60,"completedCycleCount":1,"completedCycleTotalSeconds":59.999,"averageCycleSeconds":59.999,"medianCycleSeconds":59.999,"fastestCycleSeconds":59.999,"slowestCycleSeconds":59.999,"lastCycleSeconds":59.999,"secondsSinceLastCycle":0.001,"cyclesPerHour":60}}'
+assert_contains 'averageCycleSeconds (平均每場耗時): 1 分 0.00 秒'
+assert_contains 'medianCycleSeconds (每場耗時中位數): 1 分 0.00 秒'
+assert_contains 'secondsSinceLastCycle (最後一場完成後經過時間): 0.00 秒'
+
+run_case invalid_optional_timing 0 '{"status":"stopped","completedCycles":1,"actionsPosted":1,"finalReason":"applicationQuitRequested","timing":{"elapsedSeconds":false,"averageCycleSeconds":"60","medianCycleSeconds":"60","fastestCycleSeconds":-1,"cyclesPerHour":"$(exit 1)"}}'
+assert_contains 'elapsedSeconds (總執行時間): 尚無資料'
+assert_contains 'averageCycleSeconds (平均每場耗時): 尚無資料'
+assert_contains 'medianCycleSeconds (每場耗時中位數): 尚無資料'
+assert_contains 'fastestCycleSeconds (最快一場耗時): 尚無資料'
+assert_contains 'cyclesPerHour (每小時完成場次): 尚無資料'
 
 run_case stopped 0 '{"status":"stopped","completedCycles":13,"actionsPosted":61,"finalReason":"uncertainStateExceededGrace(kind: unknown)"}'
 assert_contains 'status: stopped'
 assert_contains 'finalReason: uncertainStateExceededGrace(kind: unknown)'
 
-run_case runtime_error 1 '{"status":"error","completedCycles":2,"actionsPosted":10,"finalReason":"capture failed"}' 0 'underlying capture failure'
+run_case runtime_error 1 '{"status":"error","completedCycles":2,"actionsPosted":10,"finalReason":"capture failed","timing":{"elapsedSeconds":20.5,"completedCycleCount":2,"completedCycleTotalSeconds":16,"averageCycleSeconds":8,"medianCycleSeconds":8,"fastestCycleSeconds":7.5,"slowestCycleSeconds":8.5,"lastCycleSeconds":8.5,"secondsSinceLastCycle":4.5,"cyclesPerHour":351.219512}}' 0 'underlying capture failure'
 assert_contains 'Mirror Probe 回報 status=error'
 assert_contains 'underlying capture failure'
 assert_contains '執行失敗：capture failed'
+assert_contains 'elapsedSeconds (總執行時間): 20.50 秒'
+assert_contains 'averageCycleSeconds (平均每場耗時): 8.00 秒'
+assert_contains 'medianCycleSeconds (每場耗時中位數): 8.00 秒'
+[[ $(plutil -extract openWaitCompleted raw -expect bool \
+    "$test_dir/runtime_error/.launcher-wait.json") == true ]] || {
+    print -u2 -r -- 'FAIL app error after a successful wait must leave a completion receipt'
+    exit 1
+}
 
 run_case terminal_missing_reason 1 '{"status":"stopped","completedCycles":2,"actionsPosted":10}'
 assert_contains '缺少有效的 finalReason'
@@ -133,6 +203,10 @@ assert_contains 'launch or wait failed'
 run_case open_failure_with_terminal_report 1 '{"status":"completed","completedCycles":20,"actionsPosted":100,"finalReason":"maximumCyclesReached"}' 7
 assert_contains 'open 指令失敗（狀態碼 7）'
 assert_omits '執行結果：'
+[[ ! -e "$test_dir/open_failure_with_terminal_report/.launcher-wait.json" ]] || {
+    print -u2 -r -- 'FAIL a failed open wait must never leave a completion receipt'
+    exit 1
+}
 
 run_argument_case unlimited_default 0 --dry-run
 assert_contains '--input-mode foreground '

@@ -314,6 +314,7 @@ public enum AutoLevelWaitReason: Codable, Equatable, Sendable {
     case awaitingStateChange(intent: AutoLevelActionIntent)
     case battleInProgress
     case allAutoAlreadyEnabled
+    case battleRecognitionRecovery(remaining: TimeInterval)
     case transientState(kind: AutoLevelUncertainKind, observationCount: Int)
 }
 
@@ -415,7 +416,8 @@ public struct AutoLevelController: Sendable {
     /// issuing an initial action or a bounded result retry requires a fresh observation.
     public mutating func consume(
         _ snapshot: AutoLevelSnapshot,
-        allowNewActions: Bool = true
+        allowNewActions: Bool = true,
+        battleRecognitionRecovery: BattleRecognitionRecoveryAssessment? = nil
     ) -> AutoLevelDecision {
         if let terminalReason {
             return .stop(terminalReason)
@@ -467,6 +469,35 @@ public struct AutoLevelController: Sendable {
            snapshot.classification.state != .wideModalTwoButtons
         {
             return stop(.recoveryTransactionInterrupted(state: snapshot.classification.state))
+        }
+
+        if let recovery = battleRecognitionRecovery, recovery.matches(snapshot) {
+            uncertainty = nil
+            guard recovery.isReady else {
+                return .wait(.battleRecognitionRecovery(
+                    remaining: max(0, BattleRecognitionRecovery.minimumDuration - recovery.elapsedSeconds)
+                ))
+            }
+            if let lastActionAt {
+                let elapsed = now - lastActionAt
+                if elapsed < policy.actionCooldown {
+                    return .wait(.actionCooldown(remaining: policy.actionCooldown - elapsed))
+                }
+            }
+            let rect = VisualBattleEvidence.measuredRetreatRect
+            let target = AutoLevelActionTarget(
+                name: GameTargetName.battleRetreat.rawValue,
+                sourceText: VisualBattleEvidence.measuredRetreatSentinel,
+                rect: rect,
+                point: rect.center
+            )
+            guard target.isValid else {
+                return observeUncertainty(.ambiguousAction, at: now)
+            }
+            return issueActionRequest(
+                .requestRetreat, target: target, from: snapshot, at: now,
+                allowNewActions: allowNewActions, postAttempt: 1
+            )
         }
 
         if let uncertainKind = uncertainKind(for: snapshot.classification) {
@@ -1091,7 +1122,7 @@ public struct AutoLevelController: Sendable {
             return to == .retreatConfirmation
                 || to == .defeatPrompt
                 || genericModalStates.contains(to)
-                || (actionWasPosted && from == .battle
+                || (actionWasPosted && (from == .battle || from == .unknown)
                     && (to == .missionFailed || to == .missionFailedRepeatSelected))
 
         case .confirmRetreatWithoutTalisman:

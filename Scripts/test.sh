@@ -39,6 +39,7 @@ xcrun swift --version
 xcrun swift test "${swift_args[@]}" "${coverage_args[@]}" 2>&1 | tee "$validation_dir/swift-tests.log"
 zsh Tests/LauncherTests/auto-level-wait-tests.zsh 2>&1 | tee "$validation_dir/auto-level-launcher.log"
 zsh Tests/LauncherTests/reroll-character-tests.zsh 2>&1 | tee "$validation_dir/reroll-launcher.log"
+python3 Tests/LauncherTests/auto-level-restart-tests.py 2>&1 | tee "$validation_dir/restart-supervisor.log"
 xcrun swift build "${swift_args[@]}" -c release 2>&1 | tee "$validation_dir/release-build.log"
 readonly binary_dir=$(xcrun swift build "${swift_args[@]}" -c release --show-bin-path)
 python3 Tests/IntegrationTests/cli-tests.py "$binary_dir/mirror-probe" 2>&1 | tee "$validation_dir/cli-integration.log"

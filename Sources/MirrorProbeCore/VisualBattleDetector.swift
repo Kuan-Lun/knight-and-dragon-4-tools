@@ -43,22 +43,33 @@ public enum VisualBattleDetector {
         let detail = matches.map { "\($0.marker.rawValue)=\(String(format: "%.5f", $0.similarity))" }
             .joined(separator: ", ")
         let trusted = matches.filter { $0.similarity >= VisualBattleMatch.minimumSimilarity }
+        let evidence = trusted.map { match in
+            GameStateEvidence(
+                kind: .battleMarker, observation: nil,
+                detail: "source=battleVisualV1, marker=\(match.marker.rawValue), "
+                    + "similarity=\(match.similarity), minimumSimilarity=\(VisualBattleMatch.minimumSimilarity)",
+                battleVisualMatch: match
+            )
+        }
         guard VisualBattleEvidence.identityMarkers.allSatisfy({ marker in
             trusted.contains { $0.marker == marker }
-        }) else { return rejected("incompleteFooterMarkers, \(detail)") }
+        }) else {
+            guard trusted.contains(where: { $0.marker == .retreatControl }) else {
+                return rejected("incompleteFooterMarkers, \(detail)")
+            }
+            // Keep measured controls so temporal recovery can revalidate a visible retreat
+            // target without treating an incomplete footer as a recognized battle.
+            return .init(state: .unknown, evidence: evidence + [
+                .init(kind: .battleFooterOcclusion, observation: nil,
+                      detail: "battleVisualRejected: incompleteFooterMarkers, \(detail)"),
+            ], allowedActions: [])
+        }
         let canLocateRetreat = trusted.contains { $0.marker == .retreatControl }
 
         let retreat = VisualBattleEvidence.measuredRetreatRect
         return GameStateClassification(
             state: .battle,
-            evidence: trusted.map { match in
-                GameStateEvidence(
-                    kind: .battleMarker, observation: nil,
-                    detail: "source=battleVisualV1, marker=\(match.marker.rawValue), "
-                        + "similarity=\(match.similarity), minimumSimilarity=\(VisualBattleMatch.minimumSimilarity)",
-                    battleVisualMatch: match
-                )
-            },
+            evidence: evidence,
             allowedActions: [],
             policyGatedActions: canLocateRetreat ? [.init(
                 name: .openBattleRetreatConfirmation,

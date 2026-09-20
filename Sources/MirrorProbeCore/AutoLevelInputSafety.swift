@@ -1,6 +1,6 @@
 import Foundation
 
-/// WindowServer geometry locked at the start of an automation session. Equality is deliberately
+/// WindowServer geometry bound to the fresh preflight for an input. Equality is deliberately
 /// exact: a last-moment move or resize must invalidate an input authorization.
 public struct AutoLevelWindowGeometry: Equatable, Sendable {
     public let x: Double

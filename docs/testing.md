@@ -24,8 +24,9 @@ The command runs, in order:
 1. Swift Core and Runtime test targets.
 2. Isolated auto-level launcher tests.
 3. Isolated character-reroll launcher tests.
-4. Release executable compilation.
-5. Offline process tests against that release executable.
+4. Isolated restart supervisor tests with a fake launcher (no App or game input).
+5. Release executable compilation.
+6. Offline process tests against that release executable.
 
 Any failed stage makes the command fail. The script does not replace or re-sign
 `.build/Mirror Probe.app`. Packaging remains a separate command:
@@ -33,6 +34,9 @@ Any failed stage makes the command fail. The script does not replace or re-sign
 ```sh
 zsh Scripts/build-app.sh
 ```
+
+Packaging also respects an explicit `DEVELOPER_DIR`, so validation and packaging can use
+the same installed toolchain.
 
 Logs are in `.build/validation/`. Swift coverage data is in the debug build's
 `codecov` directory; use `xcrun swift test --show-codecov-path` with the same

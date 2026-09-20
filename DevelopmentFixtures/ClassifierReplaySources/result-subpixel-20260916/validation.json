@@ -1,0 +1,300 @@
+{
+  "sourceRun": "logs/auto-level-20260916-030418.5d1gmr",
+  "originalClassification": {
+    "allowedActions": [],
+    "evidence": [
+      {
+        "detail": "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.41885, failureTitle=0.94528, experienceHeader=0.91100, lootHeader=0.80016, repeatOption=0.89458",
+        "kind": "lowConfidenceMarker"
+      }
+    ],
+    "policyGatedActions": [],
+    "state": "unknown"
+  },
+  "liveBattleBeforeQuarterRegistration": {
+    "allowedActions": [],
+    "evidence": [
+      {
+        "battleVisualMatch": {
+          "marker": "skipControl",
+          "region": {
+            "height": 0.023,
+            "width": 0.09,
+            "x": 0.075,
+            "y": 0.87
+          },
+          "similarity": 0.9446395344537815
+        },
+        "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9446395344537815, minimumSimilarity=0.94",
+        "kind": "battleMarker"
+      },
+      {
+        "battleVisualMatch": {
+          "marker": "allAutoControl",
+          "region": {
+            "height": 0.021,
+            "width": 0.14,
+            "x": 0.225,
+            "y": 0.87
+          },
+          "similarity": 0.950558463921683
+        },
+        "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.950558463921683, minimumSimilarity=0.94",
+        "kind": "battleMarker"
+      },
+      {
+        "detail": "battleFooterMatchedButRetreatUnconfirmed",
+        "kind": "lowConfidenceMarker"
+      }
+    ],
+    "policyGatedActions": [],
+    "state": "unknown"
+  },
+  "packagedReplays": {
+    "visual-result-failure-404x874": {
+      "fixture": "Tests/MirrorProbeCoreTests/Fixtures/visual-result-failure-404x874.png",
+      "pngSHA256": "dca2172b97116663eb99c37dbe59c27fba26c3c9e75d47cea7f81457c6135c3c",
+      "classification": {
+        "allowedActions": [
+          {
+            "name": "selectMissionRepeat",
+            "target": {
+              "name": "missionRepeatOption",
+              "point": {
+                "x": 0.16699999999999998,
+                "y": 0.24650000000000002
+              },
+              "rect": {
+                "height": 0.025,
+                "width": 0.29,
+                "x": 0.022,
+                "y": 0.234
+              },
+              "sourceText": "<measured-result-repeat-option>"
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "detail": "source=resultVisualV1, marker=failureTitle, similarity=0.9595785196978471, minimumSimilarity=0.94",
+            "kind": "missionFailedTitle",
+            "visualMatch": {
+              "marker": "failureTitle",
+              "region": {
+                "height": 0.034,
+                "width": 0.24,
+                "x": 0.38,
+                "y": 0.1
+              },
+              "similarity": 0.9595785196978471
+            }
+          },
+          {
+            "detail": "source=resultVisualV1, marker=experienceHeader, similarity=0.9609093682324659, minimumSimilarity=0.94",
+            "kind": "missionExperiencePage",
+            "visualMatch": {
+              "marker": "experienceHeader",
+              "region": {
+                "height": 0.026,
+                "width": 0.2,
+                "x": 0.775,
+                "y": 0.145
+              },
+              "similarity": 0.9609093682324659
+            }
+          },
+          {
+            "detail": "source=resultVisualV1, marker=repeatOption, similarity=0.9615396752753373, minimumSimilarity=0.94",
+            "kind": "missionRepeatOption",
+            "visualMatch": {
+              "marker": "repeatOption",
+              "region": {
+                "height": 0.025,
+                "width": 0.29,
+                "x": 0.022,
+                "y": 0.234
+              },
+              "similarity": 0.9615396752753373
+            }
+          },
+          {
+            "detail": "<measured-repeat-unselected-empty-stamp>",
+            "kind": "repeatUnselectedMarker"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "missionFailed"
+      },
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    },
+    "visual-battle-404x874": {
+      "fixture": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-404x874.png",
+      "pngSHA256": "eb49a7ab620b134b3867eec9ad45810bd21e34a6de39d816e1c5431848045097",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "battleVisualMatch": {
+              "marker": "skipControl",
+              "region": {
+                "height": 0.023,
+                "width": 0.09,
+                "x": 0.075,
+                "y": 0.87
+              },
+              "similarity": 0.9446395344537815
+            },
+            "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9446395344537815, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "allAutoControl",
+              "region": {
+                "height": 0.021,
+                "width": 0.14,
+                "x": 0.225,
+                "y": 0.87
+              },
+              "similarity": 0.950558463921683
+            },
+            "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.950558463921683, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "retreatControl",
+              "region": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "similarity": 0.9509081484637518
+            },
+            "detail": "source=battleVisualV1, marker=retreatControl, similarity=0.9509081484637518, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          }
+        ],
+        "policyGatedActions": [
+          {
+            "name": "openBattleRetreatConfirmation",
+            "requirement": "temporalDefeatRecovery",
+            "target": {
+              "name": "battleRetreat",
+              "point": {
+                "x": 0.8825,
+                "y": 0.667
+              },
+              "rect": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "sourceText": "<measured-visual-battle-retreat>"
+            }
+          }
+        ],
+        "state": "battle"
+      },
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    },
+    "visual-battle-modal-404x874": {
+      "fixture": "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-modal-404x874.png",
+      "pngSHA256": "40de45701dac83228984b0cef2fa607611f7a45747aa2b08fd5d3eed968252ff",
+      "classification": {
+        "allowedActions": [
+          {
+            "name": "pressWideModalTopButton",
+            "target": {
+              "name": "wideModalTopButton",
+              "point": {
+                "x": 0.4995,
+                "y": 0.5574942791762014
+              },
+              "rect": {
+                "height": 0.039473684210526314,
+                "width": 0.783,
+                "x": 0.108,
+                "y": 0.5377574370709383
+              },
+              "sourceText": "<measured-wide-modal-primary-button>"
+            }
+          }
+        ],
+        "evidence": [
+          {
+            "detail": "layout=oneButton, underlyingState=unknown, buttonCount=1",
+            "kind": "wideModalGeometry"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "wideModalOneButton"
+      },
+      "safety": {
+        "actionAuthorization": "none",
+        "inputEventsPosted": 0,
+        "readOnly": true
+      }
+    }
+  },
+  "tests": {
+    "command": "zsh Scripts/test.sh",
+    "passed": true,
+    "swiftTestingGroups": [
+      {
+        "tests": 37,
+        "suites": 5
+      },
+      {
+        "tests": 638,
+        "suites": 59
+      }
+    ],
+    "xctestCases": 2,
+    "autoLevelLauncherCases": 55,
+    "rerollLauncherCases": 84,
+    "restartSupervisorTests": 15,
+    "releaseCLIIntegrationTests": 18,
+    "packagedCLIIntegrationTests": 18
+  },
+  "packagedExecutableSHA256": "b1a18d6f7cd65958f28d035563ca50d5eb4353f9a1c01f64fcfd227b37281d62",
+  "signatureVerified": true,
+  "launcherDryRunArguments": [
+    "--max-minutes",
+    "480",
+    "--wait",
+    "--dry-run"
+  ],
+  "permissionsAfterFinalPackaging": {
+    "postEventPermission": "granted",
+    "screenCapturePermission": "granted",
+    "timestamp": "2026-09-15T19:20:08Z",
+    "windows": [
+      {
+        "active": true,
+        "applicationName": "iPhone鏡像輸出",
+        "bundleIdentifier": "com.apple.ScreenContinuity",
+        "height": 874,
+        "onScreen": true,
+        "processID": 6891,
+        "title": "iPhone鏡像輸出",
+        "width": 404,
+        "windowID": 169,
+        "x": 1,
+        "y": 30
+      }
+    ]
+  },
+  "liveGameRunPerformed": false,
+  "liveReadOnlyCapturesPerformed": true
+}

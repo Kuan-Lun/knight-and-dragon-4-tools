@@ -77,6 +77,28 @@ public enum VisualBattleEvidence {
         hasRunningBattleEvidence(in: classification) && hasExactRetreatCandidate(in: classification)
     }
 
+    /// A visible retreat on a rejected footer is insufficient to identify a battle or click.
+    /// Only BattleRecognitionRecovery may combine it with prior battle and elapsed-time proof.
+    public static func hasRecoverableFooterOcclusion(in classification: GameStateClassification) -> Bool {
+        guard classification.state == .unknown,
+              classification.allowedActions.isEmpty, classification.policyGatedActions.isEmpty,
+              classification.evidence.filter({ $0.kind == .battleFooterOcclusion }).count == 1
+        else { return false }
+        var markers = Set<VisualBattleMarker>()
+        for evidence in classification.evidence {
+            if let match = validatedMatch(evidence) {
+                guard markers.insert(match.marker).inserted else { return false }
+            } else {
+                guard evidence.kind == .battleFooterOcclusion || evidence.kind == .lowConfidenceMarker,
+                      evidence.observation == nil, evidence.visualMatch == nil,
+                      evidence.battleVisualMatch == nil
+                else { return false }
+            }
+        }
+        return markers.contains(.retreatControl)
+            && !identityMarkers.allSatisfy { markers.contains($0) }
+    }
+
     private static func contains(_ marker: VisualBattleMarker, in classification: GameStateClassification) -> Bool {
         classification.evidence.contains { validatedMatch($0)?.marker == marker }
     }

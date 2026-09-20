@@ -24,6 +24,18 @@
     "sampleSHA256": "8823eb26a6d8ffe3b28cae7f6b485be5fc1b6ddc87d1e3cc72831db33661ecde"
   },
   {
+    "marker": "skipControl",
+    "region": [
+      0.075,
+      0.87,
+      0.09,
+      0.023
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/native-402-battle-capture-0013.png",
+    "sourceSHA256": "8d48edffb9c0a507dd002469b020692408711dcc93a740511ca78adf906abc22",
+    "sampleSHA256": "4b2ae080aadb52366edbbc9b0d9fde84fdb46907ae6dcb52887dc84dfb8a8c1b"
+  },
+  {
     "marker": "allAutoControl",
     "region": [
       0.225,

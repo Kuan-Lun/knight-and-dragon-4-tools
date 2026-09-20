@@ -1,0 +1,158 @@
+{
+  "executableSHA256": "191693bf168a68b016b8fe6a4fb8e8e0b751b75f3a698a617f33b9b62929216b",
+  "recognitionMode": "visualRegions",
+  "frames": [
+    {
+      "captureSequence": 13,
+      "pngSHA256": "8d48edffb9c0a507dd002469b020692408711dcc93a740511ca78adf906abc22",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "detail": "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44321, failureTitle=0.36499, experienceHeader=-0.10020, lootHeader=-0.08400, repeatOption=-0.03469",
+            "kind": "lowConfidenceMarker"
+          },
+          {
+            "detail": "battleVisualRejected: incompleteFooterMarkers, skipControl=0.93583, allAutoControl=0.94849, pauseControl=0.92951, retreatControl=0.95567",
+            "kind": "lowConfidenceMarker"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "unknown"
+      }
+    },
+    {
+      "captureSequence": 14,
+      "pngSHA256": "d1c6de9ce3feb03434b97518f5576233abf054a1af50311ece3657266ecb79b1",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "detail": "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44321, failureTitle=0.36499, experienceHeader=-0.09949, lootHeader=-0.08334, repeatOption=-0.03462",
+            "kind": "lowConfidenceMarker"
+          },
+          {
+            "detail": "battleVisualRejected: incompleteFooterMarkers, skipControl=0.93584, allAutoControl=0.94848, pauseControl=0.92949, retreatControl=0.95568",
+            "kind": "lowConfidenceMarker"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "unknown"
+      }
+    },
+    {
+      "captureSequence": 15,
+      "pngSHA256": "7e077e9f7e52c186ea79c42d0e8a37450cd6a4899e1561c5f9d326ab340c254f",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "detail": "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44320, failureTitle=0.36500, experienceHeader=-0.09939, lootHeader=-0.08325, repeatOption=-0.02963",
+            "kind": "lowConfidenceMarker"
+          },
+          {
+            "detail": "battleVisualRejected: incompleteFooterMarkers, skipControl=0.93584, allAutoControl=0.94848, pauseControl=0.92949, retreatControl=0.95569",
+            "kind": "lowConfidenceMarker"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "unknown"
+      }
+    },
+    {
+      "captureSequence": 16,
+      "pngSHA256": "1b7042959c27facd4317d367ccdf30508dd5bffa4d9e4219e7eaa152a840011e",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "detail": "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44320, failureTitle=0.36500, experienceHeader=-0.09929, lootHeader=-0.08316, repeatOption=-0.03499",
+            "kind": "lowConfidenceMarker"
+          },
+          {
+            "detail": "battleVisualRejected: incompleteFooterMarkers, skipControl=0.93584, allAutoControl=0.94848, pauseControl=0.92949, retreatControl=0.95570",
+            "kind": "lowConfidenceMarker"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "unknown"
+      }
+    },
+    {
+      "captureSequence": 17,
+      "pngSHA256": "c897659b2216af769252d475f72c0751ee70dbd0b76e54ccc5887568edcce1a2",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "detail": "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44320, failureTitle=0.36500, experienceHeader=-0.09925, lootHeader=-0.08311, repeatOption=-0.03489",
+            "kind": "lowConfidenceMarker"
+          },
+          {
+            "detail": "battleVisualRejected: incompleteFooterMarkers, skipControl=0.93582, allAutoControl=0.94848, pauseControl=0.92091, retreatControl=0.95568",
+            "kind": "lowConfidenceMarker"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "unknown"
+      }
+    },
+    {
+      "captureSequence": 18,
+      "pngSHA256": "761b20067c3b03a39196720d81c5e3e38c9090a88918a2e03730889a2dfb0c16",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "detail": "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44736, failureTitle=0.36472, experienceHeader=-0.09929, lootHeader=-0.08508, repeatOption=-0.03477",
+            "kind": "lowConfidenceMarker"
+          },
+          {
+            "detail": "battleVisualRejected: incompleteFooterMarkers, skipControl=0.93586, allAutoControl=0.94850, pauseControl=0.92935, retreatControl=0.95564",
+            "kind": "lowConfidenceMarker"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "unknown"
+      }
+    },
+    {
+      "captureSequence": 19,
+      "pngSHA256": "eed4bc483515c7ab1ab2c7ed9d1db1988c41ccb5a2bae1d329673a684414f930",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "detail": "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44736, failureTitle=0.36472, experienceHeader=-0.09932, lootHeader=-0.08517, repeatOption=0.10618",
+            "kind": "lowConfidenceMarker"
+          },
+          {
+            "detail": "battleVisualRejected: incompleteFooterMarkers, skipControl=0.93585, allAutoControl=0.94849, pauseControl=0.92922, retreatControl=0.95564",
+            "kind": "lowConfidenceMarker"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "unknown"
+      }
+    },
+    {
+      "captureSequence": 20,
+      "pngSHA256": "d9c54a4350e8b67c2ed8c05b9c5cc9e8247298382750bb3a49c40924701a3fec",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "detail": "resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44736, failureTitle=0.36472, experienceHeader=-0.09879, lootHeader=-0.08454, repeatOption=-0.03443",
+            "kind": "lowConfidenceMarker"
+          },
+          {
+            "detail": "battleVisualRejected: incompleteFooterMarkers, skipControl=0.93585, allAutoControl=0.94849, pauseControl=0.92920, retreatControl=0.95564",
+            "kind": "lowConfidenceMarker"
+          }
+        ],
+        "policyGatedActions": [],
+        "state": "unknown"
+      }
+    }
+  ]
+}

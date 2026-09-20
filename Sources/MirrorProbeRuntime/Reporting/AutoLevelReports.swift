@@ -75,4 +75,11 @@ struct AutomationRunReport: Codable {
     var diagnosticScreenshots: [AutomationDiagnosticScreenshotReport]
     var diagnosticPersistenceErrors: [String]
     var events: [AutomationRunEvent]
+    // Older reports predate timing, so retain backwards-compatible decoding.
+    var timing: AutomationTimingReport? = nil
+
+    mutating func recordCompletedCycles(_ count: Int, elapsed: TimeInterval) {
+        completedCycles = count
+        timing?.recordCompletedCycle(count: count, elapsed: elapsed)
+    }
 }

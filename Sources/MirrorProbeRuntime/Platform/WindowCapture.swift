@@ -39,106 +39,49 @@ extension MirrorProbeRuntime {
         try await mirrorWindowCandidates().filter(isEligibleMirrorWindow)
     }
 
-    /// Only a missing eligible window enters recovery. A replacement window, moved geometry,
-    /// capture error, or lost permission never renews the session's locked identity.
+    /// Keep the locked identity through display changes. The recovery selector requires
+    /// repeated stable geometry before a fresh capture can provide evidence for later input.
     static func selectAutomationWindow(
         requestedID: UInt32,
         expectedIdentity: AutoLevelWindowIdentity,
         expectedFrame: CGRect,
         recovery: AutomationWindowRecoveryContext,
         phase: String,
-        actionDeadline: TimeInterval?
+        deadline: AutomationCaptureDeadline?
     ) async throws -> SCWindow {
-        var retry: AutoLevelWindowAvailabilityRetry?
-        while true {
-            try recovery.checkSessionBoundary()
-            if var budget = retry {
-                if let reason = budget.validateBoundary(
-                    at: ProcessInfo.processInfo.systemUptime,
-                    stopRequested: applicationStopRequest.isRequested(stopFileURL: recovery.stopURL)
-                ) {
-                    try throwWindowRecoveryStop(reason, windowID: requestedID, phase: phase)
-                }
-                retry = budget
-            }
-            let candidates = try await mirrorWindowCandidates()
-            try recovery.checkSessionBoundary()
-            if var budget = retry {
-                if let reason = budget.validateBoundary(at: ProcessInfo.processInfo.systemUptime) {
-                    try throwWindowRecoveryStop(reason, windowID: requestedID, phase: phase)
-                }
-                retry = budget
-            }
-            if let window = candidates.first(where: {
-                $0.windowID == requestedID && isEligibleMirrorWindow($0)
-            }) {
-                guard window.owningApplication?.processID == expectedIdentity.processID,
-                      window.windowID == expectedIdentity.windowID else {
-                    throw ProbeError.unsafeWindow("the iPhone Mirroring process or window identity changed")
-                }
-                guard approximatelyEqual(window.frame, expectedFrame, tolerance: 0.5) else {
-                    throw ProbeError.unsafeWindow("the iPhone Mirroring window moved or resized during automation")
-                }
-                if let budget = retry {
+        guard requestedID == expectedIdentity.windowID else {
+            throw ProbeError.unsafeWindow("the requested window does not match the locked identity")
+        }
+        let currentExpectedFrame = recovery.currentFrame ?? expectedFrame
+        do {
+            return try await AutomationWindowSelectionRecovery.select(
+                expectedIdentity: expectedIdentity,
+                expectedFrame: currentExpectedFrame,
+                recovery: recovery,
+                deadline: deadline,
+                query: {
+                    try await mirrorWindowCandidates().map { window in
+                        AutomationWindowSelectionCandidate(
+                            window: window,
+                            identity: AutoLevelWindowIdentity(
+                                processID: window.owningApplication?.processID ?? 0,
+                                windowID: window.windowID
+                            ),
+                            frame: window.frame,
+                            isEligible: isEligibleMirrorWindow(window)
+                        )
+                    }
+                },
+                diagnostic: { outcome, candidates, retry, detail in
                     logWindowAvailability(
-                        "recovered", phase: phase, identity: expectedIdentity,
-                        candidates: candidates, retry: budget, detail: "sameIdentityAndGeometry=true"
+                        outcome, phase: phase, identity: expectedIdentity,
+                        expectedFrame: currentExpectedFrame, candidates: candidates.map(\.window),
+                        retry: retry, detail: detail
                     )
                 }
-                return window
-            }
-            if retry == nil {
-                recovery.interruptContinuity()
-                retry = AutoLevelWindowAvailabilityRetry(
-                    startedAt: ProcessInfo.processInfo.systemUptime,
-                    sessionDeadline: recovery.sessionDeadline,
-                    actionDeadline: actionDeadline
-                )
-            }
-            guard var budget = retry else { throw ProbeError.requestedWindowNotFound(requestedID) }
-            logWindowAvailability(
-                "missing", phase: phase, identity: expectedIdentity,
-                candidates: candidates, retry: budget, detail: "inputSuspendedDuringRecovery=true"
             )
-            let decision = budget.recordMissing(
-                at: ProcessInfo.processInfo.systemUptime,
-                stopRequested: applicationStopRequest.isRequested(stopFileURL: recovery.stopURL)
-            )
-            retry = budget
-            switch decision {
-            case let .retry(_, delaySeconds):
-                // Short slices keep STOP responsive without making another capture query.
-                let wakeAt = ProcessInfo.processInfo.systemUptime + delaySeconds
-                while ProcessInfo.processInfo.systemUptime < wakeAt {
-                    try recovery.checkSessionBoundary()
-                    try await Task.sleep(for: .seconds(min(
-                        0.1, max(0, wakeAt - ProcessInfo.processInfo.systemUptime)
-                    )))
-                }
-            case let .stop(reason):
-                logWindowAvailability(
-                    "exhausted", phase: phase, identity: expectedIdentity,
-                    candidates: candidates, retry: budget, detail: String(describing: reason)
-                )
-                try throwWindowRecoveryStop(reason, windowID: requestedID, phase: phase)
-            }
-        }
-    }
-
-    static func throwWindowRecoveryStop(
-        _ reason: AutoLevelWindowAvailabilityRetryStopReason,
-        windowID: UInt32,
-        phase: String
-    ) throws -> Never {
-        switch reason {
-        case .stopRequested: throw AutomationCaptureInterruption.stopRequested
-        case .sessionExpired: throw AutomationCaptureInterruption.sessionExpired
-        default:
-            throw ProbeError.unsafeWindow(
-                "iPhone Mirroring window ID \(windowID) remained unavailable within the bounded "
-                    + "capture recovery; phase=\(phase), reason=\(reason). "
-                    + "This does not establish that the window was closed; see windowAvailability diagnostics."
-            )
+        } catch ProbeError.unsafeWindow(let reason) {
+            throw ProbeError.unsafeWindow("\(reason); phase=\(phase)")
         }
     }
 
@@ -146,6 +89,7 @@ extension MirrorProbeRuntime {
         _ outcome: String,
         phase: String,
         identity: AutoLevelWindowIdentity,
+        expectedFrame: CGRect,
         candidates: [SCWindow],
         retry: AutoLevelWindowAvailabilityRetry,
         detail: String
@@ -159,8 +103,10 @@ extension MirrorProbeRuntime {
         let diagnostics: [String: Any] = [
             "timestamp": ISO8601DateFormatter().string(from: Date()),
             "outcome": outcome, "phase": phase, "attempt": retry.attempt,
-            "elapsedMissingSeconds": ProcessInfo.processInfo.systemUptime - retry.startedAt,
+            "elapsedRecoverySeconds": ProcessInfo.processInfo.systemUptime - retry.startedAt,
             "expectedPID": identity.processID, "expectedWindowID": identity.windowID,
+            "expectedFrame": ["x": expectedFrame.minX, "y": expectedFrame.minY,
+                              "width": expectedFrame.width, "height": expectedFrame.height],
             "targetProcessRunning": app.map { !$0.isTerminated } ?? false,
             "targetApplicationHidden": app.map { $0.isHidden as Any } ?? NSNull(),
             "frontmostPID": ForegroundApplicationFocus.read().processID.map { $0 as Any } ?? NSNull(),
@@ -173,7 +119,13 @@ extension MirrorProbeRuntime {
                 "pid": window.owningApplication?.processID ?? 0,
                 "onScreen": window.isOnScreen, "layer": window.windowLayer,
                 "x": window.frame.minX, "y": window.frame.minY,
-                "width": window.frame.width, "height": window.frame.height
+                "width": window.frame.width, "height": window.frame.height,
+                "deltaFromExpectedFrame": [
+                    "x": window.frame.minX - expectedFrame.minX,
+                    "y": window.frame.minY - expectedFrame.minY,
+                    "width": window.frame.width - expectedFrame.width,
+                    "height": window.frame.height - expectedFrame.height
+                ]
             ] }
         ]
         if let data = try? JSONSerialization.data(withJSONObject: diagnostics, options: [.sortedKeys]),

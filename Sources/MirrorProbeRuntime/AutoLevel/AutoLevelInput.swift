@@ -19,7 +19,9 @@ extension MirrorProbeRuntime {
         captureRecorder: AutomationCaptureRecorder,
         windowRecovery: AutomationWindowRecoveryContext,
         actionDeadline: TimeInterval,
-        expectedResultPage: MissionSuccessPageIdentity?
+        expectedResultPage: MissionSuccessPageIdentity?,
+        battleRecognitionRecovery: BattleRecognitionRecoveryAssessment? = nil,
+        inputGeneration: UInt64 = 0
     ) async throws -> AutomationActionPreflightResult {
         guard request.intent != .enableAllAuto else {
             throw ProbeError.unsafeWindow(
@@ -91,7 +93,7 @@ extension MirrorProbeRuntime {
             captureRecorder: captureRecorder,
             recovery: windowRecovery,
             phase: "preflight",
-            actionDeadline: actionDeadline
+            deadline: .inputAuthorization(actionDeadline)
         )
         let activation: AutomationForegroundActivationSnapshot?
         if inputMode == .foreground {
@@ -119,6 +121,17 @@ extension MirrorProbeRuntime {
         }
         guard preflight.classification.state == request.observedState else {
             return .stateChanged(observation: preflight, activation: activation)
+        }
+        if request.intent == .requestRetreat, let battleRecognitionRecovery {
+            let rect = VisualBattleEvidence.measuredRetreatRect
+            guard battleRecognitionRecovery.canPreflight(automationBattleRecognitionSample(
+                preflight, identity: identity, battleSessionID: battleSessionID,
+                inputGeneration: inputGeneration
+            )), request.target.name == GameTargetName.battleRetreat.rawValue,
+                request.target.sourceText == VisualBattleEvidence.measuredRetreatSentinel,
+                request.target.rect == rect, request.target.point == rect.center
+            else { return .stateChanged(observation: preflight, activation: activation) }
+            return .confirmed(observation: preflight, target: request.target, activation: activation)
         }
         // Result pages can share state and coordinates. Every fresh confirmation, including
         // recovery from unknown, must preserve the original content identity when established.
@@ -275,7 +288,10 @@ extension MirrorProbeRuntime {
                 )
             case .windowGeometryChanged:
                 throw ProbeError.unsafeWindow(
-                    "the window geometry changed immediately before input"
+                    "the window geometry changed immediately before input; "
+                        + "phase=finalInputBoundary, noInputPosted=true, "
+                        + "expectedFrame=\(expectedGeometry), "
+                        + "actualFrame=\(String(describing: snapshot.windowGeometry))"
                 )
             case .applicationNotFrontmost:
                 guard AutoLevelForegroundActivationRetryState.permitsRetry(

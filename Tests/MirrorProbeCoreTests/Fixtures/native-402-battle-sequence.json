@@ -1,0 +1,123 @@
+{
+  "sourceRun": "logs/auto-level-20260916-142900.5t7RC5",
+  "sourceReportSHA256": "440444cebc67f3dbd7b7c98b3b3b30e4eed6943d4ef22a30ef95c571b286da35",
+  "originalFinalReason": "actionDidNotAdvance(intent: MirrorProbeCore.AutoLevelActionIntent.pressWideModalTopButton)",
+  "syntheticModalOrigin": {
+    "observedAt": 8.401090833329363,
+    "frameFingerprint": "4ea62d1c88986950ffb0b72881ff9f0615b35cf2784c4f63e646f4f00960df3a",
+    "state": "wideModalOneButton",
+    "target": {
+      "name": "wideModalTopButton",
+      "point": {
+        "x": 0.4995,
+        "y": 0.5759637188208617
+      },
+      "rect": {
+        "height": 0.03968253968253968,
+        "width": 0.783,
+        "x": 0.108,
+        "y": 0.5561224489795918
+      },
+      "sourceText": "<measured-wide-modal-primary-button>"
+    },
+    "note": "Original modal PNG not retained; replay constructs its classification from the reported action target. Replay post time is explicitly simulated at the origin observation; event actionPosted time is the later result capture, not a retained mouse-post timestamp."
+  },
+  "sequence": [
+    {
+      "resource": "native-402-battle-capture-0013",
+      "source": "logs/auto-level-20260916-142900.5t7RC5/diagnostics/capture-0013.png",
+      "captureSequence": 13,
+      "capturedAtElapsedSeconds": 10.02341354166856,
+      "originalState": "unknown",
+      "frameFingerprint": "2b507e4f45bca3b62cf7852d74a547ca84a8cb16bebdad934d5ec3d0c4b6fdb5",
+      "width": 402,
+      "height": 882,
+      "pngSHA256": "8d48edffb9c0a507dd002469b020692408711dcc93a740511ca78adf906abc22",
+      "role": "calibration"
+    },
+    {
+      "resource": "native-402-battle-capture-0014",
+      "source": "logs/auto-level-20260916-142900.5t7RC5/diagnostics/capture-0014.png",
+      "captureSequence": 14,
+      "capturedAtElapsedSeconds": 11.700116458334378,
+      "originalState": "unknown",
+      "frameFingerprint": "ef961ca753059ed0b29d04c0b1dc1924983ce70596c81520fd91ef0536bf5b04",
+      "width": 402,
+      "height": 882,
+      "pngSHA256": "d1c6de9ce3feb03434b97518f5576233abf054a1af50311ece3657266ecb79b1",
+      "role": "heldOut"
+    },
+    {
+      "resource": "native-402-battle-capture-0015",
+      "source": "logs/auto-level-20260916-142900.5t7RC5/diagnostics/capture-0015.png",
+      "captureSequence": 15,
+      "capturedAtElapsedSeconds": 13.32141358332592,
+      "originalState": "unknown",
+      "frameFingerprint": "2e380f1a25f3f8a5e1104bc5d1bd59391e044e543ac2c4f488a190005be6bf8d",
+      "width": 402,
+      "height": 882,
+      "pngSHA256": "7e077e9f7e52c186ea79c42d0e8a37450cd6a4899e1561c5f9d326ab340c254f",
+      "role": "heldOut"
+    },
+    {
+      "resource": "native-402-battle-capture-0016",
+      "source": "logs/auto-level-20260916-142900.5t7RC5/diagnostics/capture-0016.png",
+      "captureSequence": 16,
+      "capturedAtElapsedSeconds": 14.955202541663311,
+      "originalState": "unknown",
+      "frameFingerprint": "6f62100c074ee1577248e5269e07fa247bbb06788288395cff25bd27d492c90f",
+      "width": 402,
+      "height": 882,
+      "pngSHA256": "1b7042959c27facd4317d367ccdf30508dd5bffa4d9e4219e7eaa152a840011e",
+      "role": "heldOut"
+    },
+    {
+      "resource": "native-402-battle-capture-0017",
+      "source": "logs/auto-level-20260916-142900.5t7RC5/diagnostics/capture-0017.png",
+      "captureSequence": 17,
+      "capturedAtElapsedSeconds": 16.64006099999824,
+      "originalState": "unknown",
+      "frameFingerprint": "ce98dec9e299f348c570ef7c3f5fcfdc8c508cf6a2a9b5ae2dc28100124cff03",
+      "width": 402,
+      "height": 882,
+      "pngSHA256": "c897659b2216af769252d475f72c0751ee70dbd0b76e54ccc5887568edcce1a2",
+      "role": "heldOut"
+    },
+    {
+      "resource": "native-402-battle-capture-0018",
+      "source": "logs/auto-level-20260916-142900.5t7RC5/diagnostics/capture-0018.png",
+      "captureSequence": 18,
+      "capturedAtElapsedSeconds": 18.262711083327304,
+      "originalState": "unknown",
+      "frameFingerprint": "510456f4a9dd9a49894873ea8d27c0a1f934159f3ffd7383e654f55574ea171e",
+      "width": 402,
+      "height": 882,
+      "pngSHA256": "761b20067c3b03a39196720d81c5e3e38c9090a88918a2e03730889a2dfb0c16",
+      "role": "heldOut"
+    },
+    {
+      "resource": "native-402-battle-capture-0019",
+      "source": "logs/auto-level-20260916-142900.5t7RC5/diagnostics/capture-0019.png",
+      "captureSequence": 19,
+      "capturedAtElapsedSeconds": 19.90696333332744,
+      "originalState": "unknown",
+      "frameFingerprint": "817e51dc8756619a5e4b6ed4b3bcab3071e48f79ba39c845c548030f31d7c217",
+      "width": 402,
+      "height": 882,
+      "pngSHA256": "eed4bc483515c7ab1ab2c7ed9d1db1988c41ccb5a2bae1d329673a684414f930",
+      "role": "heldOut"
+    },
+    {
+      "resource": "native-402-battle-capture-0020",
+      "source": "logs/auto-level-20260916-142900.5t7RC5/final.png",
+      "captureSequence": 20,
+      "capturedAtElapsedSeconds": 21.51768862499739,
+      "originalState": "unknown",
+      "frameFingerprint": "92d75a7b7310fd424428f9bf449acbcdd97e9938b57d625feadaca382132c939",
+      "width": 402,
+      "height": 882,
+      "pngSHA256": "d9c54a4350e8b67c2ed8c05b9c5cc9e8247298382750bb3a49c40924701a3fec",
+      "role": "heldOut"
+    }
+  ]
+}

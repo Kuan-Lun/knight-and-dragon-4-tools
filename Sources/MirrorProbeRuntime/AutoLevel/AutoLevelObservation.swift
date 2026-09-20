@@ -10,7 +10,7 @@ extension MirrorProbeRuntime {
         captureRecorder: AutomationCaptureRecorder,
         recovery: AutomationWindowRecoveryContext,
         phase: String,
-        actionDeadline: TimeInterval? = nil
+        deadline: AutomationCaptureDeadline? = nil
     ) async throws -> AutomationObservation {
         let frame = try await captureAutomationFrame(
             requestedID: requestedID,
@@ -18,7 +18,7 @@ extension MirrorProbeRuntime {
             expectedFrame: expectedFrame,
             recovery: recovery,
             phase: phase,
-            actionDeadline: actionDeadline
+            deadline: deadline
         )
         let observation = try recognizeAutomationFrame(frame, captureRecorder: captureRecorder)
         try recovery.checkSessionBoundary()
@@ -31,12 +31,12 @@ extension MirrorProbeRuntime {
         expectedFrame: CGRect,
         recovery: AutomationWindowRecoveryContext,
         phase: String,
-        actionDeadline: TimeInterval? = nil
+        deadline: AutomationCaptureDeadline? = nil
     ) async throws -> AutomationCapturedFrame {
         let window = try await selectAutomationWindow(
             requestedID: requestedID, expectedIdentity: expectedIdentity,
             expectedFrame: expectedFrame, recovery: recovery,
-            phase: phase, actionDeadline: actionDeadline
+            phase: phase, deadline: deadline
         )
         guard let application = window.owningApplication,
               application.processID == expectedIdentity.processID,
@@ -44,13 +44,20 @@ extension MirrorProbeRuntime {
         else {
             throw ProbeError.unsafeWindow("the iPhone Mirroring process or window identity changed")
         }
-        guard approximatelyEqual(window.frame, expectedFrame, tolerance: 0.5) else {
-            throw ProbeError.unsafeWindow("the iPhone Mirroring window moved or resized during automation")
+        let acceptedFrame = recovery.currentFrame ?? expectedFrame
+        guard approximatelyEqual(window.frame, acceptedFrame, tolerance: 0.5) else {
+            throw ProbeError.unsafeWindow(
+                "the iPhone Mirroring window moved or resized before capture; phase=\(phase), "
+                    + "expectedFrame=\(acceptedFrame), actualFrame=\(window.frame)"
+            )
         }
         let image = try await capture(window: window)
         try recovery.checkSessionBoundary()
         let capturedAt = ProcessInfo.processInfo.systemUptime
         let rgba = try rgbaFrame(from: image)
+        recovery.recordCaptureLayout(
+            width: rgba.width, height: rgba.height, bytesPerRow: rgba.bytesPerRow
+        )
         let frameMetrics = try FrameAnalyzer.analyzeRGBA(
             rgba.bytes,
             width: rgba.width,

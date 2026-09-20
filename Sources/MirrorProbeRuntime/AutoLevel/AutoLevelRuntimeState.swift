@@ -27,18 +27,41 @@ struct AutomationObservation {
     let fingerprint: String
 }
 
-/// A missing window invalidates all pixel continuity, even when it returns within one poll.
+/// A missing window or changed frame invalidates pixel continuity, even within one poll.
 final class AutomationWindowRecoveryContext {
     let stopURL: URL
     let sessionDeadline: TimeInterval?
     private(set) var generation: UInt64 = 0
+    private(set) var currentFrame: CGRect?
+    private var captureLayout: CaptureLayout?
 
-    init(stopURL: URL, sessionDeadline: TimeInterval?) {
-        self.stopURL = stopURL
-        self.sessionDeadline = sessionDeadline
+    private struct CaptureLayout: Equatable {
+        let width: Int
+        let height: Int
+        let bytesPerRow: Int
     }
 
-    func interruptContinuity() { generation &+= 1 }
+    init(stopURL: URL, sessionDeadline: TimeInterval?, initialFrame: CGRect? = nil) {
+        self.stopURL = stopURL
+        self.sessionDeadline = sessionDeadline
+        currentFrame = initialFrame
+    }
+
+    func interruptContinuity() {
+        generation &+= 1
+        captureLayout = nil
+    }
+
+    /// Moving between displays can change backing pixels even when the point frame is equal.
+    func recordCaptureLayout(width: Int, height: Int, bytesPerRow: Int) {
+        let layout = CaptureLayout(width: width, height: height, bytesPerRow: bytesPerRow)
+        if let captureLayout, captureLayout != layout { interruptContinuity() }
+        captureLayout = layout
+    }
+
+    /// Called only after the same window has returned a stable frame during bounded recovery.
+    /// Captures must be rebuilt; this value never authorizes an input by itself.
+    func acceptStableFrame(_ frame: CGRect) { currentFrame = frame }
 
     func checkSessionBoundary() throws {
         if applicationStopRequest.isRequested(stopFileURL: stopURL) {

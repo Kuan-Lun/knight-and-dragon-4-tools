@@ -57,6 +57,9 @@ public enum GameEvidenceKind: String, Codable, Equatable, Sendable {
     case battleEncounterDescription
     case battleEncounterClose
     case battleMarker
+    /// The battle footer could not be recognized. Any retained glyph matches are diagnostic
+    /// until a separate, same-battle recognition-timeout policy authorizes recovery.
+    case battleFooterOcclusion
     case defeatMarker
     case inventoryFullMarker
     case invalidObservation

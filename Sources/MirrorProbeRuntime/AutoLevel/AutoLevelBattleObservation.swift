@@ -4,6 +4,23 @@ import MirrorProbeCore
 import ScreenCaptureKit
 
 extension MirrorProbeRuntime {
+    static func automationBattleRecognitionSample(
+        _ observation: AutomationObservation,
+        identity: AutoLevelWindowIdentity,
+        battleSessionID: String?,
+        inputGeneration: UInt64
+    ) -> BattleRecognitionRecoverySample {
+        .init(
+            classification: observation.classification,
+            runtime: .init(
+                observedAt: observation.capturedAt, windowIdentity: identity,
+                frameFingerprint: observation.fingerprint, battleSessionID: battleSessionID
+            ),
+            context: automationBattleContext(for: observation, identity: identity),
+            inputGeneration: inputGeneration
+        )
+    }
+
     static func automationBattleContext(
         for observation: AutomationObservation,
         identity: AutoLevelWindowIdentity
@@ -64,6 +81,22 @@ extension MirrorProbeRuntime {
             height: current.height,
             bytesPerRow: current.bytesPerRow,
             region: BattleStallDetector.battleROI
+        )
+    }
+
+    static func automationActionFrameDifference(
+        before: RGBAFrame,
+        after: RGBAFrame,
+        continuityUnchanged: Bool
+    ) throws -> Double? {
+        guard continuityUnchanged,
+              before.width == after.width,
+              before.height == after.height,
+              before.bytesPerRow == after.bytesPerRow
+        else { return nil }
+        return try FrameAnalyzer.meanAbsoluteDifferenceRGBA(
+            before.bytes, after.bytes, width: before.width, height: before.height,
+            bytesPerRow: before.bytesPerRow
         )
     }
 

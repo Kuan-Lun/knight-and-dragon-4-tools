@@ -1,0 +1,605 @@
+{
+  "version": "0.4.33",
+  "build": "56",
+  "executableSHA256": "b8661b57d06f3a4cd5fdfda36cb5619712272bea828a9e29931fba77d3d0c277",
+  "checks": {
+    "swiftCoreTests": 642,
+    "swiftRuntimeTests": 43,
+    "xctestCases": 2,
+    "autoLevelLauncherCases": 55,
+    "rerollLauncherCases": 84,
+    "restartSupervisorTests": 15,
+    "packagedCLIIntegrationTests": 18,
+    "codesignVerification": "passed",
+    "originalLauncherDryRun": "passed",
+    "releaseBuild": "passed via Scripts/build-app.sh after sandbox denied dsymutil",
+    "packagedPermissions": {
+      "screenCapturePermission": "missing",
+      "postEventPermission": "missing"
+    }
+  },
+  "liveGameInputPosted": false,
+  "eightHourRunVerified": false,
+  "recognitionMode": "visualRegions",
+  "frames": [
+    {
+      "captureSequence": 13,
+      "pngSHA256": "8d48edffb9c0a507dd002469b020692408711dcc93a740511ca78adf906abc22",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "battleVisualMatch": {
+              "marker": "skipControl",
+              "region": {
+                "height": 0.023,
+                "width": 0.09,
+                "x": 0.075,
+                "y": 0.87
+              },
+              "similarity": 0.9836661952733421
+            },
+            "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9836661952733421, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "allAutoControl",
+              "region": {
+                "height": 0.021,
+                "width": 0.14,
+                "x": 0.225,
+                "y": 0.87
+              },
+              "similarity": 0.9484862261342313
+            },
+            "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.9484862261342313, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "retreatControl",
+              "region": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "similarity": 0.955669415513283
+            },
+            "detail": "source=battleVisualV1, marker=retreatControl, similarity=0.955669415513283, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          }
+        ],
+        "policyGatedActions": [
+          {
+            "name": "openBattleRetreatConfirmation",
+            "requirement": "temporalDefeatRecovery",
+            "target": {
+              "name": "battleRetreat",
+              "point": {
+                "x": 0.8825,
+                "y": 0.667
+              },
+              "rect": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "sourceText": "<measured-visual-battle-retreat>"
+            }
+          }
+        ],
+        "state": "battle"
+      }
+    },
+    {
+      "captureSequence": 14,
+      "pngSHA256": "d1c6de9ce3feb03434b97518f5576233abf054a1af50311ece3657266ecb79b1",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "battleVisualMatch": {
+              "marker": "skipControl",
+              "region": {
+                "height": 0.023,
+                "width": 0.09,
+                "x": 0.075,
+                "y": 0.87
+              },
+              "similarity": 0.9836657344592422
+            },
+            "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9836657344592422, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "allAutoControl",
+              "region": {
+                "height": 0.021,
+                "width": 0.14,
+                "x": 0.225,
+                "y": 0.87
+              },
+              "similarity": 0.948477674774459
+            },
+            "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.948477674774459, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "retreatControl",
+              "region": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "similarity": 0.9556817597174821
+            },
+            "detail": "source=battleVisualV1, marker=retreatControl, similarity=0.9556817597174821, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          }
+        ],
+        "policyGatedActions": [
+          {
+            "name": "openBattleRetreatConfirmation",
+            "requirement": "temporalDefeatRecovery",
+            "target": {
+              "name": "battleRetreat",
+              "point": {
+                "x": 0.8825,
+                "y": 0.667
+              },
+              "rect": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "sourceText": "<measured-visual-battle-retreat>"
+            }
+          }
+        ],
+        "state": "battle"
+      }
+    },
+    {
+      "captureSequence": 15,
+      "pngSHA256": "7e077e9f7e52c186ea79c42d0e8a37450cd6a4899e1561c5f9d326ab340c254f",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "battleVisualMatch": {
+              "marker": "skipControl",
+              "region": {
+                "height": 0.023,
+                "width": 0.09,
+                "x": 0.075,
+                "y": 0.87
+              },
+              "similarity": 0.9836657344592422
+            },
+            "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9836657344592422, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "allAutoControl",
+              "region": {
+                "height": 0.021,
+                "width": 0.14,
+                "x": 0.225,
+                "y": 0.87
+              },
+              "similarity": 0.9484833440481601
+            },
+            "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.9484833440481601, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "retreatControl",
+              "region": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "similarity": 0.955686424215589
+            },
+            "detail": "source=battleVisualV1, marker=retreatControl, similarity=0.955686424215589, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          }
+        ],
+        "policyGatedActions": [
+          {
+            "name": "openBattleRetreatConfirmation",
+            "requirement": "temporalDefeatRecovery",
+            "target": {
+              "name": "battleRetreat",
+              "point": {
+                "x": 0.8825,
+                "y": 0.667
+              },
+              "rect": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "sourceText": "<measured-visual-battle-retreat>"
+            }
+          }
+        ],
+        "state": "battle"
+      }
+    },
+    {
+      "captureSequence": 16,
+      "pngSHA256": "1b7042959c27facd4317d367ccdf30508dd5bffa4d9e4219e7eaa152a840011e",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "battleVisualMatch": {
+              "marker": "skipControl",
+              "region": {
+                "height": 0.023,
+                "width": 0.09,
+                "x": 0.075,
+                "y": 0.87
+              },
+              "similarity": 0.9836657344592422
+            },
+            "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9836657344592422, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "allAutoControl",
+              "region": {
+                "height": 0.021,
+                "width": 0.14,
+                "x": 0.225,
+                "y": 0.87
+              },
+              "similarity": 0.9484833440481601
+            },
+            "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.9484833440481601, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "retreatControl",
+              "region": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "similarity": 0.9556963991101336
+            },
+            "detail": "source=battleVisualV1, marker=retreatControl, similarity=0.9556963991101336, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          }
+        ],
+        "policyGatedActions": [
+          {
+            "name": "openBattleRetreatConfirmation",
+            "requirement": "temporalDefeatRecovery",
+            "target": {
+              "name": "battleRetreat",
+              "point": {
+                "x": 0.8825,
+                "y": 0.667
+              },
+              "rect": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "sourceText": "<measured-visual-battle-retreat>"
+            }
+          }
+        ],
+        "state": "battle"
+      }
+    },
+    {
+      "captureSequence": 17,
+      "pngSHA256": "c897659b2216af769252d475f72c0751ee70dbd0b76e54ccc5887568edcce1a2",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "battleVisualMatch": {
+              "marker": "skipControl",
+              "region": {
+                "height": 0.023,
+                "width": 0.09,
+                "x": 0.075,
+                "y": 0.87
+              },
+              "similarity": 0.9836527058829544
+            },
+            "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9836527058829544, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "allAutoControl",
+              "region": {
+                "height": 0.021,
+                "width": 0.14,
+                "x": 0.225,
+                "y": 0.87
+              },
+              "similarity": 0.9484785536074722
+            },
+            "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.9484785536074722, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "retreatControl",
+              "region": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "similarity": 0.9556840128974007
+            },
+            "detail": "source=battleVisualV1, marker=retreatControl, similarity=0.9556840128974007, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          }
+        ],
+        "policyGatedActions": [
+          {
+            "name": "openBattleRetreatConfirmation",
+            "requirement": "temporalDefeatRecovery",
+            "target": {
+              "name": "battleRetreat",
+              "point": {
+                "x": 0.8825,
+                "y": 0.667
+              },
+              "rect": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "sourceText": "<measured-visual-battle-retreat>"
+            }
+          }
+        ],
+        "state": "battle"
+      }
+    },
+    {
+      "captureSequence": 18,
+      "pngSHA256": "761b20067c3b03a39196720d81c5e3e38c9090a88918a2e03730889a2dfb0c16",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "battleVisualMatch": {
+              "marker": "skipControl",
+              "region": {
+                "height": 0.023,
+                "width": 0.09,
+                "x": 0.075,
+                "y": 0.87
+              },
+              "similarity": 0.9836358953838171
+            },
+            "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9836358953838171, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "allAutoControl",
+              "region": {
+                "height": 0.021,
+                "width": 0.14,
+                "x": 0.225,
+                "y": 0.87
+              },
+              "similarity": 0.9485014425375717
+            },
+            "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.9485014425375717, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "retreatControl",
+              "region": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "similarity": 0.9556359152809357
+            },
+            "detail": "source=battleVisualV1, marker=retreatControl, similarity=0.9556359152809357, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          }
+        ],
+        "policyGatedActions": [
+          {
+            "name": "openBattleRetreatConfirmation",
+            "requirement": "temporalDefeatRecovery",
+            "target": {
+              "name": "battleRetreat",
+              "point": {
+                "x": 0.8825,
+                "y": 0.667
+              },
+              "rect": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "sourceText": "<measured-visual-battle-retreat>"
+            }
+          }
+        ],
+        "state": "battle"
+      }
+    },
+    {
+      "captureSequence": 19,
+      "pngSHA256": "eed4bc483515c7ab1ab2c7ed9d1db1988c41ccb5a2bae1d329673a684414f930",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "battleVisualMatch": {
+              "marker": "skipControl",
+              "region": {
+                "height": 0.023,
+                "width": 0.09,
+                "x": 0.075,
+                "y": 0.87
+              },
+              "similarity": 0.9836101419657154
+            },
+            "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9836101419657154, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "allAutoControl",
+              "region": {
+                "height": 0.021,
+                "width": 0.14,
+                "x": 0.225,
+                "y": 0.87
+              },
+              "similarity": 0.9484947015135569
+            },
+            "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.9484947015135569, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "retreatControl",
+              "region": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "similarity": 0.9556426388626849
+            },
+            "detail": "source=battleVisualV1, marker=retreatControl, similarity=0.9556426388626849, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          }
+        ],
+        "policyGatedActions": [
+          {
+            "name": "openBattleRetreatConfirmation",
+            "requirement": "temporalDefeatRecovery",
+            "target": {
+              "name": "battleRetreat",
+              "point": {
+                "x": 0.8825,
+                "y": 0.667
+              },
+              "rect": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "sourceText": "<measured-visual-battle-retreat>"
+            }
+          }
+        ],
+        "state": "battle"
+      }
+    },
+    {
+      "captureSequence": 20,
+      "pngSHA256": "d9c54a4350e8b67c2ed8c05b9c5cc9e8247298382750bb3a49c40924701a3fec",
+      "classification": {
+        "allowedActions": [],
+        "evidence": [
+          {
+            "battleVisualMatch": {
+              "marker": "skipControl",
+              "region": {
+                "height": 0.023,
+                "width": 0.09,
+                "x": 0.075,
+                "y": 0.87
+              },
+              "similarity": 0.9836101419657154
+            },
+            "detail": "source=battleVisualV1, marker=skipControl, similarity=0.9836101419657154, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "allAutoControl",
+              "region": {
+                "height": 0.021,
+                "width": 0.14,
+                "x": 0.225,
+                "y": 0.87
+              },
+              "similarity": 0.9484947015135569
+            },
+            "detail": "source=battleVisualV1, marker=allAutoControl, similarity=0.9484947015135569, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          },
+          {
+            "battleVisualMatch": {
+              "marker": "retreatControl",
+              "region": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "similarity": 0.9556378570667325
+            },
+            "detail": "source=battleVisualV1, marker=retreatControl, similarity=0.9556378570667325, minimumSimilarity=0.94",
+            "kind": "battleMarker"
+          }
+        ],
+        "policyGatedActions": [
+          {
+            "name": "openBattleRetreatConfirmation",
+            "requirement": "temporalDefeatRecovery",
+            "target": {
+              "name": "battleRetreat",
+              "point": {
+                "x": 0.8825,
+                "y": 0.667
+              },
+              "rect": {
+                "height": 0.024,
+                "width": 0.085,
+                "x": 0.84,
+                "y": 0.655
+              },
+              "sourceText": "<measured-visual-battle-retreat>"
+            }
+          }
+        ],
+        "state": "battle"
+      }
+    }
+  ],
+  "releaseExecutableSHA256": "0097c687d56de3e8e3262fb7a45322bd2b3c82a2907eee70b450a528631832c3",
+  "packagingNote": "App signing modifies the Mach-O signature; packaged and pre-packaging executable hashes therefore differ.",
+  "requiredUserAction": "Reauthorize Mirror Probe screen recording and accessibility in macOS privacy settings before restarting automation."
+}

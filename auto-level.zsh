@@ -79,6 +79,72 @@ report_field() {
     plutil -extract "$key" raw -expect "$expected_type" "$report_path" 2>/dev/null
 }
 
+report_nonnegative_number() {
+    local report_path=$1 key=$2 value
+
+    # JSONEncoder can emit a Double as an integer when it has no fractional part.
+    value=$(report_field "$report_path" "$key" float) \
+        || value=$(report_field "$report_path" "$key" integer) \
+        || return 1
+    LC_ALL=C awk -v value="$value" 'BEGIN {
+        if (value !~ /^[0-9]+([.][0-9]+)?([eE][+-]?[0-9]+)?$/) exit 1
+        if (value + 0 < 0 || value + 0 > 1.7976931348623157e308) exit 1
+        print value
+    }'
+}
+
+format_duration() {
+    LC_ALL=C awk -v seconds="$1" 'BEGIN {
+        seconds = int(seconds * 100 + 0.5) / 100
+        hours = int(seconds / 3600)
+        minutes = int((seconds - hours * 3600) / 60)
+        remainder = seconds - hours * 3600 - minutes * 60
+        if (hours > 0) printf "%d 小時 %d 分 %.2f 秒", hours, minutes, remainder
+        else if (minutes > 0) printf "%d 分 %.2f 秒", minutes, remainder
+        else printf "%.2f 秒", remainder
+    }'
+}
+
+print_duration_field() {
+    local report_path=$1 key=$2 label=$3 value
+    if value=$(report_nonnegative_number "$report_path" "timing.$key"); then
+        print -r -- "  $key ($label): $(format_duration "$value")"
+    else
+        print -r -- "  $key ($label): 尚無資料"
+    fi
+}
+
+print_timing_summary() {
+    local report_path=$1 timestamp rate
+
+    if timestamp=$(report_field "$report_path" startedAt string) && [[ -n "$timestamp" ]]; then
+        print -r -- "  startedAt (開始時間): $timestamp"
+    fi
+    if timestamp=$(report_field "$report_path" endedAt string) && [[ -n "$timestamp" ]]; then
+        print -r -- "  endedAt (結束時間): $timestamp"
+    fi
+    if ! report_field "$report_path" timing dictionary >/dev/null; then
+        print -r -- '  時間統計：尚無時間統計（舊版報告或未提供）'
+        return 0
+    fi
+
+    print_duration_field "$report_path" elapsedSeconds '總執行時間'
+    print_duration_field "$report_path" completedCycleTotalSeconds '已完成場次合計耗時'
+    print_duration_field "$report_path" averageCycleSeconds '平均每場耗時'
+    print_duration_field "$report_path" medianCycleSeconds '每場耗時中位數'
+    print_duration_field "$report_path" fastestCycleSeconds '最快一場耗時'
+    print_duration_field "$report_path" slowestCycleSeconds '最慢一場耗時'
+    print_duration_field "$report_path" lastCycleSeconds '最後一場耗時'
+    print_duration_field "$report_path" secondsSinceLastCycle '最後一場完成後經過時間'
+    if rate=$(report_nonnegative_number "$report_path" timing.cyclesPerHour); then
+        LC_ALL=C printf '  cyclesPerHour (每小時完成場次): %.2f 場／小時\n' "$rate"
+    else
+        print -r -- '  cyclesPerHour (每小時完成場次): 尚無資料'
+    fi
+    print -r -- '  計時說明：首場由本次程序開始時計算，可能是不完整的一場；平均與中位數只計已完成場次，不含最後尚未完成的時間。'
+    print -r -- '  每小時完成場次以完成場次除以總執行時間計算，包含最後尚未完成的時間。'
+}
+
 print_wait_stderr() {
     local stderr_path=$1
     local heading=${2:-'Mirror Probe 回報 status=error，stderr 內容：'}
@@ -335,6 +401,12 @@ if (( open_status != 0 )); then
     runtime_fail "open 指令失敗（狀態碼 $open_status）；請檢查執行報告與錯誤紀錄"
 fi
 
+if (( wait_for_completion == 1 )); then
+    # An outer supervisor must distinguish an App error from a failed/interrupted open -W.
+    # Write this only after a successful wait, never while the App is starting or running.
+    print -r -- '{"openWaitCompleted":true}' > "$run_dir/.launcher-wait.json"
+fi
+
 if (( wait_for_completion == 1 )) && [[ ! -f "$run_dir/run-report.json" ]]; then
     if [[ -s "$stderr_log" ]]; then
         print_wait_stderr "$stderr_log" 'Mirror Probe 未能建立執行報告，錯誤內容：'
@@ -383,6 +455,7 @@ if (( wait_for_completion == 1 )); then
     print -r -- "  completedCycles: $report_completed_cycles"
     print -r -- "  actionsPosted: $report_actions_posted"
     print -r -- "  finalReason: $report_final_reason"
+    print_timing_summary "$report_path"
 
     case "$report_status" in
         completed|stopped)

@@ -25,6 +25,7 @@ extension MirrorProbeRuntime {
         report: inout AutomationRunReport,
         reportURL: URL
     ) throws {
+        report.timing?.updateElapsed(elapsed)
         report.events.append(AutomationRunEvent(
             sequence: report.events.count + 1,
             timestamp: ISO8601DateFormatter().string(from: Date()),

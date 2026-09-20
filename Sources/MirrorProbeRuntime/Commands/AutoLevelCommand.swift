@@ -92,7 +92,7 @@ extension MirrorProbeRuntime {
         defer { windowRunLock.release() }
         let initialFrame = initialWindow.frame
         let windowRecovery = AutomationWindowRecoveryContext(
-            stopURL: stopURL, sessionDeadline: sessionDeadline
+            stopURL: stopURL, sessionDeadline: sessionDeadline, initialFrame: initialFrame
         )
         let limits = AutomationLimitsReport(
             maximumCycles: maximumCycles,
@@ -119,7 +119,8 @@ extension MirrorProbeRuntime {
             finalReason: nil,
             diagnosticScreenshots: [],
             diagnosticPersistenceErrors: [],
-            events: []
+            events: [],
+            timing: AutomationTimingReport()
         )
         do {
             let initialObservation = try await captureAutomationObservation(

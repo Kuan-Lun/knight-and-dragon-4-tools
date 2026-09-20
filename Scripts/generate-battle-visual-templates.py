@@ -10,6 +10,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 ONE = "Tests/MirrorProbeCoreTests/Fixtures/active-battle-control-grid.png"
 TWO = "Tests/MirrorProbeCoreTests/Fixtures/visual-battle-native-2x.png"
+NATIVE_402 = "Tests/MirrorProbeCoreTests/Fixtures/native-402-battle-capture-0013.png"
 REGIONS = {
     # Start below the changing party/footer border, even at the matcher's
     # one-logical-pixel upward offset. Keep the original lower edges.
@@ -34,7 +35,13 @@ def sample(path, region, dx=0, dy=0):
 
 
 def sources(marker):
-    return [(ONE, REGIONS[marker][0]), (TWO, REGIONS[marker][0])]
+    paths = [ONE, TWO]
+    # Native 402x882 rasterization differs from the original 406x890/2x glyphs.
+    # Only skip needs another sample; the other required controls already match.
+    # Later incident frames remain replay inputs, not template calibration sources.
+    if marker == "skipControl":
+        paths.append(NATIVE_402)
+    return [(path, REGIONS[marker][0]) for path in paths]
 
 
 def main():

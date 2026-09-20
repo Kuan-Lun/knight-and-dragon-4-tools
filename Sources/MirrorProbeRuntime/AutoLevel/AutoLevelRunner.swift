@@ -42,6 +42,7 @@ extension MirrorProbeRuntime {
         )
         var controller = AutoLevelController(session: session, policy: policy)
         var battleTracker = AutomationBattleTracker()
+        var battleRecognitionRecovery = BattleRecognitionRecovery()
         var autoEnabledBattleIDs = Set<String>()
         var stallDetector = BattleStallDetector(configuration: BattleStallConfiguration(
             suspectedAfter: 3,
@@ -95,17 +96,20 @@ extension MirrorProbeRuntime {
                 observation = try await captureAutomationObservation(
                     requestedID: identity.windowID,
                     expectedIdentity: identity,
-                    expectedFrame: initialFrame,
+                    expectedFrame: windowRecovery.currentFrame ?? initialFrame,
                     captureRecorder: captureRecorder,
                     recovery: windowRecovery,
                     phase: "observation",
-                    actionDeadline: controller.pendingActionAcknowledgementDeadline
+                    deadline: controller.pendingActionAcknowledgementDeadline.map(
+                        AutomationCaptureDeadline.actionAcknowledgement
+                    )
                 )
             }
             let windowContinuityChanged = observation.windowContinuityGeneration
                 != handledWindowContinuityGeneration
             if windowContinuityChanged {
                 startupBattleRecovery = nil
+                battleRecognitionRecovery.reset()
                 handledWindowContinuityGeneration = observation.windowContinuityGeneration
                 needsProgressAfterWindowRecovery = true
                 inputGeneration &+= 1
@@ -120,7 +124,7 @@ extension MirrorProbeRuntime {
                     decision: "rebuildVisualEvidence",
                     action: nil, target: nil,
                     frameFingerprint: observation.fingerprint,
-                    detail: "sameProcessAndWindowVerified=true, continuityGeneration=\(handledWindowContinuityGeneration), stalePixelEvidenceDiscarded=true",
+                    detail: "sameProcessAndWindowVerified=true, continuityGeneration=\(handledWindowContinuityGeneration), stalePixelEvidenceDiscarded=true, currentFrame=\(observation.window.frame)",
                     screenshotPath: nil,
                     elapsed: observation.capturedAt - startedAt,
                     report: &report, reportURL: reportURL
@@ -135,6 +139,7 @@ extension MirrorProbeRuntime {
             )
             if freshness != .fresh {
                 startupBattleRecovery = nil
+                battleRecognitionRecovery.reset()
                 guard freshness != .invalidTiming else {
                     throw ProbeError.unsafeWindow("the observation freshness timing was invalid")
                 }
@@ -160,7 +165,9 @@ extension MirrorProbeRuntime {
                     )
                 )
                 let staleDecision = controller.consume(staleSnapshot, allowNewActions: false)
-                report.completedCycles = controller.completedCycles
+                report.recordCompletedCycles(
+                    controller.completedCycles, elapsed: observation.capturedAt - startedAt
+                )
                 let age = observationDecisionAt - observation.capturedAt
                 let staleDetail = "captureAgeSeconds=\(age), "
                     + "recognitionDurationSeconds=\(observation.recognitionDurationSeconds), "
@@ -248,6 +255,12 @@ extension MirrorProbeRuntime {
             let battleContext = automationBattleContext(
                 for: observation,
                 identity: identity
+            )
+            let recognitionRecovery = battleRecognitionRecovery.observe(
+                automationBattleRecognitionSample(
+                    observation, identity: identity, battleSessionID: battleID,
+                    inputGeneration: inputGeneration
+                )
             )
             let regionDifference = try automationBattleRegionDifference(
                 previous: previousTemporalFrame,
@@ -491,7 +504,7 @@ extension MirrorProbeRuntime {
                     confirmation,
                     anchor: observation,
                     identity: identity,
-                    expectedFrame: initialFrame,
+                    expectedFrame: windowRecovery.currentFrame ?? initialFrame,
                     inputGeneration: inputGeneration,
                     sessionDeadline: windowRecovery.sessionDeadline,
                     stopURL: stopURL,
@@ -591,8 +604,12 @@ extension MirrorProbeRuntime {
                 classification: observation.classification,
                 runtime: runtime
             )
-            let decision = controller.consume(snapshot)
-            report.completedCycles = controller.completedCycles
+            let decision = controller.consume(
+                snapshot, battleRecognitionRecovery: recognitionRecovery
+            )
+            report.recordCompletedCycles(
+                controller.completedCycles, elapsed: observation.capturedAt - startedAt
+            )
 
             let signature = "\(observation.classification.state.rawValue)|"
                 + "\(String(describing: decision))|\(stallAssessment.phase.rawValue)"
@@ -603,6 +620,10 @@ extension MirrorProbeRuntime {
                     + ", captureAgeSeconds=\(ProcessInfo.processInfo.systemUptime - observation.capturedAt)"
                     + ", recognitionDurationSeconds=\(observation.recognitionDurationSeconds)"
                     + ", startupRecoveryEligible=\(startupBattleRecovery?.isEligible == true)"
+                if let recognitionRecovery {
+                    detail += ", battleRecognitionRecoverySeconds=\(recognitionRecovery.elapsedSeconds), "
+                        + "recognitionRecoveryReady=\(recognitionRecovery.isReady), recoveryTimeoutSeconds=30"
+                }
                 let evidence = observation.classification.evidence.map { item in
                     "\(item.kind.rawValue): \(item.detail)"
                 }.joined(separator: "; ")
@@ -629,7 +650,6 @@ extension MirrorProbeRuntime {
                 continue
 
             case let .completedCycle(completion):
-                report.completedCycles = completion.count
                 try appendAutomationEvent(
                     kind: "cycleCompleted",
                     state: observation.classification.state,
@@ -791,7 +811,7 @@ extension MirrorProbeRuntime {
                     let preflightResult = try await activateAndPreflightAutomationAction(
                         request,
                         identity: identity,
-                        expectedFrame: initialFrame,
+                        expectedFrame: windowRecovery.currentFrame ?? initialFrame,
                         inputMode: inputMode,
                         expectedFocusSourceProcessID: focusBorrow?.previousProcessID,
                         activationAttempt: activationRetry.currentAttempt,
@@ -803,7 +823,9 @@ extension MirrorProbeRuntime {
                         captureRecorder: captureRecorder,
                         windowRecovery: windowRecovery,
                         actionDeadline: actionDeadline,
-                        expectedResultPage: expectedResultPage
+                        expectedResultPage: expectedResultPage,
+                        battleRecognitionRecovery: recognitionRecovery,
+                        inputGeneration: inputGeneration
                     )
                     let preflight: AutomationObservation
                     let confirmedTarget: AutoLevelActionTarget
@@ -1088,7 +1110,44 @@ extension MirrorProbeRuntime {
                         }
                     }
 
-                    if request.intent == .requestRetreat {
+                    if request.intent == .requestRetreat, let recognitionRecovery {
+                        // Timeout recovery does not claim frozen pixels: combat effects may
+                        // still be moving. Revalidate its own history and visible retreat proof.
+                        guard preflight.windowContinuityGeneration == observation.windowContinuityGeneration,
+                              recognitionRecovery.canPreflight(automationBattleRecognitionSample(
+                                  preflight, identity: identity, battleSessionID: battleID,
+                                  inputGeneration: inputGeneration
+                              ))
+                        else {
+                            focusBorrow?.restore()
+                            guard controller.cancelUnpostedRetreat(request) else {
+                                throw ProbeError.unsafeWindow("the recognition-timeout retreat could not be cancelled")
+                            }
+                            battleRecognitionRecovery.reset()
+                            currentObservation = preflight
+                            lastObservation = preflight
+                            try appendAutomationEvent(
+                                kind: "battleRecognitionRecoveryCancelled",
+                                state: preflight.classification.state, decision: "continueObservation",
+                                action: request.intent, target: request.target,
+                                frameFingerprint: preflight.fingerprint,
+                                detail: "recognitionRecoveryPreflightContinuityLost, noInputPosted=true",
+                                screenshotPath: nil, elapsed: preflight.capturedAt - startedAt,
+                                report: &report, reportURL: reportURL
+                            )
+                            continue automationLoop
+                        }
+                        try appendAutomationEvent(
+                            kind: "battleRecognitionRecoveryConfirmed",
+                            state: preflight.classification.state, decision: "retreatAfterRecognitionTimeout",
+                            action: request.intent, target: confirmedTarget,
+                            frameFingerprint: preflight.fingerprint,
+                            detail: "unknownSeconds=\(recognitionRecovery.elapsedSeconds), "
+                                + "timeoutSeconds=30, freshRetreatVerified=true, noInputPosted=true",
+                            screenshotPath: nil, elapsed: preflight.capturedAt - startedAt,
+                            report: &report, reportURL: reportURL
+                        )
+                    } else if request.intent == .requestRetreat {
                         if preflight.windowContinuityGeneration != observation.windowContinuityGeneration {
                             retreatVisualConfirmation = nil
                         }
@@ -1154,7 +1213,7 @@ extension MirrorProbeRuntime {
                         using: preflight,
                         activation: activation,
                         identity: identity,
-                        expectedFrame: initialFrame,
+                        expectedFrame: preflight.window.frame,
                         inputMode: inputMode,
                         actionDeadline: actionDeadline,
                         sessionDeadline: sessionDeadline,
@@ -1168,8 +1227,9 @@ extension MirrorProbeRuntime {
                             )
                         }
                         report.actionsPosted += 1
-                        if request.intent == .requestRetreat, startupVisualConfirmation != nil {
+                        if request.intent == .requestRetreat {
                             allAutoProgressValidator.reset()
+                            battleRecognitionRecovery.reset()
                         }
                         postedPreflight = preflight
                         postedActionTime = postedAt
@@ -1204,11 +1264,11 @@ extension MirrorProbeRuntime {
                         postedAfter = try await captureAutomationObservation(
                             requestedID: identity.windowID,
                             expectedIdentity: identity,
-                            expectedFrame: initialFrame,
+                            expectedFrame: windowRecovery.currentFrame ?? initialFrame,
                             captureRecorder: captureRecorder,
                             recovery: windowRecovery,
                             phase: "afterPost",
-                            actionDeadline: postedAt + policy.postActionTimeout
+                            deadline: .actionAcknowledgement(postedAt + policy.postActionTimeout)
                         )
                         focusBorrow?.restore()
                         break activationAttemptLoop
@@ -1360,12 +1420,12 @@ extension MirrorProbeRuntime {
                     try writePNG(preflight.image, to: beforeURL)
                     try writePNG(after.image, to: afterURL)
                 }
-                let frameDifference = try FrameAnalyzer.meanAbsoluteDifferenceRGBA(
-                    preflight.rgba.bytes,
-                    after.rgba.bytes,
-                    width: preflight.rgba.width,
-                    height: preflight.rgba.height,
-                    bytesPerRow: preflight.rgba.bytesPerRow
+                // A display change can alter pixel dimensions/scale between input and its
+                // acknowledgement. Do not read the new buffer using the old frame's layout.
+                let frameDifference = try automationActionFrameDifference(
+                    before: preflight.rgba, after: after.rgba,
+                    continuityUnchanged: preflight.windowContinuityGeneration
+                        == after.windowContinuityGeneration
                 )
                 let captureDetail = afterURL.map { "after=\($0.path)" }
                     ?? "actionScreenshotsPersisted=false"
@@ -1380,7 +1440,7 @@ extension MirrorProbeRuntime {
                         + "activationAttempts=\(activationRetry.currentAttempt), "
                         + "resultObservationFailures=\(resultObservationFailures), \(captureDetail), "
                         + "focusRestorationAfterPostCapture=\(inputMode == .foreground), "
-                        + "meanAbsoluteDifference=\(frameDifference)",
+                        + "meanAbsoluteDifference=\(frameDifference.map { String($0) } ?? "unavailableAfterWindowChange")",
                     screenshotPath: beforeURL?.path,
                     elapsed: after.capturedAt - startedAt,
                     report: &report,

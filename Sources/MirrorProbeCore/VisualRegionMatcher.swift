@@ -15,11 +15,15 @@ public enum VisualRegionMatcher {
               bytesPerRow <= Int.max / height, bytes.count >= bytesPerRow * height
         else { return -1 }
         var best = -1.0
-        for dy in [-1.0 / 890.0, 0, 1.0 / 890.0] {
-            for dx in [-1.0 / 406.0, 0, 1.0 / 406.0] {
+        // Native window sizes can place glyphs between the reference pixel centers.
+        // Sample quarter-pixel offsets too, keeping the same one-pixel search radius:
+        // 404×874 result labels need half offsets and the retreat glyph needs a quarter.
+        let offsets = [-1.0, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0]
+        for yOffset in offsets {
+            for xOffset in offsets {
                 guard let sample = sample(
                     bytes, width: width, height: height, bytesPerRow: bytesPerRow,
-                    region: region, dx: dx, dy: dy,
+                    region: region, dx: xOffset / 406.0, dy: yOffset / 890.0,
                     sampleWidth: sampleWidth, sampleHeight: sampleHeight
                 ) else { continue }
                 for template in templates {

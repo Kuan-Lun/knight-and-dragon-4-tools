@@ -1,0 +1,9 @@
+{
+  "source": "logs/auto-level-20260916-032136.jY21AC/final.png",
+  "incident": "2026-09-16T01:13:20Z",
+  "pngSHA256": "2f304ad2a6042549fd7ddf166c58de1ae93e2c6c656db3790d1192a4a22b9a54",
+  "expectedState": "missionFailed",
+  "expectedPage": "experience",
+  "expectedRepeatSelection": "unselected",
+  "note": "Byte-identical final capture retained to replay acknowledgement timeout without input events."
+}

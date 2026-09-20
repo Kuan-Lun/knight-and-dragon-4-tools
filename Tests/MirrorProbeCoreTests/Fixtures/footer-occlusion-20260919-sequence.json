@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "sourceRun": "logs/auto-level-20260919-130059.tJLHuZ",
+  "sourceReportSHA256": "1f46803213e78b71c7a585751fa7a3c45ddb8d441ef72d350e4560b9df2650df",
+  "originalRecognitionMode": "visualRegions",
+  "originalFinalReason": "uncertainStateExceededGrace(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown)",
+  "originalCompletedCycles": 227,
+  "originalSimilarityThreshold": 0.94,
+  "note": "All eight retained original PNGs are copied byte-for-byte, including duplicate captures. Original marker scores are the recorded report values (five decimal places on rejected classifications); the manifest does not claim higher precision. Damage/healing effects are visible above the footer, but these retained images alone do not establish exactly why the footer similarity dropped. A single frame is not temporal recovery authorization.",
+  "lastConfirmedBattle": {
+    "eventSequence": 3118,
+    "capturedAtElapsedSeconds": 5410.185096291665,
+    "timestamp": "2026-09-19T06:31:09Z",
+    "originalState": "battle",
+    "frameFingerprint": "5d14cf36b50097cbe8f0d8242d7c5eb8e1d1bdb6c20ebaed28bda52b6ba284e7",
+    "originalMarkerSimilarities": {
+      "skipControl": 0.9463686871521528,
+      "allAutoControl": 0.9488165412905313,
+      "retreatControl": 0.9442136296617298
+    },
+    "originalDecision": "wait(MirrorProbeCore.AutoLevelWaitReason.battleInProgress)",
+    "originalDetail": "stallPhase=monitoring, armed=true, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.031127416659728624, recognitionDurationSeconds=0.02695908333407715, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[battleMarker: source=battleVisualV1, marker=skipControl, similarity=0.9463686871521528, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=allAutoControl, similarity=0.9488165412905313, minimumSimilarity=0.94; battleMarker: source=battleVisualV1, marker=retreatControl, similarity=0.9442136296617298, minimumSimilarity=0.94]"
+  },
+  "firstUnknown": {
+    "eventSequence": 3119,
+    "capturedAtElapsedSeconds": 5426.474954374993,
+    "timestamp": "2026-09-19T06:31:26Z",
+    "originalState": "unknown",
+    "frameFingerprint": "8a939952c9919987d5b835d72b0f4d8d39252b8167b34bb78b8872589bf21ae6",
+    "originalMarkerSimilarities": {
+      "skipControl": 0.48795,
+      "allAutoControl": 0.50542,
+      "pauseControl": 0.93968,
+      "retreatControl": 0.94428
+    },
+    "originalDecision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 1))",
+    "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=paused, captureAgeSeconds=0.024065125006018206, recognitionDurationSeconds=0.021289041673298925, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44920, failureTitle=0.36435, experienceHeader=-0.10127, lootHeader=-0.08574, repeatOption=0.15546; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=0.48795, allAutoControl=0.50542, pauseControl=0.93968, retreatControl=0.94428]"
+  },
+  "sequence": [
+    {
+      "eventSequence": 3120,
+      "capturedAtElapsedSeconds": 5428.127838416665,
+      "timestamp": "2026-09-19T06:31:27Z",
+      "originalState": "unknown",
+      "frameFingerprint": "8f84d681a23fe8a7bd4dff5a05f716ac5a4c237807f365b22fb02ff5d063ef38",
+      "originalMarkerSimilarities": {
+        "skipControl": 0.48795,
+        "allAutoControl": 0.50542,
+        "pauseControl": 0.93968,
+        "retreatControl": 0.94428
+      },
+      "originalDecision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 2))",
+      "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.02830941666616127, recognitionDurationSeconds=0.025596708335797302, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44920, failureTitle=0.36435, experienceHeader=-0.10127, lootHeader=-0.08574, repeatOption=0.15546; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=0.48795, allAutoControl=0.50542, pauseControl=0.93968, retreatControl=0.94428]",
+      "resource": "footer-occlusion-20260919-capture-4656",
+      "sourceImage": "logs/auto-level-20260919-130059.tJLHuZ/diagnostics/capture-4656.png",
+      "captureSequence": 4656,
+      "role": "recent",
+      "width": 400,
+      "height": 878,
+      "pngSHA256": "6f55e0d1e77f8b924b25967abd92369f7a5a28d9190ed1673bf3887b690bf63e"
+    },
+    {
+      "eventSequence": 3121,
+      "capturedAtElapsedSeconds": 5429.819805666659,
+      "timestamp": "2026-09-19T06:31:29Z",
+      "originalState": "unknown",
+      "frameFingerprint": "3628bc482e43e33d574d7eb31f87032fc6cd6d808b101536a93ae296dbde9f67",
+      "originalMarkerSimilarities": {
+        "skipControl": 0.48795,
+        "allAutoControl": 0.50542,
+        "pauseControl": 0.93968,
+        "retreatControl": 0.94428
+      },
+      "originalDecision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 3))",
+      "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.036830458338954486, recognitionDurationSeconds=0.03281379166583065, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44920, failureTitle=0.36435, experienceHeader=-0.10127, lootHeader=-0.08574, repeatOption=0.15546; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=0.48795, allAutoControl=0.50542, pauseControl=0.93968, retreatControl=0.94428]",
+      "resource": "footer-occlusion-20260919-capture-4657",
+      "sourceImage": "logs/auto-level-20260919-130059.tJLHuZ/diagnostics/capture-4657.png",
+      "captureSequence": 4657,
+      "role": "recent",
+      "width": 400,
+      "height": 878,
+      "pngSHA256": "6353823b6779ddd818fadbf4cba404dc46b1b05a679a670a00a8a8dcd9678dcd"
+    },
+    {
+      "eventSequence": 3122,
+      "capturedAtElapsedSeconds": 5431.521751333334,
+      "timestamp": "2026-09-19T06:31:31Z",
+      "originalState": "unknown",
+      "frameFingerprint": "5700ae4d3fa83d63e690dc1951a6f2339a1914d8e48f856dbde4c59ee23cc51d",
+      "originalMarkerSimilarities": {
+        "skipControl": 0.48795,
+        "allAutoControl": 0.50542,
+        "pauseControl": 0.93968,
+        "retreatControl": 0.94428
+      },
+      "originalDecision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 4))",
+      "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.036235333333024755, recognitionDurationSeconds=0.0325426666677231, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44920, failureTitle=0.36435, experienceHeader=-0.10127, lootHeader=-0.08574, repeatOption=0.15546; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=0.48795, allAutoControl=0.50542, pauseControl=0.93968, retreatControl=0.94428]",
+      "resource": "footer-occlusion-20260919-capture-4658",
+      "sourceImage": "logs/auto-level-20260919-130059.tJLHuZ/diagnostics/capture-4658.png",
+      "captureSequence": 4658,
+      "role": "recent",
+      "width": 400,
+      "height": 878,
+      "pngSHA256": "da8969520f82603dbc2cfdcb8e90a5ca2586d4f2ebd941f3e9b4e416ac9e5985"
+    },
+    {
+      "eventSequence": 3123,
+      "capturedAtElapsedSeconds": 5433.181754083329,
+      "timestamp": "2026-09-19T06:31:32Z",
+      "originalState": "unknown",
+      "frameFingerprint": "e25c04fc2dca3f96bf7330ea4e99bcc6ef988697bde4fd89b5d39830c2fd190f",
+      "originalMarkerSimilarities": {
+        "skipControl": 0.48795,
+        "allAutoControl": 0.50542,
+        "pauseControl": 0.93968,
+        "retreatControl": 0.94428
+      },
+      "originalDecision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 5))",
+      "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.04184449999593198, recognitionDurationSeconds=0.03617991667124443, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44920, failureTitle=0.36435, experienceHeader=-0.10127, lootHeader=-0.08574, repeatOption=0.15546; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=0.48795, allAutoControl=0.50542, pauseControl=0.93968, retreatControl=0.94428]",
+      "resource": "footer-occlusion-20260919-capture-4659",
+      "sourceImage": "logs/auto-level-20260919-130059.tJLHuZ/diagnostics/capture-4659.png",
+      "captureSequence": 4659,
+      "role": "recent",
+      "width": 400,
+      "height": 878,
+      "pngSHA256": "4417503f8efd1ba7f667851c58c721def2d191f7a62ad5324485dbd527ce740a"
+    },
+    {
+      "eventSequence": 3124,
+      "capturedAtElapsedSeconds": 5434.878852708323,
+      "timestamp": "2026-09-19T06:31:34Z",
+      "originalState": "unknown",
+      "frameFingerprint": "e25c04fc2dca3f96bf7330ea4e99bcc6ef988697bde4fd89b5d39830c2fd190f",
+      "originalMarkerSimilarities": {
+        "skipControl": 0.48795,
+        "allAutoControl": 0.50542,
+        "pauseControl": 0.93968,
+        "retreatControl": 0.94428
+      },
+      "originalDecision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 6))",
+      "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.0377873333345633, recognitionDurationSeconds=0.03422741666145157, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44920, failureTitle=0.36435, experienceHeader=-0.10127, lootHeader=-0.08574, repeatOption=0.15546; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=0.48795, allAutoControl=0.50542, pauseControl=0.93968, retreatControl=0.94428]",
+      "resource": "footer-occlusion-20260919-capture-4660",
+      "sourceImage": "logs/auto-level-20260919-130059.tJLHuZ/diagnostics/capture-4660.png",
+      "captureSequence": 4660,
+      "role": "recent",
+      "width": 400,
+      "height": 878,
+      "pngSHA256": "4417503f8efd1ba7f667851c58c721def2d191f7a62ad5324485dbd527ce740a"
+    },
+    {
+      "eventSequence": 3125,
+      "capturedAtElapsedSeconds": 5436.534863208333,
+      "timestamp": "2026-09-19T06:31:36Z",
+      "originalState": "unknown",
+      "frameFingerprint": "c5cfee60506f75fd5cefaf08e037413056dfc0a27a629680b8260305cb33d97e",
+      "originalMarkerSimilarities": {
+        "skipControl": 0.48795,
+        "allAutoControl": 0.50542,
+        "pauseControl": 0.93968,
+        "retreatControl": 0.94428
+      },
+      "originalDecision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 7))",
+      "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.0357195416581817, recognitionDurationSeconds=0.0320882500091102, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44920, failureTitle=0.36435, experienceHeader=-0.10030, lootHeader=-0.08492, repeatOption=0.15546; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=0.48795, allAutoControl=0.50542, pauseControl=0.93968, retreatControl=0.94428]",
+      "resource": "footer-occlusion-20260919-capture-4661",
+      "sourceImage": "logs/auto-level-20260919-130059.tJLHuZ/diagnostics/capture-4661.png",
+      "captureSequence": 4661,
+      "role": "recent",
+      "width": 400,
+      "height": 878,
+      "pngSHA256": "433351181371cc1c85106c92f8c52fd3c0f34a596270cd04c62d9dfff4a47b7e"
+    },
+    {
+      "eventSequence": 3126,
+      "capturedAtElapsedSeconds": 5438.232213666663,
+      "timestamp": "2026-09-19T06:31:37Z",
+      "originalState": "unknown",
+      "frameFingerprint": "c5cfee60506f75fd5cefaf08e037413056dfc0a27a629680b8260305cb33d97e",
+      "originalMarkerSimilarities": {
+        "skipControl": 0.48795,
+        "allAutoControl": 0.50542,
+        "pauseControl": 0.93968,
+        "retreatControl": 0.94428
+      },
+      "originalDecision": "wait(MirrorProbeCore.AutoLevelWaitReason.transientState(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown, observationCount: 8))",
+      "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.03009820832812693, recognitionDurationSeconds=0.02740974999323953, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44920, failureTitle=0.36435, experienceHeader=-0.10030, lootHeader=-0.08492, repeatOption=0.15546; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=0.48795, allAutoControl=0.50542, pauseControl=0.93968, retreatControl=0.94428]",
+      "resource": "footer-occlusion-20260919-capture-4662",
+      "sourceImage": "logs/auto-level-20260919-130059.tJLHuZ/diagnostics/capture-4662.png",
+      "captureSequence": 4662,
+      "role": "recent",
+      "width": 400,
+      "height": 878,
+      "pngSHA256": "433351181371cc1c85106c92f8c52fd3c0f34a596270cd04c62d9dfff4a47b7e"
+    },
+    {
+      "eventSequence": 3127,
+      "capturedAtElapsedSeconds": 5439.8847183749895,
+      "timestamp": "2026-09-19T06:31:39Z",
+      "originalState": "unknown",
+      "frameFingerprint": "c5cfee60506f75fd5cefaf08e037413056dfc0a27a629680b8260305cb33d97e",
+      "originalMarkerSimilarities": {
+        "skipControl": 0.48795,
+        "allAutoControl": 0.50542,
+        "pauseControl": 0.93968,
+        "retreatControl": 0.94428
+      },
+      "originalDecision": "stop(MirrorProbeCore.AutoLevelStopReason.uncertainStateExceededGrace(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown))",
+      "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.032299708342179656, recognitionDurationSeconds=0.02935224999964703, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=0.44920, failureTitle=0.36435, experienceHeader=-0.10030, lootHeader=-0.08492, repeatOption=0.15546; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=0.48795, allAutoControl=0.50542, pauseControl=0.93968, retreatControl=0.94428]",
+      "resource": "footer-occlusion-20260919-capture-4663",
+      "sourceImage": "logs/auto-level-20260919-130059.tJLHuZ/final.png",
+      "captureSequence": 4663,
+      "role": "final",
+      "width": 400,
+      "height": 878,
+      "pngSHA256": "433351181371cc1c85106c92f8c52fd3c0f34a596270cd04c62d9dfff4a47b7e"
+    }
+  ],
+  "negativeControls": [
+    {
+      "eventSequence": 471,
+      "capturedAtElapsedSeconds": 893.1517814166582,
+      "timestamp": "2026-09-19T05:00:14Z",
+      "originalState": "unknown",
+      "frameFingerprint": "036ae3281d9331e6d733c01c6a4a910eddcf8922a45c82d81ed5dfa214b91020",
+      "originalMarkerSimilarities": {
+        "skipControl": -1.0,
+        "allAutoControl": -1.0,
+        "pauseControl": -1.0,
+        "retreatControl": -1.0
+      },
+      "originalDecision": "stop(MirrorProbeCore.AutoLevelStopReason.uncertainStateExceededGrace(kind: MirrorProbeCore.AutoLevelUncertainKind.unknown))",
+      "originalDetail": "stallPhase=inactive, armed=false, stableSeconds=0.0, samples=0, strictBattleBackground=false, reset=none, captureAgeSeconds=0.03892225000890903, recognitionDurationSeconds=0.03499204166291747, startupRecoveryEligible=false, recognitionMode=visualRegions, classificationEvidence=[lowConfidenceMarker: resultVisualRejected: incompleteOrAmbiguousMarkers, successTitle=-1.00000, failureTitle=-1.00000, experienceHeader=-1.00000, lootHeader=-1.00000, repeatOption=0.10340; lowConfidenceMarker: battleVisualRejected: incompleteFooterMarkers, skipControl=-1.00000, allAutoControl=-1.00000, pauseControl=-1.00000, retreatControl=-1.00000]",
+      "resource": "footer-occlusion-20260919-iphone-disconnected",
+      "sourceImage": "logs/auto-level-20260919-124521.NTXN1x/final.png",
+      "captureSequence": 706,
+      "role": "final",
+      "width": 400,
+      "height": 878,
+      "pngSHA256": "eab1ecd989df32e9c6ba16824984e03d9880889e0df9e7892f453f27b6979c22",
+      "sourceRun": "logs/auto-level-20260919-124521.NTXN1x",
+      "sourceReportSHA256": "e5c65e8fc1c40e1f20d1c244360b33623b3d474a25040318ac464a6cb9bb15d2",
+      "expectedRecoveryEligible": false,
+      "note": "The original image shows iPhone 使用中; mirroring ended because the iPhone was in use. No battle controls are visible."
+    }
+  ]
+}

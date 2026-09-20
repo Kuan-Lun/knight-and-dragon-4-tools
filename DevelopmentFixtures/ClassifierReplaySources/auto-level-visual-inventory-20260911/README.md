@@ -14,6 +14,14 @@ original source images; the incident captures are independent regression inputs 
 `Tests/MirrorProbeCoreTests/Fixtures/battle-footer-variant-sequence.json`, not template
 sources. The 0.94 threshold and registration tolerance remain unchanged.
 
+Version 0.4.33 adds a skip-control sample from the original 402×882 capture 13
+of the September 16 14:29 run. Its intact skip glyph scored 0.93583 against the
+two original rasterizations, below the existing 0.94 floor. Only that marker's
+sample bank changes; the threshold, regions, registration radius, other required
+controls and action targets stay unchanged. Seven later native frames are held
+out from template generation and replayed after a simulated posted modal action.
+See `../native-402-battle-20260916/README.md` for provenance and regression scope.
+
 | Visual family | Strong existing originals | Reusable graphical features |
 | --- | --- | --- |
 | Battle with different enemies and HP values | `active-battle-control-grid.png`, `active-battle-low-retreat-grid.png`, `visual-battle-low-auto.png` | Skip and all-auto footer glyphs; optional normal-pause/retreat controls |

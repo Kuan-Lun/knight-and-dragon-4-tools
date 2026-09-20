@@ -1,0 +1,125 @@
+{
+  "incident": {
+    "sessionID": "20260916-032136-eca4ff3a",
+    "startedAt": "2026-09-15T19:21:48Z",
+    "endedAt": "2026-09-16T01:13:20Z",
+    "status": "error",
+    "completedCycles": 719,
+    "actionsPosted": 3469,
+    "finalReason": "Safety check refused the action: the action authorization expired during window selection; reason=missing, expectedFrame=[x=1.0,y=30.0,width=404.0,height=874.0], actualFrame=unavailable, recoveryStop=actionExpired; phase=observation"
+  },
+  "fixture": "Tests/MirrorProbeRuntimeTests/Fixtures/visual-repeat-timeout-404x874.png",
+  "fixtureSHA256": "2f304ad2a6042549fd7ddf166c58de1ae93e2c6c656db3790d1192a4a22b9a54",
+  "tests": {
+    "command": "zsh Scripts/test.sh",
+    "passed": true,
+    "swiftTestingGroups": [
+      {
+        "tests": 43,
+        "suites": 6
+      },
+      {
+        "tests": 638,
+        "suites": 59
+      }
+    ],
+    "xctestCases": 2,
+    "autoLevelLauncherCases": 55,
+    "rerollLauncherCases": 84,
+    "restartSupervisorTests": 15,
+    "releaseCLIIntegrationTests": 18,
+    "packagedCLIIntegrationTests": 18
+  },
+  "packagedExecutableSHA256": "4171e3c043fe30644636b534fb8e1ab2ea7d63fbc51b1b8816dabfb4d86233a1",
+  "signatureVerified": true,
+  "packagedReplayClassification": {
+    "allowedActions": [
+      {
+        "name": "selectMissionRepeat",
+        "target": {
+          "name": "missionRepeatOption",
+          "point": {
+            "x": 0.16699999999999998,
+            "y": 0.24650000000000002
+          },
+          "rect": {
+            "height": 0.025,
+            "width": 0.29,
+            "x": 0.022,
+            "y": 0.234
+          },
+          "sourceText": "<measured-result-repeat-option>"
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "detail": "source=resultVisualV1, marker=failureTitle, similarity=0.95968881652357, minimumSimilarity=0.94",
+        "kind": "missionFailedTitle",
+        "visualMatch": {
+          "marker": "failureTitle",
+          "region": {
+            "height": 0.034,
+            "width": 0.24,
+            "x": 0.38,
+            "y": 0.1
+          },
+          "similarity": 0.95968881652357
+        }
+      },
+      {
+        "detail": "source=resultVisualV1, marker=experienceHeader, similarity=0.9609722681721165, minimumSimilarity=0.94",
+        "kind": "missionExperiencePage",
+        "visualMatch": {
+          "marker": "experienceHeader",
+          "region": {
+            "height": 0.026,
+            "width": 0.2,
+            "x": 0.775,
+            "y": 0.145
+          },
+          "similarity": 0.9609722681721165
+        }
+      },
+      {
+        "detail": "source=resultVisualV1, marker=repeatOption, similarity=0.9614101120012836, minimumSimilarity=0.94",
+        "kind": "missionRepeatOption",
+        "visualMatch": {
+          "marker": "repeatOption",
+          "region": {
+            "height": 0.025,
+            "width": 0.29,
+            "x": 0.022,
+            "y": 0.234
+          },
+          "similarity": 0.9614101120012836
+        }
+      },
+      {
+        "detail": "<measured-repeat-unselected-empty-stamp>",
+        "kind": "repeatUnselectedMarker"
+      }
+    ],
+    "policyGatedActions": [],
+    "state": "missionFailed"
+  },
+  "packagedReplaySafety": {
+    "actionAuthorization": "none",
+    "inputEventsPosted": 0,
+    "readOnly": true
+  },
+  "launcherDryRunArguments": [
+    "--max-minutes",
+    "480",
+    "--wait",
+    "--dry-run"
+  ],
+  "permissionsAfterFinalPackaging": {
+    "nextStep": "Run doctor --request-permissions.",
+    "postEventPermission": "missing",
+    "screenCapturePermission": "missing",
+    "timestamp": "2026-09-16T03:56:57Z",
+    "windows": []
+  },
+  "liveGameRunPerformed": false
+}
