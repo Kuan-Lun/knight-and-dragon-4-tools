@@ -39,16 +39,21 @@ geometry, dimensions and SHA-256.
   0.844 (successTitle 0.994, repeatOption 0.980); the page persisted, so a full sweep was
   taken before any further input.
 
-Pages behind the post-battle dialog were probed six times by pressing the dialog button
-with `mirror-probe click` after stopping the runner; every cycle succeeded and landed on
-the loot result page already covered above. No failure result page was captured at a zoom
-level other than 406×890, so `failureTitle` keeps only its reference-size template.
+- `zoom-failure-result-*.png` (7): the failure result page (unselected repeat row) at every
+  level. The user arranged a defeat at 211×468; its "隊伍已被擊敗" dialog button was pressed
+  once with `mirror-probe click` (canvas target mapped back to the window) and the page
+  persisted for a full sweep. Before its zoom samples `failureTitle` scored 0.907 at 211×468
+  and passed from 250×553 upward.
+
+Pages behind the post-battle dialog were also probed six times earlier the same way after
+stopping the runner; every cycle succeeded and landed on the loot result page.
 
 ## Templates
 
 `Scripts/generate-result-visual-templates.py` adds `successTitle`, `lootHeader` and
 `repeatOption` samples from the 211, 250, 289 and 328 loot captures and `experienceHeader`
-samples from the same four experience captures;
+samples from the same four experience captures and `failureTitle` samples from the four
+smallest failure captures;
 `Scripts/generate-battle-visual-templates.py` adds all four footer controls from the
 211–367 battle captures. Zoom sources are placed on the reference canvas
 (`Scripts/mirror_content_layout.py`) before sampling; earlier sources stay raw so their

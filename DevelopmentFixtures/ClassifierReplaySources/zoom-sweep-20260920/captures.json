@@ -389,5 +389,124 @@
     "imageWidth": 439,
     "imageHeight": 960,
     "sha256": "70ff6bbae7de9797b1953404b21dc572a3d64894954794f4294304ad3719f39c"
+  },
+  {
+    "kind": "failureResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-211x468.png",
+    "sourceCapture": "sweep/failure/failure-L1-211x468.png",
+    "capturedAt": "2026-09-20T06:59:21Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 211,
+      "height": 468,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 211,
+    "imageHeight": 468,
+    "sha256": "8b33fa11aac9cfa79825ff913dbc2cb960d00b7a06b5866f9662e85c5269a228"
+  },
+  {
+    "kind": "failureResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-250x553.png",
+    "sourceCapture": "sweep/failure/failure-L2-250x553.png",
+    "capturedAt": "2026-09-20T06:59:25Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 250,
+      "height": 553,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 250,
+    "imageHeight": 553,
+    "sha256": "03874a3c2aa592295d8f1cde7e7736bef457219e95b4a148c21dfe7184aa282d"
+  },
+  {
+    "kind": "failureResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-289x637.png",
+    "sourceCapture": "sweep/failure/failure-L3-289x637.png",
+    "capturedAt": "2026-09-20T06:59:29Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 289,
+      "height": 637,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 289,
+    "imageHeight": 637,
+    "sha256": "1fc1ca406af41905374aaaa9854e84072c2720fe1969566ed6354bd709fd9955"
+  },
+  {
+    "kind": "failureResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-328x722.png",
+    "sourceCapture": "sweep/failure/failure-L4-328x722.png",
+    "capturedAt": "2026-09-20T06:59:33Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 328,
+      "height": 722,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 328,
+    "imageHeight": 722,
+    "sha256": "ad0dd4de36ae0e7f9181d4d57f6bc9e5759511a3e4a59d50b19f9687fda589b6"
+  },
+  {
+    "kind": "failureResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-367x806.png",
+    "sourceCapture": "sweep/failure/failure-L5-367x806.png",
+    "capturedAt": "2026-09-20T06:59:38Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 367,
+      "height": 806,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 367,
+    "imageHeight": 806,
+    "sha256": "3f6a81c101884bb945b388ee29d376ea91428a254cab9b8f32293cc6c57555b2"
+  },
+  {
+    "kind": "failureResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-406x890.png",
+    "sourceCapture": "sweep/failure/failure-L6-406x890.png",
+    "capturedAt": "2026-09-20T06:59:42Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 406,
+      "height": 890,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 406,
+    "imageHeight": 890,
+    "sha256": "f038a7e1801ec9586a39288d0024cc912c6b90d596515606aeb0129dee5a4f27"
+  },
+  {
+    "kind": "failureResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-439x960.png",
+    "sourceCapture": "sweep/failure/failure-L7-439x960.png",
+    "capturedAt": "2026-09-20T06:59:46Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 439,
+      "height": 960,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 439,
+    "imageHeight": 960,
+    "sha256": "72f9ce683470275eba98741e94b0ccf74ee745a96f623bf2a98fc0815b8f7d03"
   }
 ]

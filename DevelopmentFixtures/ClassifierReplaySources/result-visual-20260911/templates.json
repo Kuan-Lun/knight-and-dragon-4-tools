@@ -91,6 +91,58 @@
     "sampleSHA256": "0a798a088fcf2ac42da19196f4e8a8dc0a7419a81e0f7e9a6b39f04dd74de65d"
   },
   {
+    "marker": "failureTitle",
+    "region": [
+      0.38,
+      0.1,
+      0.24,
+      0.034
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-211x468.png",
+    "placement": "zoom",
+    "sourceSHA256": "8b33fa11aac9cfa79825ff913dbc2cb960d00b7a06b5866f9662e85c5269a228",
+    "sampleSHA256": "b08eb7ad51c1ccff1b58ccb7285e8256a0aa8aecd287b5420839538c5b67c78a"
+  },
+  {
+    "marker": "failureTitle",
+    "region": [
+      0.38,
+      0.1,
+      0.24,
+      0.034
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-250x553.png",
+    "placement": "zoom",
+    "sourceSHA256": "03874a3c2aa592295d8f1cde7e7736bef457219e95b4a148c21dfe7184aa282d",
+    "sampleSHA256": "af508e463bb3a934d6f1303894b2fc75011783acdd9829bebca128f0ad629efd"
+  },
+  {
+    "marker": "failureTitle",
+    "region": [
+      0.38,
+      0.1,
+      0.24,
+      0.034
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-289x637.png",
+    "placement": "zoom",
+    "sourceSHA256": "1fc1ca406af41905374aaaa9854e84072c2720fe1969566ed6354bd709fd9955",
+    "sampleSHA256": "7a2811148c874ec1179cee4aec11302fdf93d0b7e9463ffbcad84c8cf6c18a5a"
+  },
+  {
+    "marker": "failureTitle",
+    "region": [
+      0.38,
+      0.1,
+      0.24,
+      0.034
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-328x722.png",
+    "placement": "zoom",
+    "sourceSHA256": "ad0dd4de36ae0e7f9181d4d57f6bc9e5759511a3e4a59d50b19f9687fda589b6",
+    "sampleSHA256": "ce90cbc8b39a0809a3746a54229c0e5f4a658eaad882b71ddafbd777e0ceb7bc"
+  },
+  {
     "marker": "experienceHeader",
     "region": [
       0.775,

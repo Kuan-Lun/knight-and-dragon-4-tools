@@ -37,11 +37,16 @@ ZOOM_EXPERIENCE = ["Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-2
                    "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-250x553.png",
                    "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-289x637.png",
                    "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-328x722.png"]
+ZOOM_FAILURE = ["Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-211x468.png",
+                "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-250x553.png",
+                "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-289x637.png",
+                "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-328x722.png"]
 SOURCES = {
     "successTitle": [(RAW, "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png"),
                      (RAW, "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-experience.png")]
                     + [(ZOOM, path) for path in ZOOM_LOOT],
-    "failureTitle": [(RAW, "Tests/MirrorProbeCoreTests/Fixtures/failure-repeat-confirmation-before.png")],
+    "failureTitle": [(RAW, "Tests/MirrorProbeCoreTests/Fixtures/failure-repeat-confirmation-before.png")]
+                    + [(ZOOM, path) for path in ZOOM_FAILURE],
     "experienceHeader": [(RAW, "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png"),
                          (RAW, "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-experience.png")]
                         + [(ZOOM, path) for path in ZOOM_EXPERIENCE],
