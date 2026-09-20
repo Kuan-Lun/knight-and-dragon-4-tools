@@ -130,6 +130,22 @@ struct MirrorContentLayoutTests {
         #expect(layout.canvasContent == .init(x: 14, y: 76, width: 782, height: 1688))
     }
 
+    @Test("A dragged window size snaps to the nearest calibrated zoom level",
+          arguments: [(252.0, 557.0, 250.0, 553.0), (300.0, 660.0, 289.0, 637.0),
+                      (404.0, 886.0, 406.0, 890.0), (500.0, 1100.0, 439.0, 960.0),
+                      (150.0, 330.0, 211.0, 468.0)])
+    func draggedSizesSnapToCalibratedLevels(width: Double, height: Double, toWidth: Double, toHeight: Double) {
+        let nearest = MirrorContentLayout.nearestCalibratedWindowSize(for: (width, height))
+        #expect(nearest?.width == toWidth && nearest?.height == toHeight)
+    }
+
+    @Test("Calibrated sizes and invalid sizes need no resize",
+          arguments: [(211.0, 468.0), (406.0, 890.0), (439.0, 960.0), (406.4, 890.3), (0.0, 0.0),
+                      (Double.nan, 500.0), (-10.0, 20.0)])
+    func calibratedAndInvalidSizesDoNotSnap(width: Double, height: Double) {
+        #expect(MirrorContentLayout.nearestCalibratedWindowSize(for: (width, height)) == nil)
+    }
+
     @Test("Frames without the mirroring border have no layout",
           arguments: ["edgeToEdge", "blank", "letterboxed", "asymmetric", "wrongAspect", "shallowTop"])
     func unsupportedFramesHaveNoLayout(kind: String) {

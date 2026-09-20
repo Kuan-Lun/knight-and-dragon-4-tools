@@ -78,7 +78,11 @@ extension MirrorProbeRuntime {
             reason: "Complete the user-requested auto-level session and its safety observations"
         )
         defer { ProcessInfo.processInfo.endActivity(activity) }
-        let initialWindow = try await selectMirrorWindow(requestedID: requestedID)
+        // A window dragged off a zoom level is moved to the nearest calibrated size first;
+        // the session then locks that geometry.
+        let initialWindow = try await snapMirrorWindowToCalibratedSize(
+            selectMirrorWindow(requestedID: requestedID)
+        )
         guard let initialApplication = initialWindow.owningApplication,
               initialApplication.processID > 0
         else {

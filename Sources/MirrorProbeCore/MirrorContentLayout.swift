@@ -41,6 +41,28 @@ public struct MirrorContentLayout: Equatable, Sendable {
     /// RGBA border color used to regenerate the canvas border.
     public let border: [UInt8]
 
+    /// Window sizes (points) of the iPhone Mirroring zoom levels on a 1x display, smallest to
+    /// largest. Glyph rasterization differs between window sizes, and the templates were
+    /// sampled at exactly these sizes, so recognition is only calibrated here; a window dragged
+    /// to another size is resized to the nearest level before a session starts.
+    public static let calibratedWindowSizes: [(width: Double, height: Double)] = [
+        (211, 468), (250, 553), (289, 637), (328, 722), (367, 806), (406, 890), (439, 960),
+    ]
+
+    /// The calibrated size closest in width to `size`, or nil when `size` already is one.
+    public static func nearestCalibratedWindowSize(
+        for size: (width: Double, height: Double)
+    ) -> (width: Double, height: Double)? {
+        guard size.width.isFinite, size.height.isFinite, size.width > 0, size.height > 0,
+              let nearest = calibratedWindowSizes.min(by: {
+                  abs($0.width - size.width) < abs($1.width - size.width)
+              })
+        else { return nil }
+        let alreadyCalibrated = abs(nearest.width - size.width) <= 0.5
+            && abs(nearest.height - size.height) <= 0.5
+        return alreadyCalibrated ? nil : nearest
+    }
+
     /// Recognition regions are calibrated on the reference frame, so every detector requires a
     /// frame (or canvas) with the reference proportions and at least half its size.
     public static func hasReferenceProportions(width: Int, height: Int) -> Bool {

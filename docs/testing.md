@@ -88,6 +88,13 @@ on a reference-proportioned canvas before recognition; `analyze-file` and `captu
 reports describe it under `contentLayout`, and a run logs `mirrorContentLayout:` to
 stderr whenever it changes.
 
+Templates are sampled at the zoom-level window sizes listed in
+`MirrorContentLayout.calibratedWindowSizes`; a window dragged to another size is stepped to
+the nearest level through the app's 顯示方式 menu (Accessibility ⌘- / ⌘+ presses) by
+`snapMirrorWindowToCalibratedSize` before an auto-level session locks its geometry, because
+glyph rasterization at intermediate sizes scores below the 0.94 floor. Setting the window
+size directly rounds the height differently (250x552 instead of 250x553) and also fails.
+
 To collect calibration or regression captures at every zoom level on this Mac:
 
 ```sh
