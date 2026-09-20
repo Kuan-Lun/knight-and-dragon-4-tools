@@ -13,9 +13,7 @@ public enum AutoLevelVisualClassifier {
         guard bytes.count >= bytesPerRow * height else {
             throw VisualResultDetectorError.insufficientBytes
         }
-        guard width >= 200, height >= 400,
-              abs(Double(width) / Double(height) - 406.0 / 890.0) <= 0.01
-        else {
+        guard MirrorContentLayout.hasReferenceProportions(width: width, height: height) else {
             return .init(state: .unknown, evidence: [
                 .init(kind: .lowConfidenceMarker, observation: nil,
                       detail: "autoLevelVisualRejected: unsupportedImageGeometry"),

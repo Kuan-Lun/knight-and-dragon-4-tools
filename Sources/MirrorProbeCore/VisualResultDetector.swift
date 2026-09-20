@@ -44,8 +44,7 @@ public enum VisualResultDetector {
         guard modal.layout == .none else {
             return rejected("modalPresent", isResultCandidate: false)
         }
-        guard width >= 200, height >= 400,
-              abs(Double(width) / Double(height) - 406.0 / 890.0) <= 0.01
+        guard MirrorContentLayout.hasReferenceProportions(width: width, height: height)
         else { return rejected("unsupportedImageGeometry", isResultCandidate: false) }
 
         let scores = Dictionary(uniqueKeysWithValues: markers.map { marker in

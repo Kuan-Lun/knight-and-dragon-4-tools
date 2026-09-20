@@ -94,9 +94,8 @@ public struct VisualBattleActivityEvidence: Equatable, Sendable {
     public static func validateBuffer(
         _ bytes: [UInt8], width: Int, height: Int, bytesPerRow: Int
     ) throws {
-        guard width >= 200, height >= 400, width <= 10_000, height <= 10_000,
-              width * height <= 25_000_000,
-              abs(Double(width) / Double(height) - 406.0 / 890.0) <= 0.01,
+        guard MirrorContentLayout.hasReferenceProportions(width: width, height: height),
+              width <= 10_000, height <= 10_000, width * height <= 25_000_000,
               bytesPerRow >= width * 4, bytesPerRow <= Int.max / height
         else { throw VisualBattleActivityError.invalidDimensions }
         guard bytes.count >= bytesPerRow * height else {

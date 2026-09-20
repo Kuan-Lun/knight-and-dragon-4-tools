@@ -41,6 +41,13 @@ public struct MirrorContentLayout: Equatable, Sendable {
     /// RGBA border color used to regenerate the canvas border.
     public let border: [UInt8]
 
+    /// Recognition regions are calibrated on the reference frame, so every detector requires a
+    /// frame (or canvas) with the reference proportions and at least half its size.
+    public static func hasReferenceProportions(width: Int, height: Int) -> Bool {
+        width >= 200 && height >= 400
+            && abs(Double(width) / Double(height) - Double(referenceWidth) / Double(referenceHeight)) <= 0.01
+    }
+
     /// A reference-size capture needs no canvas; its bytes are used as captured.
     public var isIdentity: Bool {
         sourceWidth == canvasWidth && sourceHeight == canvasHeight

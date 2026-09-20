@@ -117,6 +117,58 @@
     "sampleSHA256": "a3c1a06bdfcde61c0979da350ebeca8c2f10a864983ffdd7078c1aaabbbcc89b"
   },
   {
+    "marker": "experienceHeader",
+    "region": [
+      0.775,
+      0.145,
+      0.2,
+      0.026
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-211x468.png",
+    "placement": "zoom",
+    "sourceSHA256": "9b8024f9db01168b9e2904dee71a1ab6107f6066211e14ff15672c114be139fa",
+    "sampleSHA256": "57577aa0881d57cc7d2b0071979d2fa6e20dcfc705d428d03bad59cdbf3fa51c"
+  },
+  {
+    "marker": "experienceHeader",
+    "region": [
+      0.775,
+      0.145,
+      0.2,
+      0.026
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-250x553.png",
+    "placement": "zoom",
+    "sourceSHA256": "e98f0b6c4657f4a282cc6d56898778f5f1b835aec91c6a436058b49a64996044",
+    "sampleSHA256": "d65588b5b04892f769b28093cd3cfa75b66566d8ea0eaf8de47c7c5df7a287eb"
+  },
+  {
+    "marker": "experienceHeader",
+    "region": [
+      0.775,
+      0.145,
+      0.2,
+      0.026
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-289x637.png",
+    "placement": "zoom",
+    "sourceSHA256": "b781d44f97c0439a6ab479326503722f3088c6f9e4c0b2bf97f9ddf412f736d9",
+    "sampleSHA256": "86fa3d84aee59d4df65881a597ac4cea4c323c71e6c7e056c3685d77b048ab44"
+  },
+  {
+    "marker": "experienceHeader",
+    "region": [
+      0.775,
+      0.145,
+      0.2,
+      0.026
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-328x722.png",
+    "placement": "zoom",
+    "sourceSHA256": "4d3c55b9fd73fd75ec7872a080a539e7baddb7e147a2b28f4e73f174a6a71496",
+    "sampleSHA256": "ae0b7307b14b88daa5f1c2c9f36e7ff2fe6508c902f1bc07883ded5ce5902cb7"
+  },
+  {
     "marker": "lootHeader",
     "region": [
       0.775,

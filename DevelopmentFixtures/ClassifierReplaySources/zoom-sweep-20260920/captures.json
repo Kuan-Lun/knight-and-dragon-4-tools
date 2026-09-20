@@ -270,5 +270,124 @@
     "imageWidth": 439,
     "imageHeight": 960,
     "sha256": "d74ef9689368dd011803ffd6a8524b090af49dda2c7cdc7b4519261f2bb759c1"
+  },
+  {
+    "kind": "experienceResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-211x468.png",
+    "sourceCapture": "sweep/experience/experience-L1-211x468.png",
+    "capturedAt": "2026-09-20T06:43:27Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 211,
+      "height": 468,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 211,
+    "imageHeight": 468,
+    "sha256": "9b8024f9db01168b9e2904dee71a1ab6107f6066211e14ff15672c114be139fa"
+  },
+  {
+    "kind": "experienceResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-250x553.png",
+    "sourceCapture": "sweep/experience/experience-L2-250x553.png",
+    "capturedAt": "2026-09-20T06:43:31Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 250,
+      "height": 553,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 250,
+    "imageHeight": 553,
+    "sha256": "e98f0b6c4657f4a282cc6d56898778f5f1b835aec91c6a436058b49a64996044"
+  },
+  {
+    "kind": "experienceResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-289x637.png",
+    "sourceCapture": "sweep/experience/experience-L3-289x637.png",
+    "capturedAt": "2026-09-20T06:43:36Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 289,
+      "height": 637,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 289,
+    "imageHeight": 637,
+    "sha256": "b781d44f97c0439a6ab479326503722f3088c6f9e4c0b2bf97f9ddf412f736d9"
+  },
+  {
+    "kind": "experienceResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-328x722.png",
+    "sourceCapture": "sweep/experience/experience-L4-328x722.png",
+    "capturedAt": "2026-09-20T06:43:40Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 328,
+      "height": 722,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 328,
+    "imageHeight": 722,
+    "sha256": "4d3c55b9fd73fd75ec7872a080a539e7baddb7e147a2b28f4e73f174a6a71496"
+  },
+  {
+    "kind": "experienceResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-367x806.png",
+    "sourceCapture": "sweep/experience/experience-L5-367x806.png",
+    "capturedAt": "2026-09-20T06:43:44Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 367,
+      "height": 806,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 367,
+    "imageHeight": 806,
+    "sha256": "40a2c6683ea3d2234f4ba992945270bc3223749eee7c356e50aa842117aa0ae5"
+  },
+  {
+    "kind": "experienceResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-406x890.png",
+    "sourceCapture": "sweep/experience/experience-L6-406x890.png",
+    "capturedAt": "2026-09-20T06:43:48Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 406,
+      "height": 890,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 406,
+    "imageHeight": 890,
+    "sha256": "bfb82d01944203694fc0d9a5479efbe8e3b49b8dc83bc13312e38dde73dbd832"
+  },
+  {
+    "kind": "experienceResult",
+    "fixture": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-439x960.png",
+    "sourceCapture": "sweep/experience/experience-L7-439x960.png",
+    "capturedAt": "2026-09-20T06:43:52Z",
+    "window": {
+      "x": 6,
+      "y": 30,
+      "width": 439,
+      "height": 960,
+      "windowID": 11402,
+      "processID": 97029
+    },
+    "imageWidth": 439,
+    "imageHeight": 960,
+    "sha256": "70ff6bbae7de9797b1953404b21dc572a3d64894954794f4294304ad3719f39c"
   }
 ]

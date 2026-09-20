@@ -91,10 +91,7 @@ extension MirrorProbeRuntime {
         } else {
             classification = try recognizeGameState(in: normalized.image, rgba: normalized.rgba)
         }
-        let detectedLayout = MirrorContentLayout.detect(
-            normalized.rgba.bytes, width: normalized.rgba.width, height: normalized.rgba.height,
-            bytesPerRow: normalized.rgba.bytesPerRow
-        ) != nil
+
         let status: String
         if frameMetrics.isBlank {
             status = "rejected"
@@ -118,7 +115,7 @@ extension MirrorProbeRuntime {
                 orientation: "up",
                 pngSHA256: pngSHA256
             ),
-            contentLayout: ContentLayoutReport(normalized.layout, detected: detectedLayout),
+            contentLayout: ContentLayoutReport(normalized.layout, detected: normalized.layoutDetected),
             frameMetrics: frameMetrics,
             ocr: AnalysisOCRReport(
                 engine: "none",

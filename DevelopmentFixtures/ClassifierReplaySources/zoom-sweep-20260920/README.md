@@ -34,16 +34,21 @@ geometry, dimensions and SHA-256.
   406×890 before the next cycle. Battles last 8–28 seconds, so a full sweep per battle
   was not possible.
 
+- `zoom-experience-result-*.png` (7): the experience result page at every level. The first
+  live run of the rebuilt App at 211×468 stopped on this page with `experienceHeader` at
+  0.844 (successTitle 0.994, repeatOption 0.980); the page persisted, so a full sweep was
+  taken before any further input.
+
 Pages behind the post-battle dialog were probed six times by pressing the dialog button
 with `mirror-probe click` after stopping the runner; every cycle succeeded and landed on
-the loot result page already covered above. No failure result page or experience page
-was captured at a zoom level other than 406×890, so `failureTitle` and
-`experienceHeader` keep only their reference-size templates.
+the loot result page already covered above. No failure result page was captured at a zoom
+level other than 406×890, so `failureTitle` keeps only its reference-size template.
 
 ## Templates
 
 `Scripts/generate-result-visual-templates.py` adds `successTitle`, `lootHeader` and
-`repeatOption` samples from the 211, 250, 289 and 328 loot captures;
+`repeatOption` samples from the 211, 250, 289 and 328 loot captures and `experienceHeader`
+samples from the same four experience captures;
 `Scripts/generate-battle-visual-templates.py` adds all four footer controls from the
 211–367 battle captures. Zoom sources are placed on the reference canvas
 (`Scripts/mirror_content_layout.py`) before sampling; earlier sources stay raw so their

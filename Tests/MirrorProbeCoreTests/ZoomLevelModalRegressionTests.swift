@@ -10,13 +10,6 @@ import Testing
 /// frame proportions, so it only needs the reference canvas to see the same proportions.
 @Suite("Battle dialog recognition at mirroring zoom levels")
 struct ZoomLevelModalRegressionTests {
-    private struct Frame {
-        var bytes: [UInt8]
-        let width: Int
-        let height: Int
-        var bytesPerRow: Int { width * 4 }
-    }
-
     private static let captures: [(name: String, width: Int, height: Int, sha256: String)] = [
         ("zoom-battle-modal-211x468", 211, 468,
          "8e714641f20bb926e346b61b5156b6aee682c06f6253b6b4555c1397a666aba8"),
@@ -54,26 +47,7 @@ struct ZoomLevelModalRegressionTests {
         #expect(y > 38 && y < Double(frame.height - 8))
     }
 
-    private func fixture(_ name: String, sha256: String) throws -> Frame {
-        let url = try #require(Bundle.module.url(forResource: name, withExtension: "png"))
-        let data = try Data(contentsOf: url)
-        #expect(SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined() == sha256)
-        let source = try #require(CGImageSourceCreateWithData(data as CFData, nil))
-        let image = try #require(CGImageSourceCreateImageAtIndex(source, 0, nil))
-        var frame = Frame(bytes: [UInt8](repeating: 0, count: image.width * image.height * 4),
-                          width: image.width, height: image.height)
-        let width = frame.width, height = frame.height, bytesPerRow = frame.bytesPerRow
-        let rendered = frame.bytes.withUnsafeMutableBytes { buffer -> Bool in
-            guard let context = CGContext(
-                data: buffer.baseAddress, width: width, height: height,
-                bitsPerComponent: 8, bytesPerRow: bytesPerRow,
-                space: CGColorSpaceCreateDeviceRGB(),
-                bitmapInfo: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue
-            ) else { return false }
-            context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-            return true
-        }
-        #expect(rendered)
-        return frame
+    private func fixture(_ name: String, sha256: String) throws -> RGBAFixtureFrame {
+        try loadRGBAFixture(name, sha256: sha256)
     }
 }

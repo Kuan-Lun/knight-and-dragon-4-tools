@@ -21,8 +21,7 @@ public enum VisualBattleDetector {
             bytes, width: width, height: height, bytesPerRow: bytesPerRow
         )
         guard modal.layout == .none else { return rejected("modalPresent") }
-        guard width >= 200, height >= 400,
-              abs(Double(width) / Double(height) - 406.0 / 890.0) <= 0.01
+        guard MirrorContentLayout.hasReferenceProportions(width: width, height: height)
         else { return rejected("unsupportedImageGeometry") }
 
         let matches = VisualBattleMarker.allCases.compactMap { marker -> VisualBattleMatch? in

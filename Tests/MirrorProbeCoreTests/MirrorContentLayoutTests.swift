@@ -6,20 +6,13 @@ import Testing
 
 @Suite("Mirror window content layout detection and canvas mapping")
 struct MirrorContentLayoutTests {
-    private struct Frame {
-        var bytes: [UInt8]
-        let width: Int
-        let height: Int
-        var bytesPerRow: Int { width * 4 }
-    }
-
     /// A synthetic mirroring capture: uniform border with textured content that never repeats
     /// the border color, so every content row and column is detectable.
     private func syntheticFrame(
         width: Int, height: Int, top: Int, bottom: Int, left: Int, right: Int,
         border: (UInt8, UInt8, UInt8) = (255, 255, 255)
-    ) -> Frame {
-        var frame = Frame(bytes: [UInt8](repeating: 0, count: width * height * 4),
+    ) -> RGBAFixtureFrame {
+        var frame = RGBAFixtureFrame(bytes: [UInt8](repeating: 0, count: width * height * 4),
                           width: width, height: height)
         for y in 0..<height {
             for x in 0..<width {
@@ -40,7 +33,7 @@ struct MirrorContentLayoutTests {
         return frame
     }
 
-    private func detect(_ frame: Frame) -> MirrorContentLayout? {
+    private func detect(_ frame: RGBAFixtureFrame) -> MirrorContentLayout? {
         MirrorContentLayout.detect(
             frame.bytes, width: frame.width, height: frame.height, bytesPerRow: frame.bytesPerRow
         )
@@ -140,7 +133,7 @@ struct MirrorContentLayoutTests {
     @Test("Frames without the mirroring border have no layout",
           arguments: ["edgeToEdge", "blank", "letterboxed", "asymmetric", "wrongAspect", "shallowTop"])
     func unsupportedFramesHaveNoLayout(kind: String) {
-        let frame: Frame
+        let frame: RGBAFixtureFrame
         switch kind {
         case "edgeToEdge":
             frame = syntheticFrame(width: 406, height: 890, top: 0, bottom: 0, left: 0, right: 0)
@@ -173,25 +166,7 @@ struct MirrorContentLayoutTests {
         #expect(layout.border == [255, 255, 255, 255])
     }
 
-    private func fixture(_ name: String) throws -> Frame {
-        let url = try #require(Bundle.module.url(forResource: name, withExtension: "png"))
-        let data = try Data(contentsOf: url)
-        let source = try #require(CGImageSourceCreateWithData(data as CFData, nil))
-        let image = try #require(CGImageSourceCreateImageAtIndex(source, 0, nil))
-        var frame = Frame(bytes: [UInt8](repeating: 0, count: image.width * image.height * 4),
-                          width: image.width, height: image.height)
-        let width = frame.width, height = frame.height, bytesPerRow = frame.bytesPerRow
-        let rendered = frame.bytes.withUnsafeMutableBytes { buffer -> Bool in
-            guard let context = CGContext(
-                data: buffer.baseAddress, width: width, height: height,
-                bitsPerComponent: 8, bytesPerRow: bytesPerRow,
-                space: CGColorSpaceCreateDeviceRGB(),
-                bitmapInfo: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue
-            ) else { return false }
-            context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
-            return true
-        }
-        #expect(rendered)
-        return frame
+    private func fixture(_ name: String) throws -> RGBAFixtureFrame {
+        try loadRGBAFixture(name)
     }
 }

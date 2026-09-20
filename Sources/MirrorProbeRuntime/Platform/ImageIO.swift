@@ -44,6 +44,8 @@ extension MirrorProbeRuntime {
         let image: CGImage
         let rgba: RGBAFrame
         let layout: MirrorContentLayout
+        /// False when no mirroring border was found and the capture is recognized as is.
+        let layoutDetected: Bool
         let sourceWidth: Int
         let sourceHeight: Int
     }
@@ -63,6 +65,7 @@ extension MirrorProbeRuntime {
         if layout.isIdentity, source.bytesPerRow == source.width * 4 {
             return NormalizedMirrorFrame(
                 image: try image ?? cgImage(from: source), rgba: source, layout: layout,
+                layoutDetected: detected != nil,
                 sourceWidth: source.width, sourceHeight: source.height
             )
         }
@@ -76,7 +79,7 @@ extension MirrorProbeRuntime {
             bytesPerRow: layout.canvasWidth * 4
         )
         return NormalizedMirrorFrame(
-            image: try cgImage(from: canvas), rgba: canvas, layout: layout,
+            image: try cgImage(from: canvas), rgba: canvas, layout: layout, layoutDetected: true,
             sourceWidth: source.width, sourceHeight: source.height
         )
     }

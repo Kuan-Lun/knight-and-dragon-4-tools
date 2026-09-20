@@ -82,7 +82,7 @@ class OfflineCLIIntegrationTests(unittest.TestCase):
         return result
 
     def assert_report_contract(self, report, input_path):
-        self.assertEqual(report["schemaVersion"], 2)
+        self.assertEqual(report["schemaVersion"], 3)
         self.assertEqual(report["command"], "analyze-file")
         self.assertEqual(report["profile"], "zh-Hant-v1")
         self.assertEqual(report["recognitionMode"], "visualRegions")
@@ -96,6 +96,19 @@ class OfflineCLIIntegrationTests(unittest.TestCase):
         })
         encoded = input_path.read_bytes()
         width, height = struct.unpack(">II", encoded[16:24])
+        layout = report["contentLayout"]
+        self.assertEqual(set(layout), {
+            "detected", "sourceWidth", "sourceHeight", "sourceContentX", "sourceContentY",
+            "contentWidth", "contentHeight", "canvasWidth", "canvasHeight", "canvasContentX",
+            "canvasContentY", "identity",
+        })
+        self.assertEqual((layout["sourceWidth"], layout["sourceHeight"]), (width, height))
+        if layout["detected"]:
+            # A detected border places the content on a reference-proportioned canvas.
+            self.assertAlmostEqual(layout["canvasWidth"] / layout["canvasHeight"], 406 / 890, delta=0.01)
+        else:
+            self.assertTrue(layout["identity"])
+            self.assertEqual((layout["canvasWidth"], layout["canvasHeight"]), (width, height))
         self.assertEqual(report["image"], {
             "width": width, "height": height, "orientation": "up",
             "pngSHA256": hashlib.sha256(encoded).hexdigest(),
