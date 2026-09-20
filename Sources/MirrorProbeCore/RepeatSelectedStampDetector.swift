@@ -5,15 +5,19 @@ public struct RepeatSelectedStampDetection: Equatable, Sendable {
     public let region: NormalizedRect
     public let redPixelCount: Int
     public let sampledPixelCount: Int
+    /// The scrolled-list displacement the stamp area was sampled at; see `VisualResultListOffset`.
+    public let listOffset: Double
 
     public init(
         region: NormalizedRect,
         redPixelCount: Int,
-        sampledPixelCount: Int
+        sampledPixelCount: Int,
+        listOffset: Double = 0
     ) {
         self.region = region
         self.redPixelCount = redPixelCount
         self.sampledPixelCount = sampledPixelCount
+        self.listOffset = listOffset
     }
 
     public var redPixelRatio: Double {
@@ -32,7 +36,8 @@ public struct RepeatSelectedStampDetection: Equatable, Sendable {
     }
 
     public var isValid: Bool {
-        region == RepeatSelectedStampDetector.measuredRegion
+        VisualResultListOffset.isAllowed(listOffset)
+            && region == RepeatSelectedStampDetector.measuredRegion(listOffset: listOffset)
             && redPixelCount >= 0
             && sampledPixelCount > 0
             && redPixelCount <= sampledPixelCount
@@ -42,6 +47,7 @@ public struct RepeatSelectedStampDetection: Equatable, Sendable {
 public enum RepeatSelectedStampDetectorError: Error, Equatable, Sendable {
     case invalidDimensions
     case insufficientBytes
+    case invalidListOffset
 }
 
 /// Detects whether the fixed result-page stamp area contains the game's red selection ink.
@@ -65,12 +71,21 @@ public enum RepeatSelectedStampDetector {
     public static let evidenceSentinel = "<measured-repeat-selected-red-stamp>"
     public static let absentEvidenceSentinel = "<measured-repeat-unselected-empty-stamp>"
 
+    /// The stamp area moved with a scrolled loot list; see `VisualResultListOffset`.
+    public static func measuredRegion(listOffset: Double) -> NormalizedRect {
+        listOffset == 0 ? measuredRegion : measuredRegion.offsetY(listOffset)
+    }
+
     public static func detectRGBA(
         _ bytes: [UInt8],
         width: Int,
         height: Int,
-        bytesPerRow: Int
+        bytesPerRow: Int,
+        listOffset: Double = 0
     ) throws -> RepeatSelectedStampDetection {
+        guard VisualResultListOffset.isAllowed(listOffset) else {
+            throw RepeatSelectedStampDetectorError.invalidListOffset
+        }
         guard width > 0,
               height > 0,
               width <= Int.max / 4,
@@ -83,15 +98,16 @@ public enum RepeatSelectedStampDetector {
             throw RepeatSelectedStampDetectorError.insufficientBytes
         }
 
-        let firstX = max(0, min(width - 1, Int(floor(measuredRegion.x * Double(width)))))
+        let region = measuredRegion(listOffset: listOffset)
+        let firstX = max(0, min(width - 1, Int(floor(region.x * Double(width)))))
         let lastX = max(
             firstX + 1,
-            min(width, Int(ceil((measuredRegion.x + measuredRegion.width) * Double(width))))
+            min(width, Int(ceil((region.x + region.width) * Double(width))))
         )
-        let firstY = max(0, min(height - 1, Int(floor(measuredRegion.y * Double(height)))))
+        let firstY = max(0, min(height - 1, Int(floor(region.y * Double(height)))))
         let lastY = max(
             firstY + 1,
-            min(height, Int(ceil((measuredRegion.y + measuredRegion.height) * Double(height))))
+            min(height, Int(ceil((region.y + region.height) * Double(height))))
         )
 
         var redPixelCount = 0
@@ -120,9 +136,10 @@ public enum RepeatSelectedStampDetector {
         }
 
         return RepeatSelectedStampDetection(
-            region: measuredRegion,
+            region: region,
             redPixelCount: redPixelCount,
-            sampledPixelCount: sampledPixelCount
+            sampledPixelCount: sampledPixelCount,
+            listOffset: listOffset
         )
     }
 }

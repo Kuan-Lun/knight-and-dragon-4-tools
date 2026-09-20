@@ -51,6 +51,45 @@ struct RepeatSelectedStampDetectorTests {
         #expect(!detection.isPresent)
     }
 
+    @Test("A scrolled list moves the stamp area by the recorded offset", arguments: [1, 2])
+    func stampAreaFollowsListOffset(scale: Int) throws {
+        let width = 406 * scale, height = 890 * scale
+        let offset = -0.03
+        var bytes = [UInt8](repeating: 255, count: width * height * 4)
+        // Ink exactly where the stamp sits on a list scrolled up by the offset.
+        let region = RepeatSelectedStampDetector.measuredRegion(listOffset: offset)
+        for y in Int(ceil(region.y * Double(height)))..<Int(floor((region.y + region.height) * Double(height))) {
+            for x in Int(ceil(region.x * Double(width)))..<Int(floor((region.x + region.width) * Double(width))) {
+                let index = (y * width + x) * 4
+                bytes.replaceSubrange(index..<(index + 4), with: [200, 40, 40, 255])
+            }
+        }
+        let shifted = try RepeatSelectedStampDetector.detectRGBA(
+            bytes, width: width, height: height, bytesPerRow: width * 4, listOffset: offset
+        )
+        #expect(shifted.isValid && shifted.isPresent && shifted.listOffset == offset)
+        #expect(shifted.region == region)
+        let fixed = try RepeatSelectedStampDetector.detectRGBA(
+            bytes, width: width, height: height, bytesPerRow: width * 4
+        )
+        #expect(fixed.isValid && fixed.listOffset == 0)
+        #expect(fixed.region == RepeatSelectedStampDetector.measuredRegion)
+        #expect(fixed.redPixelRatio < shifted.redPixelRatio)
+        #expect(throws: RepeatSelectedStampDetectorError.invalidListOffset) {
+            try RepeatSelectedStampDetector.detectRGBA(
+                bytes, width: width, height: height, bytesPerRow: width * 4, listOffset: -0.05
+            )
+        }
+        // A detection cannot claim a region that does not belong to its offset.
+        #expect(!RepeatSelectedStampDetection(
+            region: region, redPixelCount: 1, sampledPixelCount: 10, listOffset: 0
+        ).isValid)
+        #expect(!RepeatSelectedStampDetection(
+            region: RepeatSelectedStampDetector.measuredRegion, redPixelCount: 1,
+            sampledPixelCount: 10, listOffset: offset
+        ).isValid)
+    }
+
     @Test("Brown separator shades cannot become selection ink as capture colors fluctuate")
     func brownSeparatorHueIsExcluded() throws {
         // All these pixels were counted by the old red-channel cutoff in the 00:56 preflight.

@@ -1085,10 +1085,9 @@ public struct AutoLevelController: Sendable {
                   in: snapshot
               ),
               currentTarget == pendingAction.request.target,
-              currentTarget.sourceText
-                  == MissionResultTopActionResolver.measuredTopAdvanceSentinel,
-              currentTarget.rect == MissionResultTopActionResolver.measuredTopAdvanceRect,
-              currentTarget.point == MissionResultTopActionResolver.measuredTopAdvanceRect.center,
+              MissionResultTopActionResolver.isMeasuredTopAdvanceTarget(
+                  currentTarget, in: snapshot.classification
+              ),
               currentTarget.isValid,
               targetIsCompatible(
                   currentTarget,
@@ -1484,11 +1483,7 @@ public struct AutoLevelController: Sendable {
             return false
         }
         let verticalSeparation = repeatRect.center.y - target.point.y
-        let isMeasuredResultTop = canonicalSource
-                == MissionResultTopActionResolver.measuredTopAdvanceSentinel
-            && target.rect == MissionResultTopActionResolver.measuredTopAdvanceRect
-            && target.point == MissionResultTopActionResolver.measuredTopAdvanceRect.center
-            && hasMeasuredResultTopEvidence(matching: target, in: classification)
+        let isMeasuredResultTop = hasMeasuredResultTopEvidence(matching: target, in: classification)
         if isMeasuredResultTop {
             return true
         }
@@ -1520,9 +1515,7 @@ public struct AutoLevelController: Sendable {
         matching target: AutoLevelActionTarget,
         in classification: GameStateClassification
     ) -> Bool {
-        guard target.sourceText == MissionResultTopActionResolver.measuredTopAdvanceSentinel,
-              target.rect == MissionResultTopActionResolver.measuredTopAdvanceRect,
-              target.point == MissionResultTopActionResolver.measuredTopAdvanceRect.center
+        guard MissionResultTopActionResolver.isMeasuredTopAdvanceTarget(target, in: classification)
         else {
             return false
         }

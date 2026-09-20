@@ -34,7 +34,9 @@ public enum MissionRepeatSelectionProof {
               VisualResultEvidence.trustedTitle(in: classification, expectedKind: titleKind),
               repeats.count == 1,
               let rowRect = VisualResultEvidence.trustedRepeatRect(in: classification),
-              (0.225...0.255).contains(rowRect.center.y),
+              (0.225...0.255).contains(
+                  rowRect.center.y - VisualResultEvidence.listOffset(in: classification)
+              ),
               rowRect.x + rowRect.width <= RepeatSelectedStampDetector.measuredRegion.x,
               rowRect.width >= 0.20, rowRect.height <= 0.05,
               target.isValid,

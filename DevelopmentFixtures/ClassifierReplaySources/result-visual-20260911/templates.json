@@ -9,6 +9,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png",
     "placement": "raw",
+    "rowOffset": 0.0,
     "sourceSHA256": "55ec0601f8d3ecabe4468592e287608c93f8aaed3d9f9b700fc20abad9ab6df2",
     "sampleSHA256": "0512b7341d7bbd21a94b776281e6b3ba1cd74de9f0dcaf97dd25ae2f5b42b892"
   },
@@ -22,6 +23,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-experience.png",
     "placement": "raw",
+    "rowOffset": 0.0,
     "sourceSHA256": "1af0059233c5b2885d1b672591030af86a08e94fa32a763db8924c5e3e614cd4",
     "sampleSHA256": "d8b1123d3a4051e2ca4203c9423e068c5e3eac78348fc1f171efabfb3653c06d"
   },
@@ -35,6 +37,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-211x468.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "a4967f96a47bb65db6417ea4e69f879892c970b9899f8b38b9abf6f4eb84217c",
     "sampleSHA256": "f45567eca726eedb856bd21cbadce2da72a0b558e776fadb3332f4b83e5fd95a"
   },
@@ -48,6 +51,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-250x553.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "cb2dc55400148743d7b3014c7f46e20bd91eeb5ec5f884ed9749b3c1bcdbc6b3",
     "sampleSHA256": "e456f908fbf7b8def515c4109a797067fc407a07d23082100d71de50befed967"
   },
@@ -61,6 +65,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-289x637.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "064a1adc3991678ee5ed1f89dd9c05374229599ddb64bcd3b13a77f378eb2c4a",
     "sampleSHA256": "71cb56857220d9aec6464ff6ed7e8c81e73610850b768a5a41814dd97eb179bc"
   },
@@ -74,6 +79,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-328x722.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "d36a5a4abb835b588d78f338478e582bc157a92dcd2e2e6e38027c5082535e7e",
     "sampleSHA256": "43b1c1de10cb626c8d1d2dc78768d4544180ab088a1273378d07b4cd7d666e8c"
   },
@@ -87,6 +93,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/failure-repeat-confirmation-before.png",
     "placement": "raw",
+    "rowOffset": 0.0,
     "sourceSHA256": "a9516cecc2e2f9f7b9e54c92018dda546a0434357489ce81ae11b2bbf9064eeb",
     "sampleSHA256": "0a798a088fcf2ac42da19196f4e8a8dc0a7419a81e0f7e9a6b39f04dd74de65d"
   },
@@ -100,6 +107,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-211x468.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "8b33fa11aac9cfa79825ff913dbc2cb960d00b7a06b5866f9662e85c5269a228",
     "sampleSHA256": "b08eb7ad51c1ccff1b58ccb7285e8256a0aa8aecd287b5420839538c5b67c78a"
   },
@@ -113,6 +121,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-250x553.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "03874a3c2aa592295d8f1cde7e7736bef457219e95b4a148c21dfe7184aa282d",
     "sampleSHA256": "af508e463bb3a934d6f1303894b2fc75011783acdd9829bebca128f0ad629efd"
   },
@@ -126,6 +135,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-289x637.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "1fc1ca406af41905374aaaa9854e84072c2720fe1969566ed6354bd709fd9955",
     "sampleSHA256": "7a2811148c874ec1179cee4aec11302fdf93d0b7e9463ffbcad84c8cf6c18a5a"
   },
@@ -139,6 +149,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-failure-result-328x722.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "ad0dd4de36ae0e7f9181d4d57f6bc9e5759511a3e4a59d50b19f9687fda589b6",
     "sampleSHA256": "ce90cbc8b39a0809a3746a54229c0e5f4a658eaad882b71ddafbd777e0ceb7bc"
   },
@@ -152,6 +163,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png",
     "placement": "raw",
+    "rowOffset": 0.0,
     "sourceSHA256": "55ec0601f8d3ecabe4468592e287608c93f8aaed3d9f9b700fc20abad9ab6df2",
     "sampleSHA256": "f1200e81607768e12d4b5103cfb6a7f856378acb22a601ec8fa5c5298a75e227"
   },
@@ -165,6 +177,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-experience.png",
     "placement": "raw",
+    "rowOffset": 0.0,
     "sourceSHA256": "1af0059233c5b2885d1b672591030af86a08e94fa32a763db8924c5e3e614cd4",
     "sampleSHA256": "a3c1a06bdfcde61c0979da350ebeca8c2f10a864983ffdd7078c1aaabbbcc89b"
   },
@@ -178,6 +191,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-211x468.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "9b8024f9db01168b9e2904dee71a1ab6107f6066211e14ff15672c114be139fa",
     "sampleSHA256": "57577aa0881d57cc7d2b0071979d2fa6e20dcfc705d428d03bad59cdbf3fa51c"
   },
@@ -191,6 +205,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-250x553.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "e98f0b6c4657f4a282cc6d56898778f5f1b835aec91c6a436058b49a64996044",
     "sampleSHA256": "d65588b5b04892f769b28093cd3cfa75b66566d8ea0eaf8de47c7c5df7a287eb"
   },
@@ -204,6 +219,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-289x637.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "b781d44f97c0439a6ab479326503722f3088c6f9e4c0b2bf97f9ddf412f736d9",
     "sampleSHA256": "86fa3d84aee59d4df65881a597ac4cea4c323c71e6c7e056c3685d77b048ab44"
   },
@@ -217,6 +233,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-experience-result-328x722.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "4d3c55b9fd73fd75ec7872a080a539e7baddb7e147a2b28f4e73f174a6a71496",
     "sampleSHA256": "ae0b7307b14b88daa5f1c2c9f36e7ff2fe6508c902f1bc07883ded5ce5902cb7"
   },
@@ -230,6 +247,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-result-no-modal.png",
     "placement": "raw",
+    "rowOffset": 0.0,
     "sourceSHA256": "50c82a52974ac47a085d8a3305f08e012f43a32debf1d7c9dd47816b483da786",
     "sampleSHA256": "492fb91d0b9b55c674e34528203f2f4a373669b9ed5e37223c8fce077d51b533"
   },
@@ -243,6 +261,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-startup.png",
     "placement": "raw",
+    "rowOffset": 0.0,
     "sourceSHA256": "1a12308ad0e2c1f3b59e73b4e7e152434c322c6d6abe8835dcbfba0d2861abe5",
     "sampleSHA256": "b90276675b77bad310fc5fe47343fd812430dd8cd7398fd707fe8098db308487"
   },
@@ -256,6 +275,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-211x468.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "a4967f96a47bb65db6417ea4e69f879892c970b9899f8b38b9abf6f4eb84217c",
     "sampleSHA256": "79bd173e6ea31ddf6d271c8e631330ce64eb8665ddab69b5c80ce447e2fcaaf2"
   },
@@ -269,6 +289,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-250x553.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "cb2dc55400148743d7b3014c7f46e20bd91eeb5ec5f884ed9749b3c1bcdbc6b3",
     "sampleSHA256": "8df7d1de1251ee8846faa24733070f3272a0f90c934395e0d6253bfdddfd4d61"
   },
@@ -282,6 +303,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-289x637.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "064a1adc3991678ee5ed1f89dd9c05374229599ddb64bcd3b13a77f378eb2c4a",
     "sampleSHA256": "244fb2a66c5c74c0dab3d8d357952910ab3d7d29d9db559a7ef4b4bcac03d6c2"
   },
@@ -295,6 +317,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-328x722.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "d36a5a4abb835b588d78f338478e582bc157a92dcd2e2e6e38027c5082535e7e",
     "sampleSHA256": "fa9b676d5dfff9938a5191e609c73a4e7763c6eb4686866d73e6016a9522b7ae"
   },
@@ -308,6 +331,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/Images/mission-repeat-selected-srlected.png",
     "placement": "raw",
+    "rowOffset": 0.0,
     "sourceSHA256": "55ec0601f8d3ecabe4468592e287608c93f8aaed3d9f9b700fc20abad9ab6df2",
     "sampleSHA256": "090e826796217efc3441c09c633eb13a3e5d0e8e8f984947d6798bf2228100c5"
   },
@@ -321,6 +345,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/low-result-title-experience.png",
     "placement": "raw",
+    "rowOffset": 0.0,
     "sourceSHA256": "1af0059233c5b2885d1b672591030af86a08e94fa32a763db8924c5e3e614cd4",
     "sampleSHA256": "07e4a6f1a3c45b8b2bcc16e4604a4a0c601564c60e9a237398b3041cd1a172bc"
   },
@@ -334,6 +359,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-211x468.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "a4967f96a47bb65db6417ea4e69f879892c970b9899f8b38b9abf6f4eb84217c",
     "sampleSHA256": "00f01939d14d5755e6bf16b779d7c48f782652a9a8ddbf148a5d0adca0cba8a8"
   },
@@ -347,6 +373,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-250x553.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "cb2dc55400148743d7b3014c7f46e20bd91eeb5ec5f884ed9749b3c1bcdbc6b3",
     "sampleSHA256": "94aa8fda75695e13829f0a01d7d828f643f30b98689a48f1da514d6874b9ee7d"
   },
@@ -360,6 +387,7 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-289x637.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "064a1adc3991678ee5ed1f89dd9c05374229599ddb64bcd3b13a77f378eb2c4a",
     "sampleSHA256": "897f8aefc8c18e45b2f4692dc1907de04b35af2ec46ab72023caf2b86af30bd3"
   },
@@ -373,7 +401,22 @@
     ],
     "source": "Tests/MirrorProbeCoreTests/Fixtures/zoom-loot-result-328x722.png",
     "placement": "zoom",
+    "rowOffset": 0.0,
     "sourceSHA256": "d36a5a4abb835b588d78f338478e582bc157a92dcd2e2e6e38027c5082535e7e",
     "sampleSHA256": "ba9a68512d81462f08e9d71f84f776508ab2d10a156ae6c7f5b690dda9596b4a"
+  },
+  {
+    "marker": "repeatOption",
+    "region": [
+      0.022,
+      0.234,
+      0.29,
+      0.025
+    ],
+    "source": "Tests/MirrorProbeCoreTests/Fixtures/scrolled-loot-result-20260921-001348.png",
+    "placement": "canvas",
+    "rowOffset": -6.25,
+    "sourceSHA256": "ddc2ddd1719769e6ac68738c7c4a1798fd549d85a49f3acea05760968bef9ef6",
+    "sampleSHA256": "a14d426ef33e1e002d5147ebddbd6baa7792db0e0fb923ca60d02d906ab6bf08"
   }
 ]

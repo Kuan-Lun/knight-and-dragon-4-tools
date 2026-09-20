@@ -11,6 +11,23 @@ public enum MissionResultTopActionResolver {
         height: 0.011235955056179803
     )
 
+    /// The control scrolls with the loot list; see `VisualResultListOffset`.
+    public static func measuredTopAdvanceRect(listOffset: Double) -> NormalizedRect {
+        listOffset == 0 ? measuredTopAdvanceRect : measuredTopAdvanceRect.offsetY(listOffset)
+    }
+
+    /// The fixed upper control at the displacement of the classification's repeat row.
+    public static func isMeasuredTopAdvanceTarget(
+        _ target: AutoLevelActionTarget, in classification: GameStateClassification
+    ) -> Bool {
+        let rect = measuredTopAdvanceRect(
+            listOffset: VisualResultEvidence.listOffset(in: classification)
+        )
+        return target.sourceText == measuredTopAdvanceSentinel
+            && target.rect == rect
+            && target.point == rect.center
+    }
+
     public static func resolve(
         classification: GameStateClassification
     ) -> GameStateClassification {
@@ -41,13 +58,16 @@ public enum MissionResultTopActionResolver {
             return withoutResultAction(classification)
         }
 
+        let rect = measuredTopAdvanceRect(
+            listOffset: VisualResultEvidence.listOffset(in: classification)
+        )
         let action = AllowedGameAction(
             name: .advanceMissionComplete,
             target: NamedGameTarget(
                 name: .missionCompleteAdvance,
                 sourceText: measuredTopAdvanceSentinel,
-                rect: measuredTopAdvanceRect,
-                point: measuredTopAdvanceRect.center
+                rect: rect,
+                point: rect.center
             )
         )
         let measuredEvidence = GameStateEvidence(

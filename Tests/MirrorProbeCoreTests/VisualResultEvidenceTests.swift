@@ -233,6 +233,57 @@ struct VisualResultEvidenceTests {
                                         similarity: similarity))
     }
 
+    @Test("A repeat row matched on a scrolled list validates only within the bounded offset")
+    func repeatRowListOffsetValidation() {
+        let inRange = -7.0 / 445.0
+        func evidence(_ match: VisualResultMatch, kind: GameEvidenceKind = .missionRepeatOption) -> GameStateEvidence {
+            .init(kind: kind, observation: nil, detail: "scrolled", visualMatch: match)
+        }
+        let shifted = VisualResultMatch(
+            marker: .repeatOption, region: VisualResultMatch.region(for: .repeatOption, listOffset: inRange),
+            similarity: 0.98, listOffset: inRange
+        )
+        #expect(VisualResultEvidence.validatedMatch(evidence(shifted)) == shifted)
+        // The region must be the calibrated one moved by exactly the recorded offset.
+        let inconsistent = VisualResultMatch(
+            marker: .repeatOption, region: VisualResultMatch.region(for: .repeatOption),
+            similarity: 0.98, listOffset: inRange
+        )
+        #expect(VisualResultEvidence.validatedMatch(evidence(inconsistent)) == nil)
+        for outOfRange in [-0.04, 0.01, .nan, .infinity] {
+            let match = VisualResultMatch(
+                marker: .repeatOption,
+                region: VisualResultMatch.region(for: .repeatOption, listOffset: outOfRange),
+                similarity: 0.98, listOffset: outOfRange
+            )
+            #expect(VisualResultEvidence.validatedMatch(evidence(match)) == nil)
+        }
+        // A scrolled row is held to the lower floor; the calibrated position keeps 0.94.
+        let weakShifted = VisualResultMatch(
+            marker: .repeatOption, region: VisualResultMatch.region(for: .repeatOption, listOffset: inRange),
+            similarity: 0.80, listOffset: inRange
+        )
+        #expect(VisualResultEvidence.validatedMatch(evidence(weakShifted)) == weakShifted)
+        let weakCanonical = VisualResultMatch(
+            marker: .repeatOption, region: VisualResultMatch.region(for: .repeatOption), similarity: 0.80
+        )
+        #expect(VisualResultEvidence.validatedMatch(evidence(weakCanonical)) == nil)
+        let tooWeak = VisualResultMatch(
+            marker: .repeatOption, region: VisualResultMatch.region(for: .repeatOption, listOffset: inRange),
+            similarity: 0.70, listOffset: inRange
+        )
+        #expect(VisualResultEvidence.validatedMatch(evidence(tooWeak)) == nil)
+        // The title and page header never move.
+        let title = VisualResultMatch(
+            marker: .successTitle, region: VisualResultMatch.region(for: .successTitle),
+            similarity: 0.98, listOffset: inRange
+        )
+        #expect(VisualResultEvidence.validatedMatch(evidence(title, kind: .missionCompleteTitle)) == nil)
+        #expect(VisualResultListOffset.candidates.allSatisfy(VisualResultListOffset.isAllowed))
+        #expect(VisualResultListOffset.candidates.contains { $0 < inRange } )
+        #expect(!VisualResultListOffset.isAllowed(-0.04) && !VisualResultListOffset.isAllowed(0.01))
+    }
+
     private func result(page: MissionSuccessPageIdentity = .experience,
                         failure: Bool = false, selected: Bool = true) -> GameStateClassification {
         let state: GameState = failure

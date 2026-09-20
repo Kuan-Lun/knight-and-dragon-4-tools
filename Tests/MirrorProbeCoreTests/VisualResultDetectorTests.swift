@@ -38,6 +38,8 @@ struct VisualResultDetectorTests {
         let matches = classification.evidence.compactMap(\.visualMatch)
         #expect(matches.count == 3)
         #expect(matches.allSatisfy { $0.similarity >= VisualResultMatch.minimumSimilarity })
+        // Native captures of unscrolled pages match at the calibrated positions.
+        #expect(matches.allSatisfy { $0.listOffset == 0 })
         #expect(Set(matches.map { $0.marker.rawValue }).count == 3)
         #expect(snapshot(capture, at: 1).actionCandidates.map(\.intent)
             == [try #require(capture.fixture.expectedIntent)])

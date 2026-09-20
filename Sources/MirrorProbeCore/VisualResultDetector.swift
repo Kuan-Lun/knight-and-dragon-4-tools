@@ -47,9 +47,10 @@ public enum VisualResultDetector {
         guard MirrorContentLayout.hasReferenceProportions(width: width, height: height)
         else { return rejected("unsupportedImageGeometry", isResultCandidate: false) }
 
-        let scores = Dictionary(uniqueKeysWithValues: markers.map { marker in
+        var scores = Dictionary(uniqueKeysWithValues: markers.map { marker in
             (marker, bestSimilarity(
-                marker, bytes: bytes, width: width, height: height, bytesPerRow: bytesPerRow
+                marker, listOffset: 0,
+                bytes: bytes, width: width, height: height, bytesPerRow: bytesPerRow
             ))
         })
         func matched(_ marker: VisualResultMarker) -> Bool {
@@ -57,17 +58,40 @@ public enum VisualResultDetector {
         }
         let titles = [VisualResultMarker.successTitle, .failureTitle].filter(matched)
         let pages = [VisualResultMarker.experienceHeader, .lootHeader].filter(matched)
-        let isCandidate = !titles.isEmpty || (!pages.isEmpty && matched(.repeatOption))
+        // A scrolled loot list moves the repeat row with the ">>" control and the stamp while
+        // the title and header stay put. Search the bounded offsets only once the calibrated
+        // position fails under a matched title and header; every result target then follows
+        // the offset the row was found at.
+        var listOffset = 0.0
+        var repeatMatched = matched(.repeatOption)
+        if !repeatMatched, titles.count == 1, pages.count == 1 {
+            var best = scores[.repeatOption] ?? -1
+            for candidate in VisualResultListOffset.candidates {
+                let score = bestSimilarity(
+                    .repeatOption, listOffset: candidate,
+                    bytes: bytes, width: width, height: height, bytesPerRow: bytesPerRow
+                )
+                if score > best {
+                    best = score
+                    listOffset = candidate
+                }
+            }
+            scores[.repeatOption] = best
+            repeatMatched = listOffset != 0 && best >= VisualResultListOffset.minimumSimilarity
+        }
+        let isCandidate = !titles.isEmpty || (!pages.isEmpty && repeatMatched)
         let scoreDetail = markers.map {
             "\($0.rawValue)=\(String(format: "%.5f", scores[$0] ?? -1))"
-        }.joined(separator: ", ")
-        guard titles.count == 1, pages.count == 1, matched(.repeatOption),
+        }.joined(separator: ", ") + ", repeatListOffset=\(String(format: "%.5f", listOffset))"
+        guard titles.count == 1, pages.count == 1, repeatMatched,
               let title = titles.first, let page = pages.first
         else { return rejected("incompleteOrAmbiguousMarkers, \(scoreDetail)", isResultCandidate: isCandidate) }
 
-        let stamp = try repeatStamp ?? RepeatSelectedStampDetector.detectRGBA(
-            bytes, width: width, height: height, bytesPerRow: bytesPerRow
-        )
+        let stamp = try repeatStamp.flatMap { $0.listOffset == listOffset ? $0 : nil }
+            ?? RepeatSelectedStampDetector.detectRGBA(
+                bytes, width: width, height: height, bytesPerRow: bytesPerRow,
+                listOffset: listOffset
+            )
         guard stamp.isValid, stamp.isPresent || stamp.isClearlyAbsent else {
             return rejected(
                 "ambiguousSelectionStamp, redPixelCount=\(stamp.redPixelCount), "
@@ -81,14 +105,16 @@ public enum VisualResultDetector {
             ? (stamp.isPresent ? .missionCompleteRepeatSelected : .missionComplete)
             : (stamp.isPresent ? .missionFailedRepeatSelected : .missionFailed)
         func makeEvidence(_ marker: VisualResultMarker, kind: GameEvidenceKind) -> GameStateEvidence {
+            let offset = marker == .repeatOption ? listOffset : 0
             let match = VisualResultMatch(
-                marker: marker, region: VisualResultMatch.region(for: marker),
-                similarity: scores[marker] ?? -1
+                marker: marker, region: VisualResultMatch.region(for: marker, listOffset: offset),
+                similarity: scores[marker] ?? -1, listOffset: offset
             )
             return GameStateEvidence(
                 kind: kind, observation: nil,
                 detail: "source=resultVisualV1, marker=\(marker.rawValue), "
-                    + "similarity=\(match.similarity), minimumSimilarity=\(VisualResultMatch.minimumSimilarity)",
+                    + "similarity=\(match.similarity), minimumSimilarity=\(VisualResultMatch.minimumSimilarity)"
+                    + (offset == 0 ? "" : ", listOffset=\(offset)"),
                 visualMatch: match
             )
         }
@@ -104,7 +130,7 @@ public enum VisualResultDetector {
                     : RepeatSelectedStampDetector.absentEvidenceSentinel
             ),
         ]
-        let repeatRect = VisualResultMatch.region(for: .repeatOption)
+        let repeatRect = VisualResultMatch.region(for: .repeatOption, listOffset: listOffset)
         let classification = GameStateClassification(
             state: state, evidence: evidence,
             allowedActions: stamp.isPresent ? [] : [AllowedGameAction(
@@ -137,10 +163,11 @@ public enum VisualResultDetector {
     }
 
     private static func bestSimilarity(
-        _ marker: VisualResultMarker, bytes: [UInt8], width: Int, height: Int, bytesPerRow: Int
+        _ marker: VisualResultMarker, listOffset: Double,
+        bytes: [UInt8], width: Int, height: Int, bytesPerRow: Int
     ) -> Double {
         VisualRegionMatcher.bestSimilarity(
-            region: VisualResultMatch.region(for: marker),
+            region: VisualResultMatch.region(for: marker, listOffset: listOffset),
             templates: VisualResultTemplates.samples[marker] ?? [],
             sampleWidth: VisualResultTemplates.sampleWidth, sampleHeight: VisualResultTemplates.sampleHeight,
             bytes: bytes, width: width, height: height, bytesPerRow: bytesPerRow

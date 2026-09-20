@@ -16,11 +16,30 @@ public struct VisualResultMatch: Codable, Equatable, Sendable {
     public let marker: VisualResultMarker
     public let region: NormalizedRect
     public let similarity: Double
+    /// Vertical displacement of the scrolled list block this match was found at. Only the
+    /// repeat row may carry one; the fixed title and page header are always zero.
+    public let listOffset: Double
 
-    public init(marker: VisualResultMarker, region: NormalizedRect, similarity: Double) {
+    public init(
+        marker: VisualResultMarker, region: NormalizedRect, similarity: Double,
+        listOffset: Double = 0
+    ) {
         self.marker = marker
         self.region = region
         self.similarity = similarity
+        self.listOffset = listOffset
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case marker, region, similarity, listOffset
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        marker = try container.decode(VisualResultMarker.self, forKey: .marker)
+        region = try container.decode(NormalizedRect.self, forKey: .region)
+        similarity = try container.decode(Double.self, forKey: .similarity)
+        listOffset = try container.decodeIfPresent(Double.self, forKey: .listOffset) ?? 0
     }
 
     public static func region(for marker: VisualResultMarker) -> NormalizedRect {
@@ -33,6 +52,57 @@ public struct VisualResultMatch: Codable, Equatable, Sendable {
             .init(x: 0.022, y: 0.234, width: 0.29, height: 0.025)
         }
     }
+
+    /// A scrolled repeat row is held to `VisualResultListOffset.minimumSimilarity`.
+    public static func minimumSimilarity(for marker: VisualResultMarker, listOffset: Double) -> Double {
+        marker == .repeatOption && listOffset != 0
+            ? VisualResultListOffset.minimumSimilarity : minimumSimilarity
+    }
+
+    /// The calibrated region moved with the scrolled list; only the repeat row moves.
+    public static func region(for marker: VisualResultMarker, listOffset: Double) -> NormalizedRect {
+        let base = region(for: marker)
+        guard marker == .repeatOption, listOffset != 0 else { return base }
+        return base.offsetY(listOffset)
+    }
+}
+
+/// A long loot list can be scrolled a little, which moves the ">>" control, the repeat row
+/// and its stamp together while the title and page header stay fixed: three runs at 211x468
+/// (logs/auto-level-20260920-224537 after 55 cycles, -232356 after 31, and 20260921-001348 at
+/// startup) sat seven canvas rows high and stayed unknown. Recognition follows that block
+/// within this bounded range and every result target moves with it; a page scrolled further
+/// stays unknown, so the user scrolls it back to the top.
+public enum VisualResultListOffset {
+    public static let range: ClosedRange<Double> = -0.032...0.006
+
+    /// A scrolled row shows the same glyphs downscaled at another phone-pixel phase, so it
+    /// correlated only 0.77 to 0.87 with the calibrated samples (0.998 with its own sample,
+    /// which is included). The other text inside the search window scored at most 0.45.
+    public static let minimumSimilarity = 0.75
+
+    /// One reference-canvas row per step (890 rows at 406x890, 445 at 211x468); the region
+    /// matcher's own one-row sub-search covers the gaps. Nearest offsets first.
+    public static let candidates: [Double] = {
+        let step = 2.0 / 890.0
+        var offsets: [Double] = []
+        for multiple in 1...14 {
+            let up = -Double(multiple) * step, down = Double(multiple) * step
+            if range.contains(up) { offsets.append(up) }
+            if range.contains(down) { offsets.append(down) }
+        }
+        return offsets
+    }()
+
+    public static func isAllowed(_ offset: Double) -> Bool {
+        offset.isFinite && range.contains(offset)
+    }
+}
+
+extension NormalizedRect {
+    public func offsetY(_ delta: Double) -> NormalizedRect {
+        NormalizedRect(x: x, y: y + delta, width: width, height: height)
+    }
 }
 
 /// Validates serialized visual evidence at the same boundaries that previously required OCR.
@@ -44,12 +114,23 @@ public enum VisualResultEvidence {
         guard evidence.observation == nil, evidence.battleVisualMatch == nil,
               let match = evidence.visualMatch,
               expectedMarker(for: evidence.kind) == match.marker,
+              match.marker == .repeatOption
+                  ? VisualResultListOffset.isAllowed(match.listOffset) : match.listOffset == 0,
               match.region.isValid,
-              match.region == VisualResultMatch.region(for: match.marker),
+              match.region == VisualResultMatch.region(for: match.marker, listOffset: match.listOffset),
               match.similarity.isFinite,
-              (VisualResultMatch.minimumSimilarity...1).contains(match.similarity)
+              (VisualResultMatch.minimumSimilarity(for: match.marker, listOffset: match.listOffset)...1)
+                  .contains(match.similarity)
         else { return nil }
         return match
+    }
+
+    /// The scrolled-list displacement the classification's repeat row was matched at: zero
+    /// for an unscrolled page and for OCR-based evidence.
+    public static func listOffset(in classification: GameStateClassification) -> Double {
+        let rows = classification.evidence.filter { $0.kind == .missionRepeatOption }
+        guard rows.count == 1, let match = validatedMatch(rows[0]) else { return 0 }
+        return match.listOffset
     }
 
     public static func hasVisualMatches(in classification: GameStateClassification) -> Bool {
