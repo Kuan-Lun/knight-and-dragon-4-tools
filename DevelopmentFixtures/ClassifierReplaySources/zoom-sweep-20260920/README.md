@@ -61,6 +61,15 @@ and is held out from calibration.
 
 ## Validation
 
+Live: `logs/auto-level-20260920-145016.EZnRXy`, the packaged 0.4.37 (60) App at a
+211×468 window, completed 3 cycles with 11 actions in 57 seconds
+(`maximumCyclesReached`), recognizing loot result, two-button and one-button dialogs
+and battle pages on the 204×445 canvas. The first advance click was not acknowledged
+and the existing retry posted it again 11 seconds later; the remaining ten actions were
+acknowledged on the next capture. Earlier the same day the 0.4.36 App at the same size
+stopped after 13 seconds without recognizing any page.
+
+Offline:
 See `docs/testing.md` (zoom-level captures) and the regression suites
 `ZoomLevelResultRegressionTests`, `ZoomLevelBattleRegressionTests`,
 `ZoomLevelModalRegressionTests`, `MirrorContentLayoutTests` and
