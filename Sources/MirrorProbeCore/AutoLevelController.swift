@@ -904,6 +904,14 @@ public struct AutoLevelController: Sendable {
             ) {
                 return retry
             }
+            if let retry = retryTimedOutWideModalPress(
+                pendingAction,
+                with: snapshot,
+                at: now,
+                allowNewActions: allowNewActions
+            ) {
+                return retry
+            }
             return stop(.actionDidNotAdvance(intent: pendingAction.request.intent))
         }
 
@@ -1061,6 +1069,45 @@ public struct AutoLevelController: Sendable {
 
         return issueActionRequest(
             .advanceMissionSuccess,
+            target: currentTarget,
+            from: snapshot,
+            at: now,
+            allowNewActions: allowNewActions,
+            postAttempt: pendingAction.postAttempt + 1
+        )
+    }
+
+    /// A dialog button press that the game never received leaves the same dialog on screen; a
+    /// mouse movement by the user during the 60 ms between the posted mouse-down and mouse-up
+    /// turns the tap into a drag. Dialog buttons have no side effects beyond dismissing or
+    /// advancing the dialog, so re-post while the same dialog layout and exact button target
+    /// remain the only candidate. Each retry gets fresh input validation; the bound stops a
+    /// dialog the game refuses to dismiss.
+    private mutating func retryTimedOutWideModalPress(
+        _ pendingAction: PendingAction,
+        with snapshot: AutoLevelSnapshot,
+        at now: TimeInterval,
+        allowNewActions: Bool
+    ) -> AutoLevelDecision? {
+        guard pendingAction.postedAt != nil,
+              pendingAction.request.intent == .pressWideModalTopButton,
+              pendingAction.postAttempt < Self.maximumWideModalPressPostAttempts,
+              genericModalStates.contains(pendingAction.originState),
+              snapshot.classification.state == pendingAction.originState,
+              uncertainKind(for: snapshot.classification) == nil,
+              let currentTarget = uniqueMatchingCandidateTarget(
+                  for: .pressWideModalTopButton,
+                  in: snapshot
+              ),
+              currentTarget == pendingAction.request.target,
+              currentTarget.isValid
+        else { return nil }
+
+        if let lastActionAt, now - lastActionAt < policy.actionCooldown {
+            return .wait(.actionCooldown(remaining: policy.actionCooldown - (now - lastActionAt)))
+        }
+        return issueActionRequest(
+            .pressWideModalTopButton,
             target: currentTarget,
             from: snapshot,
             at: now,
@@ -1493,6 +1540,7 @@ public struct AutoLevelController: Sendable {
 
     private static let maximumMissionSuccessAdvancePostAttempts = 3
     private static let maximumMissionRepeatSelectionPostAttempts = 3
+    private static let maximumWideModalPressPostAttempts = 3
 
     private func compactResultText(_ text: String) -> String {
         let compatible = text.precomposedStringWithCompatibilityMapping

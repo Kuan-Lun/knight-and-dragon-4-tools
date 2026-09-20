@@ -273,6 +273,86 @@ struct AutoLevelControllerTests {
         #expect(decision == .stop(.actionDidNotAdvance(intent: .closeBattlePrompt)))
     }
 
+    @Test("A dialog press the game never received retries twice on the unchanged dialog before stopping",
+          arguments: [GameState.wideModalOneButton, .wideModalTwoButtons])
+    func wideModalPressHasThreeAttemptBound(state: GameState) {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let dialog: (Double) -> AutoLevelSnapshot = { time in
+            self.makeSnapshot(
+                state: state, time: time, fingerprint: "frozen-dialog",
+                actions: [self.gameAction(.pressWideModalTopButton)]
+            )
+        }
+        let first = requireAction(controller.consume(dialog(1)))!
+        #expect(first.requestID == 1 && first.intent == .pressWideModalTopButton)
+        let marked1 = controller.markActionPosted(first, at: 2)
+        #expect(marked1)
+        #expect(controller.consume(dialog(4.9)) == .wait(.awaitingFrameChange(intent: .pressWideModalTopButton)))
+
+        let second = requireAction(controller.consume(dialog(5)))!
+        #expect(second.requestID == 2 && second.target == first.target)
+        let marked2 = controller.markActionPosted(second, at: 6)
+        #expect(marked2)
+        #expect(controller.consume(dialog(8.9)) == .wait(.awaitingFrameChange(intent: .pressWideModalTopButton)))
+
+        let third = requireAction(controller.consume(dialog(9)))!
+        #expect(third.requestID == 3 && third.target == first.target)
+        let marked3 = controller.markActionPosted(third, at: 10)
+        #expect(marked3)
+        #expect(controller.consume(dialog(12.9)) == .wait(.awaitingFrameChange(intent: .pressWideModalTopButton)))
+        #expect(controller.consume(dialog(13)) == .stop(.actionDidNotAdvance(intent: .pressWideModalTopButton)))
+        #expect(controller.actionsIssued == 3)
+    }
+
+    @Test("A retried dialog press that finally dismisses the dialog resumes normally")
+    func retriedWideModalPressAcknowledgedByDismissal() {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let first = requireAction(controller.consume(makeSnapshot(
+            state: .wideModalOneButton, time: 1, fingerprint: "dialog",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))!
+        let marked4 = controller.markActionPosted(first, at: 2)
+        #expect(marked4)
+        let second = requireAction(controller.consume(makeSnapshot(
+            state: .wideModalOneButton, time: 5, fingerprint: "dialog",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))!
+        #expect(second.requestID == 2)
+        let marked5 = controller.markActionPosted(second, at: 6)
+        #expect(marked5)
+        let resultPage: (Double) -> AutoLevelSnapshot = { time in
+            self.makeSnapshot(
+                state: .missionCompleteRepeatSelected, time: time, fingerprint: "result-after-dialog",
+                actions: [self.gameAction(.advanceMissionComplete)]
+            )
+        }
+        // The dismissal is acknowledged by the result page, which first completes the cycle.
+        #expect(controller.consume(resultPage(7)) == .completedCycle(.init(count: 1, outcome: .success)))
+        #expect(controller.pendingActionAcknowledgementDeadline == nil)
+        #expect(requireAction(controller.consume(resultPage(7)))?.intent == .advanceMissionSuccess)
+        #expect(controller.actionsIssued == 3)
+    }
+
+    @Test("A timed-out dialog press does not retry when the dialog layout or button changed")
+    func wideModalPressRetryRequiresSameDialog() {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let first = requireAction(controller.consume(makeSnapshot(
+            state: .wideModalOneButton, time: 1, fingerprint: "dialog",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))!
+        let marked6 = controller.markActionPosted(first, at: 2)
+        #expect(marked6)
+        let movedButton = gameAction(
+            .pressWideModalTopButton,
+            rect: NormalizedRect(x: 0.2, y: 0.7, width: 0.6, height: 0.05)
+        )
+        #expect(movedButton.target.rect != first.target.rect)
+        #expect(controller.consume(makeSnapshot(
+            state: .wideModalOneButton, time: 5, fingerprint: "dialog",
+            actions: [movedButton]
+        )) == .stop(.actionDidNotAdvance(intent: .pressWideModalTopButton)))
+    }
+
     @Test("Delayed modal OCR waits for fresh pixels without consuming an action or its deadline")
     func staleInitialActionRequiresFreshObservation() throws {
         var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 5))
@@ -448,9 +528,21 @@ struct AutoLevelControllerTests {
             ? .confirmRetreatWithoutTalisman : .pressWideModalTopButton))
         let confirmationPosted = controller.markActionPosted(confirmation, at: 5.5)
         #expect(confirmationPosted)
-        #expect(controller.consume(confirmationAt(13.5), allowNewActions: false)
-            == .stop(.actionDidNotAdvance(intent: confirmation.intent)))
-        #expect(controller.actionsIssued == 2)
+        if state == .retreatConfirmation {
+            // The one-shot retreat confirmation never inherits a retry.
+            #expect(controller.consume(confirmationAt(13.5), allowNewActions: false)
+                == .stop(.actionDidNotAdvance(intent: confirmation.intent)))
+            #expect(controller.actionsIssued == 2)
+        } else {
+            // A generic dialog button retries, but never from a stale observation.
+            #expect(controller.consume(confirmationAt(13.5), allowNewActions: false)
+                == .wait(.freshObservationRequired))
+            #expect(controller.actionsIssued == 2)
+            let retried = try #require(requireAction(controller.consume(confirmationAt(14))))
+            #expect(retried.requestID == 3)
+            #expect(retried.intent == .pressWideModalTopButton)
+            #expect(controller.actionsIssued == 3)
+        }
     }
 
     @Test("A delayed post starts its acknowledgement timeout without extending authorization")
