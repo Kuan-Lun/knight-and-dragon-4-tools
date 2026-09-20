@@ -528,21 +528,16 @@ struct AutoLevelControllerTests {
             ? .confirmRetreatWithoutTalisman : .pressWideModalTopButton))
         let confirmationPosted = controller.markActionPosted(confirmation, at: 5.5)
         #expect(confirmationPosted)
-        if state == .retreatConfirmation {
-            // The one-shot retreat confirmation never inherits a retry.
-            #expect(controller.consume(confirmationAt(13.5), allowNewActions: false)
-                == .stop(.actionDidNotAdvance(intent: confirmation.intent)))
-            #expect(controller.actionsIssued == 2)
-        } else {
-            // A generic dialog button retries, but never from a stale observation.
-            #expect(controller.consume(confirmationAt(13.5), allowNewActions: false)
-                == .wait(.freshObservationRequired))
-            #expect(controller.actionsIssued == 2)
-            let retried = try #require(requireAction(controller.consume(confirmationAt(14))))
-            #expect(retried.requestID == 3)
-            #expect(retried.intent == .pressWideModalTopButton)
-            #expect(controller.actionsIssued == 3)
-        }
+        // A confirmation the game never received is pressed again on the same sheet, but
+        // never from a stale observation: the one-shot authorization is not re-spent early.
+        #expect(controller.consume(confirmationAt(13.5), allowNewActions: false)
+            == .wait(.freshObservationRequired))
+        #expect(controller.actionsIssued == 2)
+        let retried = try #require(requireAction(controller.consume(confirmationAt(14))))
+        #expect(retried.requestID == 3)
+        #expect(retried.intent == confirmation.intent)
+        #expect(retried.target == confirmation.target)
+        #expect(controller.actionsIssued == 3)
     }
 
     @Test("A delayed post starts its acknowledgement timeout without extending authorization")
@@ -2497,6 +2492,91 @@ struct AutoLevelControllerTests {
             battleStatus: .stalledAfterDefeat
         )
         #expect(requireAction(controller.consume(stalled))?.intent == .requestRetreat)
+    }
+
+    @Test("A stalled-battle retreat the game never received retries twice before stopping")
+    func retreatRequestHasThreeAttemptBound() throws {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let stalled: (Double) -> AutoLevelSnapshot = { time in
+            self.makeSnapshot(
+                state: .battle, time: time, fingerprint: "frozen-battle",
+                gatedActions: [self.gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+                battleSessionID: "b1", allAutoStatus: .active, battleStatus: .stalledAfterDefeat
+            )
+        }
+        let first = try #require(requireAction(controller.consume(stalled(1))))
+        #expect(first.intent == .requestRetreat)
+        let firstPosted = controller.markActionPosted(first, at: 2)
+        #expect(firstPosted)
+        #expect(controller.consume(stalled(4.9)) == .wait(.awaitingFrameChange(intent: .requestRetreat)))
+        let second = try #require(requireAction(controller.consume(stalled(5))))
+        #expect(second.requestID == 2 && second.intent == .requestRetreat && second.target == first.target)
+        let secondPosted = controller.markActionPosted(second, at: 6)
+        #expect(secondPosted)
+        let third = try #require(requireAction(controller.consume(stalled(9))))
+        #expect(third.requestID == 3)
+        let thirdPosted = controller.markActionPosted(third, at: 10)
+        #expect(thirdPosted)
+        #expect(controller.consume(stalled(13)) == .stop(.actionDidNotAdvance(intent: .requestRetreat)))
+        #expect(controller.actionsIssued == 3)
+    }
+
+    @Test("A retried retreat still authorizes the confirmation sheet, which also retries")
+    func retriedRetreatAuthorizesConfirmationRetry() throws {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let stalled: (Double) -> AutoLevelSnapshot = { time in
+            self.makeSnapshot(
+                state: .battle, time: time, fingerprint: "frozen-battle",
+                gatedActions: [self.gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+                battleSessionID: "b1", allAutoStatus: .active, battleStatus: .stalledAfterDefeat
+            )
+        }
+        let sheet: (Double) -> AutoLevelSnapshot = { time in
+            self.makeSnapshot(
+                state: .retreatConfirmation, time: time, fingerprint: "sheet",
+                gatedActions: [self.gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
+            )
+        }
+        let first = try #require(requireAction(controller.consume(stalled(1))))
+        let firstPosted = controller.markActionPosted(first, at: 2)
+        #expect(firstPosted)
+        let retry = try #require(requireAction(controller.consume(stalled(5))))
+        #expect(retry.intent == .requestRetreat)
+        let retryPosted = controller.markActionPosted(retry, at: 6)
+        #expect(retryPosted)
+        // The sheet acknowledges the retried retreat and is confirmed once.
+        let confirmation = try #require(requireAction(controller.consume(sheet(7))))
+        #expect(confirmation.intent == .confirmRetreatWithoutTalisman)
+        let confirmationPosted = controller.markActionPosted(confirmation, at: 8)
+        #expect(confirmationPosted)
+        // A lost confirmation press leaves the same sheet: press it again, bounded.
+        let confirmationRetry = try #require(requireAction(controller.consume(sheet(11))))
+        #expect(confirmationRetry.intent == .confirmRetreatWithoutTalisman)
+        #expect(confirmationRetry.target == confirmation.target)
+        let confirmationRetryPosted = controller.markActionPosted(confirmationRetry, at: 12)
+        #expect(confirmationRetryPosted)
+        let thirdConfirmation = try #require(requireAction(controller.consume(sheet(15))))
+        let thirdPosted = controller.markActionPosted(thirdConfirmation, at: 16)
+        #expect(thirdPosted)
+        #expect(controller.consume(sheet(19)) == .stop(.actionDidNotAdvance(intent: .confirmRetreatWithoutTalisman)))
+        #expect(controller.actionsIssued == 5)
+    }
+
+    @Test("A timed-out retreat does not retry once the battle is no longer stalled")
+    func retreatRetryRequiresStalledBattle() throws {
+        var controller = makeController(policy: policy(actionCooldown: 0, postActionTimeout: 3))
+        let first = try #require(requireAction(controller.consume(makeSnapshot(
+            state: .battle, time: 1, fingerprint: "frozen-battle",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleSessionID: "b1", allAutoStatus: .active, battleStatus: .stalledAfterDefeat
+        ))))
+        let firstPosted = controller.markActionPosted(first, at: 2)
+        #expect(firstPosted)
+        #expect(controller.consume(makeSnapshot(
+            state: .battle, time: 5, fingerprint: "frozen-battle",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleSessionID: "b1", allAutoStatus: .active, battleStatus: .inProgress
+        )) == .stop(.actionDidNotAdvance(intent: .requestRetreat)))
     }
 
     @Test("Cancelling an unposted retreat resumes battle observations and preserves limits")

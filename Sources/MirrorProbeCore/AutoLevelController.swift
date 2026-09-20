@@ -912,6 +912,14 @@ public struct AutoLevelController: Sendable {
             ) {
                 return retry
             }
+            if let retry = retryTimedOutRetreatStep(
+                pendingAction,
+                with: snapshot,
+                at: now,
+                allowNewActions: allowNewActions
+            ) {
+                return retry
+            }
             return stop(.actionDidNotAdvance(intent: pendingAction.request.intent))
         }
 
@@ -1108,6 +1116,51 @@ public struct AutoLevelController: Sendable {
         }
         return issueActionRequest(
             .pressWideModalTopButton,
+            target: currentTarget,
+            from: snapshot,
+            at: now,
+            allowNewActions: allowNewActions,
+            postAttempt: pendingAction.postAttempt + 1
+        )
+    }
+
+    /// A retreat request or its confirmation press which the game never received leaves the
+    /// same stalled battle or the same confirmation sheet on screen. Nothing advanced, so
+    /// re-posting the same target repeats a decision already made rather than making a new
+    /// one: the retreat still requires stalled-defeat metadata on the fresh observation, and
+    /// the confirmation still requires its sheet. Each retry gets fresh input validation.
+    private mutating func retryTimedOutRetreatStep(
+        _ pendingAction: PendingAction,
+        with snapshot: AutoLevelSnapshot,
+        at now: TimeInterval,
+        allowNewActions: Bool
+    ) -> AutoLevelDecision? {
+        let intent = pendingAction.request.intent
+        guard pendingAction.postedAt != nil,
+              intent == .requestRetreat || intent == .confirmRetreatWithoutTalisman,
+              pendingAction.postAttempt < Self.maximumRetreatStepPostAttempts,
+              snapshot.classification.state == pendingAction.originState,
+              uncertainKind(for: snapshot.classification) == nil,
+              let currentTarget = uniqueMatchingCandidateTarget(for: intent, in: snapshot),
+              currentTarget == pendingAction.request.target,
+              currentTarget.isValid
+        else { return nil }
+        switch intent {
+        case .requestRetreat:
+            guard snapshot.classification.state == .battle,
+                  snapshot.runtime.battleStatus == .stalledAfterDefeat
+            else { return nil }
+        case .confirmRetreatWithoutTalisman:
+            guard snapshot.classification.state == .retreatConfirmation else { return nil }
+        default:
+            return nil
+        }
+
+        if let lastActionAt, now - lastActionAt < policy.actionCooldown {
+            return .wait(.actionCooldown(remaining: policy.actionCooldown - (now - lastActionAt)))
+        }
+        return issueActionRequest(
+            intent,
             target: currentTarget,
             from: snapshot,
             at: now,
@@ -1541,6 +1594,7 @@ public struct AutoLevelController: Sendable {
     private static let maximumMissionSuccessAdvancePostAttempts = 3
     private static let maximumMissionRepeatSelectionPostAttempts = 3
     private static let maximumWideModalPressPostAttempts = 3
+    private static let maximumRetreatStepPostAttempts = 3
 
     private func compactResultText(_ text: String) -> String {
         let compatible = text.precomposedStringWithCompatibilityMapping
