@@ -102,7 +102,7 @@ extension MirrorProbeRuntime {
             }
         }
 
-        guard posted else {
+        guard posted.posted else {
             guard let boundaryResult else {
                 throw ProbeError.unsafeWindow(
                     "the final character reroll boundary rejected input"

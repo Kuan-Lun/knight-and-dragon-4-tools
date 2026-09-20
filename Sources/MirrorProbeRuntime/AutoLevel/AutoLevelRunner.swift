@@ -1220,7 +1220,7 @@ extension MirrorProbeRuntime {
                         stopURL: stopURL
                     )
                     switch clickResult {
-                    case let .posted(postedAt):
+                    case let .posted(postedAt, cursorDisturbed):
                         guard controller.markActionPosted(request, at: postedAt) else {
                             throw ProbeError.unsafeWindow(
                                 "the controller refused the posted action acknowledgement window"
@@ -1261,7 +1261,7 @@ extension MirrorProbeRuntime {
                             )
                             return
                         }
-                        postedAfter = try await captureAutomationObservation(
+                        var afterPost = try await captureAutomationObservation(
                             requestedID: identity.windowID,
                             expectedIdentity: identity,
                             expectedFrame: windowRecovery.currentFrame ?? initialFrame,
@@ -1270,6 +1270,76 @@ extension MirrorProbeRuntime {
                             phase: "afterPost",
                             deadline: .actionAcknowledgement(postedAt + policy.postActionTimeout)
                         )
+                        // A tap lost to a concurrent mouse movement leaves the confirmed page
+                        // byte-identical. Re-post it now, through the same input boundary, on the
+                        // same confirmed target; the controller's timeout retry stays as backstop.
+                        var disturbed = cursorDisturbed
+                        var reposts = 0
+                        while AutomationClickRepostPolicy.shouldRepost(
+                            cursorDisturbed: disturbed,
+                            frameUnchanged: afterPost.fingerprint == preflight.fingerprint,
+                            repostsSoFar: reposts
+                        ) {
+                            reposts += 1
+                            try appendAutomationEvent(
+                                kind: "actionReposted",
+                                state: preflight.classification.state,
+                                decision: String(describing: decision),
+                                action: request.intent,
+                                target: request.target,
+                                frameFingerprint: preflight.fingerprint,
+                                detail: "cursorDisturbed=true, frameUnchanged=true, repost=\(reposts), "
+                                    + "maximumReposts=\(AutomationClickRepostPolicy.maximumReposts)",
+                                screenshotPath: nil,
+                                elapsed: afterPost.capturedAt - startedAt,
+                                report: &report,
+                                reportURL: reportURL
+                            )
+                            let repost = try postAutomationClick(
+                                request,
+                                confirmedTarget: confirmedTarget,
+                                using: preflight,
+                                activation: activation,
+                                identity: identity,
+                                expectedFrame: preflight.window.frame,
+                                inputMode: inputMode,
+                                actionDeadline: actionDeadline,
+                                sessionDeadline: sessionDeadline,
+                                stopURL: stopURL
+                            )
+                            guard case let .posted(_, repostDisturbed) = repost else {
+                                try appendAutomationEvent(
+                                    kind: "actionRepostRefused",
+                                    state: preflight.classification.state,
+                                    decision: String(describing: decision),
+                                    action: request.intent,
+                                    target: request.target,
+                                    frameFingerprint: preflight.fingerprint,
+                                    detail: "boundary=\(String(describing: repost)), noInputPosted=true",
+                                    screenshotPath: nil,
+                                    elapsed: ProcessInfo.processInfo.systemUptime - startedAt,
+                                    report: &report,
+                                    reportURL: reportURL
+                                )
+                                break
+                            }
+                            report.actionsPosted += 1
+                            disturbed = repostDisturbed
+                            let remaining = sessionDeadline.map {
+                                max(0, $0 - ProcessInfo.processInfo.systemUptime)
+                            }
+                            try await Task.sleep(for: .seconds(min(1, remaining ?? 1)))
+                            afterPost = try await captureAutomationObservation(
+                                requestedID: identity.windowID,
+                                expectedIdentity: identity,
+                                expectedFrame: windowRecovery.currentFrame ?? initialFrame,
+                                captureRecorder: captureRecorder,
+                                recovery: windowRecovery,
+                                phase: "afterRepost",
+                                deadline: .actionAcknowledgement(postedAt + policy.postActionTimeout)
+                            )
+                        }
+                        postedAfter = afterPost
                         focusBorrow?.restore()
                         break activationAttemptLoop
 

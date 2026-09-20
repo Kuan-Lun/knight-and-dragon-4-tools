@@ -193,7 +193,7 @@ enum AutomationActionPreflightResult {
 }
 
 enum AutomationClickResult {
-    case posted(at: TimeInterval)
+    case posted(at: TimeInterval, cursorDisturbed: Bool)
     case stopRequested
     case maximumRuntimeReached
     case foregroundActivationContended(detail: String)
@@ -263,5 +263,17 @@ struct AutomationBattleTracker {
         default:
             return false
         }
+    }
+}
+
+/// A tap posted while the user moves the mouse becomes a drag and is never received. When the
+/// cursor was found away from the click point and the next capture is byte-identical to the
+/// page the action was confirmed on, nothing happened: re-post right away instead of waiting
+/// for the controller's acknowledgement timeout, which remains the bounded backstop.
+enum AutomationClickRepostPolicy {
+    static let maximumReposts = 2
+
+    static func shouldRepost(cursorDisturbed: Bool, frameUnchanged: Bool, repostsSoFar: Int) -> Bool {
+        cursorDisturbed && frameUnchanged && repostsSoFar >= 0 && repostsSoFar < maximumReposts
     }
 }

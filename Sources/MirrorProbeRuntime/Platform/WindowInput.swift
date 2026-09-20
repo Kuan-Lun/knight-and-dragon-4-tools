@@ -5,11 +5,25 @@ import Foundation
 import MirrorProbeCore
 
 extension MirrorProbeRuntime {
+    /// Outcome of one posted mouse-down/up pair.
+    struct SingleClickPost {
+        let posted: Bool
+        /// The cursor was found away from the click point right after the events were posted:
+        /// a concurrent physical mouse movement, which turns the tap into a drag on the phone.
+        let cursorDisturbed: Bool
+        let cursorLocation: CGPoint?
+
+        static let refused = SingleClickPost(posted: false, cursorDisturbed: false, cursorLocation: nil)
+    }
+
+    /// Distance (points) beyond which the cursor is considered moved during the click.
+    static let clickCursorDisturbanceTolerance = 1.5
+
     static func postSingleClick(
         at point: CGPoint,
         processID: Int32? = nil,
         validateBeforePost: () throws -> Bool = { true }
-    ) throws -> Bool {
+    ) throws -> SingleClickPost {
         guard let mouseDown = CGEvent(
             mouseEventSource: nil,
             mouseType: .leftMouseDown,
@@ -27,7 +41,7 @@ extension MirrorProbeRuntime {
         AutomationInputMarker.mark(mouseUp)
 
         guard try validateBeforePost() else {
-            return false
+            return .refused
         }
         if let processID {
             mouseDown.postToPid(processID)
@@ -37,10 +51,17 @@ extension MirrorProbeRuntime {
         usleep(60_000)
         if let processID {
             mouseUp.postToPid(processID)
-        } else {
-            mouseUp.post(tap: .cghidEventTap)
+            return SingleClickPost(posted: true, cursorDisturbed: false, cursorLocation: nil)
         }
-        return true
+        mouseUp.post(tap: .cghidEventTap)
+        // HID-tap events move the cursor to the click point; a physical movement in between
+        // leaves it elsewhere. Give the queued events a moment before reading the location.
+        usleep(30_000)
+        let location = CGEvent(source: nil)?.location
+        let disturbed = location.map {
+            hypot($0.x - point.x, $0.y - point.y) > clickCursorDisturbanceTolerance
+        } ?? false
+        return SingleClickPost(posted: true, cursorDisturbed: disturbed, cursorLocation: location)
     }
 
     static func topmostInputWindow(

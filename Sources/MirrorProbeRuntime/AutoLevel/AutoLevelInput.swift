@@ -357,7 +357,7 @@ extension MirrorProbeRuntime {
                 throw ProbeError.unsafeWindow(message + "; " + diagnostic)
             }
         }
-        guard posted else {
+        guard posted.posted else {
             guard let boundaryResult else {
                 throw ProbeError.unsafeWindow(
                     "the final input boundary refused input without a classified reason"
@@ -373,7 +373,13 @@ extension MirrorProbeRuntime {
                 "the input was posted without a recorded authorization timestamp"
             )
         }
-        return .posted(at: authorizedPostTime)
+        if posted.cursorDisturbed {
+            let location = posted.cursorLocation.map { "[x=\($0.x),y=\($0.y)]" } ?? "unknown"
+            FileHandle.standardError.write(Data(
+                "clickCursorDisturbed: point=[x=\(clickPoint.x),y=\(clickPoint.y)], cursorAfterPost=\(location)\n".utf8
+            ))
+        }
+        return .posted(at: authorizedPostTime, cursorDisturbed: posted.cursorDisturbed)
     }
 
     /// `全部自動` is a persistent toggle, not an idempotent command. Keep a final
