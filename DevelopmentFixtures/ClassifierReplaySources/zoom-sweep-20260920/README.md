@@ -80,6 +80,13 @@ packaged App carrying the failure samples, completed 2 failure cycles with 4 act
 battle and the defeat dialog were all recognized and every action was acknowledged on the
 next capture.
 
+Middle levels with the certificate-signed 0.4.38 App: `logs/auto-level-20260920-154709.BuTJEA`
+at 328×722 (2 cycles, 5 actions, 17 s, starting from a defeat dialog through the failure page)
+and `logs/auto-level-20260920-154738.xCUR4t` at 367×806 (2 cycles, 5 actions, 29 s). Every
+action was acknowledged on the next capture; no awaitingFrameChange observation occurred.
+Live coverage is therefore 211, 328, 367 and 406 wide; 250, 289 and 439 wide are covered
+offline only.
+
 Offline:
 See `docs/testing.md` (zoom-level captures) and the regression suites
 `ZoomLevelResultRegressionTests`, `ZoomLevelBattleRegressionTests`,
