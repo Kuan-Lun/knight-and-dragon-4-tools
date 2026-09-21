@@ -2820,6 +2820,146 @@ struct AutoLevelControllerTests {
         #expect(controller.actionsIssued == 1)
     }
 
+    @Test("A focus-deferred unposted action is discarded and re-requested from a newer frame")
+    func foregroundDeferralDiscardsUnpostedAction() {
+        var controller = makeController(policy: policy(actionCooldown: 10))
+        guard let request = requireAction(controller.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 1,
+            fingerprint: "prompt",
+            actions: [gameAction(.pressWideModalTopButton)]
+        ))) else { return }
+
+        let differentRequest = AutoLevelActionRequest(
+            requestID: request.requestID + 1,
+            intent: request.intent,
+            target: request.target,
+            observedState: request.observedState,
+            frameFingerprint: request.frameFingerprint,
+            completedCycles: request.completedCycles
+        )
+        let cancelled = controller.cancelUnpostedActionForForegroundDeferral(differentRequest)
+        #expect(!cancelled)
+        let cancelled2 = controller.cancelUnpostedActionForForegroundDeferral(request)
+        #expect(cancelled2)
+        let cancelled3 = controller.cancelUnpostedActionForForegroundDeferral(request)
+        #expect(!cancelled3)
+        #expect(controller.actionsIssued == 1)
+        let marked = controller.markActionPosted(request, at: 2)
+        #expect(!marked)
+        #expect(controller.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 3,
+            fingerprint: "prompt",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )) == .wait(.actionCooldown(remaining: 8)))
+
+        let renewed = requireAction(controller.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 12,
+            fingerprint: "prompt-later",
+            actions: [gameAction(.pressWideModalTopButton)]
+        )))
+        #expect(renewed?.intent == .pressWideModalTopButton)
+        #expect(renewed?.requestID == request.requestID + 1)
+        #expect(renewed?.frameFingerprint == "prompt-later")
+        #expect(controller.actionsIssued == 2)
+    }
+
+    @Test("A posted action cannot be discarded by focus deferral")
+    func foregroundDeferralKeepsPostedAction() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        guard let request = requireAction(controller.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 1,
+            fingerprint: "prompt",
+            actions: [gameAction(.pressWideModalTopButton)]
+        ))) else { return }
+
+        let marked = controller.markActionPosted(request, at: 2)
+        #expect(marked)
+        let cancelled = controller.cancelUnpostedActionForForegroundDeferral(request)
+        #expect(!cancelled)
+        let decision = controller.consume(makeSnapshot(
+            state: .wideModalOneButton,
+            time: 3,
+            fingerprint: "prompt",
+            actions: [gameAction(.pressWideModalTopButton)]
+        ))
+        guard case .wait = decision else {
+            Issue.record("Expected the posted action to stay pending, got \(decision)")
+            return
+        }
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("Focus deferral of a retreat discards its recovery confirmation")
+    func foregroundDeferralOfRetreatDropsConfirmation() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        guard let request = requireAction(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        ))) else { return }
+
+        let cancelled = controller.cancelUnpostedActionForForegroundDeferral(request)
+        #expect(cancelled)
+        #expect(controller.consume(makeSnapshot(
+            state: .retreatConfirmation,
+            time: 2,
+            fingerprint: "external-confirmation",
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
+        )) == .stop(.retreatConfirmationWasNotRequested))
+        #expect(controller.actionsIssued == 1)
+    }
+
+    @Test("Focus deferral of an unposted retreat confirmation keeps its one-shot authorization")
+    func foregroundDeferralOfConfirmationRestoresAuthorization() {
+        var controller = makeController(policy: policy(actionCooldown: 0))
+        guard let retreat = requireAction(controller.consume(makeSnapshot(
+            state: .battle,
+            time: 1,
+            fingerprint: "stalled",
+            gatedActions: [gatedAction(.openBattleRetreatConfirmation, .temporalDefeatRecovery)],
+            battleStatus: .stalledAfterDefeat
+        ))) else { return }
+        let marked = controller.markActionPosted(retreat, at: 2)
+        #expect(marked)
+        guard let confirmation = requireAction(controller.consume(makeSnapshot(
+            state: .retreatConfirmation,
+            time: 3,
+            fingerprint: "requested-confirmation",
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
+        ))) else { return }
+        #expect(confirmation.intent == .confirmRetreatWithoutTalisman)
+
+        let cancelled = controller.cancelUnpostedActionForForegroundDeferral(confirmation)
+        #expect(cancelled)
+        guard let renewed = requireAction(controller.consume(makeSnapshot(
+            state: .retreatConfirmation,
+            time: 4,
+            fingerprint: "requested-confirmation-later",
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
+        ))) else { return }
+        #expect(renewed.intent == .confirmRetreatWithoutTalisman)
+        #expect(renewed.requestID == confirmation.requestID + 1)
+        #expect(controller.actionsIssued == 3)
+
+        // Once posted, the confirmation can neither be discarded nor authorized again.
+        let marked2 = controller.markActionPosted(renewed, at: 5)
+        #expect(marked2)
+        let cancelled2 = controller.cancelUnpostedActionForForegroundDeferral(renewed)
+        #expect(!cancelled2)
+        #expect(controller.consume(makeSnapshot(
+            state: .retreatConfirmation,
+            time: 6,
+            fingerprint: "requested-confirmation-later",
+            gatedActions: [gatedAction(.confirmNoTalismanRetreat, .explicitRetreatConfirmation)]
+        )) == .wait(.awaitingFrameChange(intent: .confirmRetreatWithoutTalisman)))
+    }
+
     @Test("Verified stalled defeat requests retreat without equipment metadata")
     func stalledDefeatNeedsNoEquipmentMetadata() {
         var controller = makeController()

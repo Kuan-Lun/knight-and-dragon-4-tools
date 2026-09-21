@@ -7,7 +7,6 @@ extension MirrorProbeRuntime {
     static func performAutoLevelLoop(
         initialObservation: AutomationObservation,
         identity: AutoLevelWindowIdentity,
-        initialFrame: CGRect,
         sessionID: String,
         inputMode: AutoLevelInputMode,
         captureLevel: AutoLevelCaptureLevel,
@@ -21,6 +20,7 @@ extension MirrorProbeRuntime {
         directoryURL: URL,
         reportURL: URL,
         stopURL: URL,
+        operations: AutoLevelLoopOperations,
         report: inout AutomationRunReport
     ) async throws {
         let policy = AutoLevelPolicy(
@@ -61,6 +61,7 @@ extension MirrorProbeRuntime {
         var previousTemporalFrame: AutomationTemporalFrame?
         var currentObservation: AutomationObservation? = initialObservation
         var lastObservation: AutomationObservation? = initialObservation
+        var foregroundDeferral = AutoLevelForegroundDeferralState()
         var lastLoggedSignature: String?
         var lastHeartbeatAt = startedAt
         var handledWindowContinuityGeneration: UInt64 = 0
@@ -92,15 +93,10 @@ extension MirrorProbeRuntime {
                 observation = supplied
                 currentObservation = nil
             } else {
-                try await Task.sleep(for: .seconds(pollInterval))
-                observation = try await captureAutomationObservation(
-                    requestedID: identity.windowID,
-                    expectedIdentity: identity,
-                    expectedFrame: windowRecovery.currentFrame ?? initialFrame,
-                    captureRecorder: captureRecorder,
-                    recovery: windowRecovery,
-                    phase: "observation",
-                    deadline: controller.pendingActionAcknowledgementDeadline.map(
+                try await operations.sleep(pollInterval)
+                observation = try await operations.captureObservation(
+                    "observation",
+                    controller.pendingActionAcknowledgementDeadline.map(
                         AutomationCaptureDeadline.actionAcknowledgement
                     )
                 )
@@ -133,7 +129,7 @@ extension MirrorProbeRuntime {
             lastObservation = observation
 
             try windowRecovery.checkSessionBoundary()
-            let observationDecisionAt = ProcessInfo.processInfo.systemUptime
+            let observationDecisionAt = operations.now()
             let freshness = freshnessRecovery.evaluate(
                 capturedAt: observation.capturedAt, now: observationDecisionAt
             )
@@ -500,16 +496,8 @@ extension MirrorProbeRuntime {
                 visualConfirmationCandidate = stallDetector.beginVisualConfirmation(from: sample)
             }
             if let confirmation = visualConfirmationCandidate {
-                let result = try await confirmAutomationVisualStability(
-                    confirmation,
-                    anchor: observation,
-                    identity: identity,
-                    expectedFrame: windowRecovery.currentFrame ?? initialFrame,
-                    inputGeneration: inputGeneration,
-                    sessionDeadline: windowRecovery.sessionDeadline,
-                    stopURL: stopURL,
-                    captureRecorder: captureRecorder,
-                    windowRecovery: windowRecovery
+                let result = try await operations.confirmVisualStability(
+                    confirmation, observation, inputGeneration
                 )
                 switch result {
                 case let .confirmed(confirmation, final, assessment):
@@ -617,7 +605,7 @@ extension MirrorProbeRuntime {
                 || observation.capturedAt - lastHeartbeatAt >= 30
             if shouldLog {
                 var detail = automationStallDetail(stallAssessment)
-                    + ", captureAgeSeconds=\(ProcessInfo.processInfo.systemUptime - observation.capturedAt)"
+                    + ", captureAgeSeconds=\(operations.now() - observation.capturedAt)"
                     + ", recognitionDurationSeconds=\(observation.recognitionDurationSeconds)"
                     + ", startupRecoveryEligible=\(startupBattleRecovery?.isEligible == true)"
                 if let recognitionRecovery {
@@ -714,7 +702,7 @@ extension MirrorProbeRuntime {
                         )
                         return
                     }
-                    let retryBoundaryNow = ProcessInfo.processInfo.systemUptime
+                    let retryBoundaryNow = operations.now()
                     guard retryBoundaryNow.isFinite,
                           retryBoundaryNow >= 0,
                           actionDeadline.isFinite,
@@ -757,8 +745,8 @@ extension MirrorProbeRuntime {
                         )
                     }
 
-                    var focusBorrow = inputMode == .foreground
-                        ? ForegroundFocusBorrow(targetProcessID: identity.processID)
+                    var focusBorrow: (any AutomationFocusBorrow)? = inputMode == .foreground
+                        ? operations.borrowFocus(identity.processID)
                         : nil
                     guard inputMode != .foreground || focusBorrow != nil else {
                         // macOS can briefly return AXError.noValue while the user switches
@@ -797,35 +785,51 @@ extension MirrorProbeRuntime {
                         )
                         switch retryDecision {
                         case let .retry(_, delayMilliseconds):
-                            try await Task.sleep(for: .milliseconds(delayMilliseconds))
+                            try await operations.sleep(Double(delayMilliseconds) / 1_000)
                             continue activationAttemptLoop
                         case let .exhausted(attempts):
-                            throw ProbeError.unsafeWindow(
-                                "the current focused application remained unavailable after "
-                                    + "\(attempts) attempts; "
-                                    + activationFailureDetails.joined(separator: " | ")
-                            )
+                            // Nothing was activated or posted. Discard this request rather than
+                            // the run and keep observing within a bounded patience; a later
+                            // request is minted from a newer frame and validated from scratch.
+                            let failure = "the current focused application remained unavailable after "
+                                + "\(attempts) attempts; "
+                                + activationFailureDetails.joined(separator: " | ")
+                            if let terminalReason = try await deferForegroundAction(
+                                reason: .focusUnavailable,
+                                request: request,
+                                observation: observation,
+                                failure: failure,
+                                controller: &controller,
+                                deferral: &foregroundDeferral,
+                                startedAt: startedAt,
+                                stopURL: stopURL,
+                                sessionDeadline: windowRecovery.sessionDeadline,
+                                now: operations.now,
+                                sleep: operations.sleep,
+                                report: &report,
+                                reportURL: reportURL
+                            ) {
+                                throw ProbeError.unsafeWindow(terminalReason)
+                            }
+                            continue automationLoop
                         }
                     }
                     defer { focusBorrow?.restore() }
-                    let preflightResult = try await activateAndPreflightAutomationAction(
-                        request,
-                        identity: identity,
-                        expectedFrame: windowRecovery.currentFrame ?? initialFrame,
-                        inputMode: inputMode,
-                        expectedFocusSourceProcessID: focusBorrow?.previousProcessID,
-                        activationAttempt: activationRetry.currentAttempt,
-                        activationSettleDelayMilliseconds: activationRetry
-                            .settleDelayMilliseconds,
-                        battleSessionID: battleID,
-                        allAutoStatus: allAutoStatus,
-                        battleStatus: battleStatus,
-                        captureRecorder: captureRecorder,
-                        windowRecovery: windowRecovery,
-                        actionDeadline: actionDeadline,
-                        expectedResultPage: expectedResultPage,
-                        battleRecognitionRecovery: recognitionRecovery,
-                        inputGeneration: inputGeneration
+                    let preflightResult = try await operations.activateAndPreflight(
+                        AutoLevelPreflightRequest(
+                            request: request,
+                            expectedFocusSourceProcessID: focusBorrow?.previousProcessID,
+                            activationAttempt: activationRetry.currentAttempt,
+                            activationSettleDelayMilliseconds: activationRetry
+                                .settleDelayMilliseconds,
+                            battleSessionID: battleID,
+                            allAutoStatus: allAutoStatus,
+                            battleStatus: battleStatus,
+                            actionDeadline: actionDeadline,
+                            expectedResultPage: expectedResultPage,
+                            battleRecognitionRecovery: recognitionRecovery,
+                            inputGeneration: inputGeneration
+                        )
                     )
                     let preflight: AutomationObservation
                     let confirmedTarget: AutoLevelActionTarget
@@ -867,13 +871,13 @@ extension MirrorProbeRuntime {
                             frameFingerprint: observation.fingerprint,
                             detail: detail,
                             screenshotPath: nil,
-                            elapsed: ProcessInfo.processInfo.systemUptime - startedAt,
+                            elapsed: operations.now() - startedAt,
                             report: &report,
                             reportURL: reportURL
                         )
                         switch retryDecision {
                         case let .retry(_, delayMilliseconds):
-                            try await Task.sleep(for: .milliseconds(delayMilliseconds))
+                            try await operations.sleep(Double(delayMilliseconds) / 1_000)
                             continue activationAttemptLoop
                         case let .exhausted(attempts):
                             throw ProbeError.unsafeWindow(
@@ -891,6 +895,10 @@ extension MirrorProbeRuntime {
                         preflight = observation
                         confirmedTarget = target
                         activation = activationSnapshot
+                        try recordForegroundRecovery(
+                            &foregroundDeferral, request: request, observation: observation,
+                            startedAt: startedAt, report: &report, reportURL: reportURL
+                        )
                         if applicationResolutionFailures > 0 {
                             try appendAutomationEvent(
                                 kind: "applicationResolutionRecovered",
@@ -913,6 +921,10 @@ extension MirrorProbeRuntime {
 
                     case let .stateChanged(observation, activationSnapshot):
                         focusBorrow?.restore()
+                        try recordForegroundRecovery(
+                            &foregroundDeferral, request: request, observation: observation,
+                            startedAt: startedAt, report: &report, reportURL: reportURL
+                        )
                         let confirmationEvidence = observation.classification.evidence.map {
                             "\($0.kind.rawValue): \($0.detail)"
                         }.joined(separator: " | ")
@@ -928,7 +940,7 @@ extension MirrorProbeRuntime {
                         ) {
                             lastObservation = observation
                             resultObservationFailures += 1
-                            let confirmationNow = ProcessInfo.processInfo.systemUptime
+                            let confirmationNow = operations.now()
                             let failureDetail = "requestID=\(request.requestID), "
                                 + "attempt=\(failedAttempt)/\(AutoLevelForegroundActivationRetryState.maximumAttempts), "
                                 + "expectedPage=\(String(describing: expectedResultPage)), "
@@ -961,7 +973,7 @@ extension MirrorProbeRuntime {
                             )
                             switch retryDecision {
                             case let .retry(_, delayMilliseconds):
-                                try await Task.sleep(for: .milliseconds(delayMilliseconds))
+                                try await operations.sleep(Double(delayMilliseconds) / 1_000)
                                 continue activationAttemptLoop
                             case let .exhausted(attempts):
                                 throw ProbeError.unsafeWindow(
@@ -1085,7 +1097,7 @@ extension MirrorProbeRuntime {
                                 report: &report,
                                 reportURL: reportURL
                             )
-                            try await Task.sleep(for: .milliseconds(delayMilliseconds))
+                            try await operations.sleep(Double(delayMilliseconds) / 1_000)
                             continue activationAttemptLoop
 
                         case let .exhausted(attempts):
@@ -1102,11 +1114,29 @@ extension MirrorProbeRuntime {
                                 report: &report,
                                 reportURL: reportURL
                             )
-                            throw ProbeError.unsafeWindow(
-                                "iPhone Mirroring could not be made active and frontmost after "
-                                    + "\(attempts) attempts; "
-                                    + activationFailureDetails.joined(separator: " | ")
-                            )
+                            // Focus was borrowed and given back; no input was posted. Discard
+                            // this request rather than the run, within the same bounded patience.
+                            let failure = "iPhone Mirroring could not be made active and frontmost after "
+                                + "\(attempts) attempts; "
+                                + activationFailureDetails.joined(separator: " | ")
+                            if let terminalReason = try await deferForegroundAction(
+                                reason: .focusContended,
+                                request: request,
+                                observation: observation,
+                                failure: failure,
+                                controller: &controller,
+                                deferral: &foregroundDeferral,
+                                startedAt: startedAt,
+                                stopURL: stopURL,
+                                sessionDeadline: windowRecovery.sessionDeadline,
+                                now: operations.now,
+                                sleep: operations.sleep,
+                                report: &report,
+                                reportURL: reportURL
+                            ) {
+                                throw ProbeError.unsafeWindow(terminalReason)
+                            }
+                            continue automationLoop
                         }
                     }
 
@@ -1207,18 +1237,15 @@ extension MirrorProbeRuntime {
                         )
                     }
 
-                    let clickResult = try postAutomationClick(
-                        request,
+                    let clickResult = try operations.postClick(AutoLevelClickRequest(
+                        request: request,
                         confirmedTarget: confirmedTarget,
-                        using: preflight,
+                        observation: preflight,
                         activation: activation,
-                        identity: identity,
                         expectedFrame: preflight.window.frame,
-                        inputMode: inputMode,
                         actionDeadline: actionDeadline,
-                        sessionDeadline: sessionDeadline,
-                        stopURL: stopURL
-                    )
+                        sessionDeadline: sessionDeadline
+                    ))
                     switch clickResult {
                     case let .posted(postedAt, cursorDisturbed):
                         guard controller.markActionPosted(request, at: postedAt) else {
@@ -1237,12 +1264,12 @@ extension MirrorProbeRuntime {
                         // Keep the successful borrow alive through the existing first after-frame,
                         // including the loop's defer. Do not repost a toggle if it has not changed.
                         let remainingRuntime = sessionDeadline.map {
-                            max(0, $0 - ProcessInfo.processInfo.systemUptime)
+                            max(0, $0 - operations.now())
                         }
-                        try await Task.sleep(for: .seconds(min(1, remainingRuntime ?? 1)))
+                        try await operations.sleep(min(1, remainingRuntime ?? 1))
                         let stoppedByUser = applicationStopRequest.isRequested(stopFileURL: stopURL)
                         if stoppedByUser || sessionDeadline.map({
-                            ProcessInfo.processInfo.systemUptime >= $0
+                            operations.now() >= $0
                         }) == true {
                             focusBorrow?.restore()
                             try finishAutomationRun(
@@ -1261,14 +1288,8 @@ extension MirrorProbeRuntime {
                             )
                             return
                         }
-                        var afterPost = try await captureAutomationObservation(
-                            requestedID: identity.windowID,
-                            expectedIdentity: identity,
-                            expectedFrame: windowRecovery.currentFrame ?? initialFrame,
-                            captureRecorder: captureRecorder,
-                            recovery: windowRecovery,
-                            phase: "afterPost",
-                            deadline: .actionAcknowledgement(postedAt + policy.postActionTimeout)
+                        var afterPost = try await operations.captureObservation(
+                            "afterPost", .actionAcknowledgement(postedAt + policy.postActionTimeout)
                         )
                         // A tap lost to a concurrent mouse movement leaves the confirmed page in
                         // place. Re-post it now, through the same input boundary, on the same
@@ -1309,18 +1330,15 @@ extension MirrorProbeRuntime {
                                 report: &report,
                                 reportURL: reportURL
                             )
-                            let repost = try postAutomationClick(
-                                request,
+                            let repost = try operations.postClick(AutoLevelClickRequest(
+                                request: request,
                                 confirmedTarget: confirmedTarget,
-                                using: preflight,
+                                observation: preflight,
                                 activation: activation,
-                                identity: identity,
                                 expectedFrame: preflight.window.frame,
-                                inputMode: inputMode,
                                 actionDeadline: actionDeadline,
-                                sessionDeadline: sessionDeadline,
-                                stopURL: stopURL
-                            )
+                                sessionDeadline: sessionDeadline
+                            ))
                             guard case let .posted(_, repostDisturbed) = repost else {
                                 try appendAutomationEvent(
                                     kind: "actionRepostRefused",
@@ -1331,7 +1349,7 @@ extension MirrorProbeRuntime {
                                     frameFingerprint: preflight.fingerprint,
                                     detail: "boundary=\(String(describing: repost)), noInputPosted=true",
                                     screenshotPath: nil,
-                                    elapsed: ProcessInfo.processInfo.systemUptime - startedAt,
+                                    elapsed: operations.now() - startedAt,
                                     report: &report,
                                     reportURL: reportURL
                                 )
@@ -1340,17 +1358,11 @@ extension MirrorProbeRuntime {
                             report.actionsPosted += 1
                             disturbed = repostDisturbed
                             let remaining = sessionDeadline.map {
-                                max(0, $0 - ProcessInfo.processInfo.systemUptime)
+                                max(0, $0 - operations.now())
                             }
-                            try await Task.sleep(for: .seconds(min(1, remaining ?? 1)))
-                            afterPost = try await captureAutomationObservation(
-                                requestedID: identity.windowID,
-                                expectedIdentity: identity,
-                                expectedFrame: windowRecovery.currentFrame ?? initialFrame,
-                                captureRecorder: captureRecorder,
-                                recovery: windowRecovery,
-                                phase: "afterRepost",
-                                deadline: .actionAcknowledgement(postedAt + policy.postActionTimeout)
+                            try await operations.sleep(min(1, remaining ?? 1))
+                            afterPost = try await operations.captureObservation(
+                                "afterRepost", .actionAcknowledgement(postedAt + policy.postActionTimeout)
                             )
                             comparison = try compareAutomationPageAfterClick(
                                 request: request, confirmedTarget: confirmedTarget,
@@ -1414,11 +1426,11 @@ extension MirrorProbeRuntime {
                                 frameFingerprint: preflight.fingerprint,
                                 detail: "\(detail), nextDelayMilliseconds=\(delayMilliseconds)",
                                 screenshotPath: nil,
-                                elapsed: ProcessInfo.processInfo.systemUptime - startedAt,
+                                elapsed: operations.now() - startedAt,
                                 report: &report,
                                 reportURL: reportURL
                             )
-                            try await Task.sleep(for: .milliseconds(delayMilliseconds))
+                            try await operations.sleep(Double(delayMilliseconds) / 1_000)
                             continue activationAttemptLoop
 
                         case let .exhausted(attempts):
@@ -1431,7 +1443,7 @@ extension MirrorProbeRuntime {
                                 frameFingerprint: preflight.fingerprint,
                                 detail: detail,
                                 screenshotPath: nil,
-                                elapsed: ProcessInfo.processInfo.systemUptime - startedAt,
+                                elapsed: operations.now() - startedAt,
                                 report: &report,
                                 reportURL: reportURL
                             )

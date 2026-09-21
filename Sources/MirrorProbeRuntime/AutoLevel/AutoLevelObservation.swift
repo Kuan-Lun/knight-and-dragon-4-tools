@@ -73,7 +73,7 @@ extension MirrorProbeRuntime {
         return AutomationCapturedFrame(
             capturedAt: capturedAt,
             windowContinuityGeneration: recovery.generation,
-            window: window,
+            window: AutomationWindowSnapshot(window),
             image: normalized.image,
             rgba: rgba,
             layout: normalized.layout,

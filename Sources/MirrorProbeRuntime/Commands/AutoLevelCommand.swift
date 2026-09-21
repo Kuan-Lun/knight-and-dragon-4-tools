@@ -163,7 +163,6 @@ extension MirrorProbeRuntime {
             try await performAutoLevelLoop(
                 initialObservation: initialObservation,
                 identity: identity,
-                initialFrame: initialFrame,
                 sessionID: sessionID,
                 inputMode: inputMode,
                 captureLevel: captureLevel,
@@ -177,6 +176,14 @@ extension MirrorProbeRuntime {
                 directoryURL: directoryURL,
                 reportURL: reportURL,
                 stopURL: stopURL,
+                operations: .live(
+                    identity: identity,
+                    initialFrame: initialFrame,
+                    inputMode: inputMode,
+                    captureRecorder: captureRecorder,
+                    windowRecovery: windowRecovery,
+                    stopURL: stopURL
+                ),
                 report: &report
             )
         } catch let interruption as AutomationCaptureInterruption {

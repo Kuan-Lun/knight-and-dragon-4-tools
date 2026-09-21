@@ -29,6 +29,14 @@ struct ForegroundApplicationFocusSnapshot: Codable {
 }
 
 enum ForegroundApplicationFocus {
+    /// Applied on every read. The system-wide element's timeout is the process-wide default,
+    /// and other system-wide callers in this process set their own value before each call.
+    static let messagingTimeoutSeconds: Float = 0.25
+    /// One retry after kAXErrorCannotComplete, which reports a frontmost application that is
+    /// busy or not yet answering Accessibility, for example while another application launches
+    /// and takes focus. A longer second wait separates a slow answer from a missing one.
+    static let retryMessagingTimeoutSeconds: Float = 1
+
     static var currentApplication: NSRunningApplication? {
         read().application
     }
@@ -37,15 +45,31 @@ enum ForegroundApplicationFocus {
     /// system-wide attribute has no value; the candidate still needs a live AXFrontmost true.
     static func read() -> ForegroundApplicationFocusSnapshot {
         let systemWide = AXUIElementCreateSystemWide()
-        let timeoutError = AXUIElementSetMessagingTimeout(systemWide, 0.25)
-        guard timeoutError == .success else {
-            return failure(timeoutError, reason: "messagingTimeoutUnavailable")
-        }
-
         var value: CFTypeRef?
-        let attributeError = AXUIElementCopyAttributeValue(
-            systemWide, kAXFocusedApplicationAttribute as CFString, &value
-        )
+        var attributeError = AXError.cannotComplete
+        var retried = false
+        for timeout in [messagingTimeoutSeconds, retryMessagingTimeoutSeconds] {
+            let timeoutError = AXUIElementSetMessagingTimeout(systemWide, timeout)
+            guard timeoutError == .success else {
+                return failure(timeoutError, reason: "messagingTimeoutUnavailable")
+            }
+            value = nil
+            attributeError = AXUIElementCopyAttributeValue(
+                systemWide, kAXFocusedApplicationAttribute as CFString, &value
+            )
+            guard attributeError == .cannotComplete, !retried else { break }
+            retried = true
+            FileHandle.standardError.write(Data(
+                "focusReadRetry: accessibilityError=\(attributeError.rawValue), "
+                    .appending("timeoutSeconds=\(retryMessagingTimeoutSeconds), ")
+                    .appending("outcome=retryingAfterCannotComplete\n")
+                    .utf8
+            ))
+        }
+        if retried {
+            // The longer wait belongs to that retry only; keep the process-wide default short.
+            AXUIElementSetMessagingTimeout(systemWide, messagingTimeoutSeconds)
+        }
         guard attributeError == .success else {
             let unavailable = failure(attributeError, reason: "focusedApplicationUnavailable")
             guard attributeError == .noValue else { return unavailable }
@@ -75,7 +99,7 @@ enum ForegroundApplicationFocus {
             source: "AXFocusedApplication",
             fallbackCandidateProcessID: nil,
             fallbackAccessibilityError: nil,
-            outcome: "focusedApplicationConfirmed"
+            outcome: retried ? "focusedApplicationConfirmedAfterRetry" : "focusedApplicationConfirmed"
         )
     }
 

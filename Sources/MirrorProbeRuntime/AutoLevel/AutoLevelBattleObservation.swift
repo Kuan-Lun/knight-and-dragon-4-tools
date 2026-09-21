@@ -29,7 +29,7 @@ extension MirrorProbeRuntime {
     }
 
     static func automationBattleContext(
-        window: SCWindow,
+        window: AutomationWindowSnapshot,
         rgba: RGBAFrame,
         identity: AutoLevelWindowIdentity
     ) -> BattleWindowContext {

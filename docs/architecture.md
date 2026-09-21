@@ -57,6 +57,10 @@ A requested action then requires a newer preflight, trusted target geometry,
 window/focus continuity and an unexpired input authorization. Only a posted
 event counts as input. A later observation must acknowledge the action before
 the controller can move on.
+When the focused application cannot be read before a focus borrow, or another
+process keeps focus after activation, the unposted request is discarded and
+observation resumes; `AutoLevelForegroundDeferralState` bounds that patience to
+two minutes per episode, with growing backoff between attempts.
 
 The reroll runner obtains independent full-frame/focused OCR and rendered-digit
 evidence, waits for stability, then performs a final pixel guard before Random.
@@ -78,16 +82,20 @@ an observable completion criterion so subsequent work can be committed separatel
 runner still owns substantial mutable state. Moving the code into a target does
 not by itself decouple capture, time, input and persistence.
 
-Introduce narrow interfaces for a monotonic clock, observed window frames, input
-posting and report storage. Start with battle-session lifecycle and preflight
-transactions; keep the live runner calling the same extracted operations that
-tests exercise. Avoid a second, test-only implementation of the loop.
+The auto-level loop now receives `AutoLevelLoopOperations`: its clock, sleeps,
+captures, visual-stability bursts, focus borrows, activation preflights and
+clicks are injected, with `live` binding the macOS implementations and
+`AutomationWindowSnapshot` replacing the live `SCWindow` inside observations.
+`AutoLevelLoopForegroundDeferralTests` drives the unchanged production loop
+offline through those seams. Report storage and the reroll runner are still
+coupled to the filesystem and platform; keep extending the same seams rather
+than adding a second, test-only implementation of the loop.
 
 Completion tests should drive the production workflow through:
 
 - successful result/repeat selection, posted action, acknowledgement and next battle;
 - stale observations that acknowledge past input but cannot authorize new input;
-- focus contention followed by a completely new preflight;
+- focus contention or an unreadable focus, deferred and followed by a completely new preflight (covered);
 - STOP/expiry during capture or retries, including focus cleanup and terminal report;
 - capture/persistence failure and loss of window continuity;
 - startup-frozen recovery versus a later frozen battle.

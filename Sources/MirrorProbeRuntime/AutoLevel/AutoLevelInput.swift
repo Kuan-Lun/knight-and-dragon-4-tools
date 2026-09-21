@@ -238,7 +238,7 @@ extension MirrorProbeRuntime {
             )
         }
         guard observation.window.windowID == identity.windowID,
-              observation.window.owningApplication?.processID == identity.processID,
+              observation.window.processID == identity.processID,
               approximatelyEqual(observation.window.frame, expectedFrame, tolerance: 0.5)
         else {
             throw ProbeError.unsafeWindow("the preflight window identity or geometry changed")

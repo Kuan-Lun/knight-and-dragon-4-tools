@@ -713,6 +713,37 @@ public struct AutoLevelController: Sendable {
         return true
     }
 
+    /// Discards an unposted action because foreground focus could not be borrowed or kept for
+    /// it. The caller resumes observations; a later request is minted only from a newer snapshot
+    /// after the cooldown, with the issued-action count consumed like every other cancellation.
+    /// A discarded retreat loses its recovery confirmation, exactly like `cancelUnpostedRetreat`.
+    /// A discarded retreat confirmation regains its one-shot authorization: issuing it consumed
+    /// that authorization, yet no input was posted, so the same sheet may still be confirmed
+    /// once from a newer frame. A posted action is never discarded here.
+    public mutating func cancelUnpostedActionForForegroundDeferral(
+        _ request: AutoLevelActionRequest
+    ) -> Bool {
+        guard terminalReason == nil,
+              let pendingAction,
+              pendingAction.request == request,
+              pendingAction.postedAt == nil
+        else {
+            return false
+        }
+
+        self.pendingAction = nil
+        uncertainty = nil
+        switch request.intent {
+        case .requestRetreat:
+            recoveryConfirmationAuthorized = false
+        case .confirmRetreatWithoutTalisman:
+            recoveryConfirmationAuthorized = true
+        default:
+            break
+        }
+        return true
+    }
+
     /// Starts the acknowledgement timeout only after the caller confirms that the authorized
     /// input was posted. The original request time continues to bound preflight authorization;
     /// this method never creates a new request or expands that input deadline.

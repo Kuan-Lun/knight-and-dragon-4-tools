@@ -50,7 +50,7 @@ to Swift tests; launcher/CLI subprocess coverage is not merged into that file.
 | Core unit tests | Policy boundaries, target geometry, retries, frame validation, detector evidence | Real macOS input delivery |
 | Saved-frame replays | Actual retained PNG classification and explicit multi-frame scenarios | Unrecorded portions of live runs |
 | Filesystem/process integration | Kernel run-lock contention/release, symlink/hardlink/permission rejection | End-to-end application launch locking |
-| Runtime tests | Production command parsing, offline analysis and report persistence/termination | The whole live capture/input loop |
+| Runtime tests | Production command parsing, offline analysis, report persistence/termination, and the automation loop itself driven through scripted platform operations (`AutoLevelLoopOperations`) | Real window capture, focus reads and input delivery |
 | CLI integration | Actual executable dispatch, exit codes, stdout JSON, output files and invalid inputs | Screen Recording/Accessibility permissions |
 | Launcher integration | Real shell scripts with fake `open`/`codesign`, argument and report contracts | Launch Services or real signing identity |
 

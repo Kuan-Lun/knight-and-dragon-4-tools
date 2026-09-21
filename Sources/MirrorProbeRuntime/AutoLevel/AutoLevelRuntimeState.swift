@@ -3,11 +3,37 @@ import Foundation
 import MirrorProbeCore
 import ScreenCaptureKit
 
+/// The window facts the automation loop reads from a capture. A value type, so tests can
+/// build observations without a live ScreenCaptureKit window; the loop never needs more.
+struct AutomationWindowSnapshot: Equatable, Sendable {
+    let windowID: UInt32
+    let processID: Int32?
+    let frame: CGRect
+    /// ScreenCaptureKit streaming state; recorded for capture diagnostics, never used as focus.
+    let isActive: Bool
+
+    init(windowID: UInt32, processID: Int32?, frame: CGRect, isActive: Bool) {
+        self.windowID = windowID
+        self.processID = processID
+        self.frame = frame
+        self.isActive = isActive
+    }
+
+    init(_ window: SCWindow) {
+        self.init(
+            windowID: window.windowID,
+            processID: window.owningApplication?.processID,
+            frame: window.frame,
+            isActive: window.isActive
+        )
+    }
+}
+
 /// Capture time precedes recognition so its latency never becomes sampled stability.
 struct AutomationCapturedFrame {
     let capturedAt: TimeInterval
     let windowContinuityGeneration: UInt64
-    let window: SCWindow
+    let window: AutomationWindowSnapshot
     /// Recognition canvas (see MirrorContentLayout); identical to the capture at 406x890.
     let image: CGImage
     let rgba: RGBAFrame
@@ -19,7 +45,7 @@ struct AutomationObservation {
     let capturedAt: TimeInterval
     let recognitionDurationSeconds: TimeInterval
     let windowContinuityGeneration: UInt64
-    let window: SCWindow
+    let window: AutomationWindowSnapshot
     /// Recognition canvas; action targets are canvas-normalized (see MirrorContentLayout).
     let image: CGImage
     let rgba: RGBAFrame
