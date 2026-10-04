@@ -1280,13 +1280,13 @@ public struct AutoLevelController: Sendable {
 
         case .requestRetreat:
             // The battle can finish while a posted retreat is being acknowledged, so the
-            // first captured continuation may already be its failure result. An unposted
+            // first captured continuation may already be a success or failure result. An unposted
             // request still needs the caller's separate preflight cancellation path.
             return to == .retreatConfirmation
                 || to == .defeatPrompt
                 || genericModalStates.contains(to)
                 || (actionWasPosted && (from == .battle || from == .unknown)
-                    && (to == .missionFailed || to == .missionFailedRepeatSelected))
+                    && isMissionResultState(to))
 
         case .confirmRetreatWithoutTalisman:
             return to == .defeatPrompt

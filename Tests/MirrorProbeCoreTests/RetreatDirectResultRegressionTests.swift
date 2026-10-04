@@ -5,30 +5,38 @@ import ImageIO
 import Testing
 @testable import MirrorProbeCore
 
-@Suite("Native retreat to failure result regression")
-struct RetreatDirectFailureRegressionTests {
-    @Test("Posted retreat accepts the recorded result and continues with repeat selection exactly once")
-    func replayNativeTransition() throws {
+@Suite("Native retreat to mission result regression")
+struct RetreatDirectResultRegressionTests {
+    @Test("Posted retreat accepts the recorded result and continues exactly once", arguments: [
+        ("retreat-direct-failure", [182, 183], GameState.missionFailed,
+         AutoLevelCycleOutcome.failure, GameActionName.selectMissionRepeat, AutoLevelActionIntent.selectMissionRepeat),
+        ("retreat-direct-success", [1052, 1053], GameState.missionCompleteRepeatSelected,
+         AutoLevelCycleOutcome.success, GameActionName.advanceMissionComplete, AutoLevelActionIntent.advanceMissionSuccess),
+    ])
+    func replayNativeTransition(
+        resourcePrefix: String, captureSequences: [Int], resultState: GameState,
+        outcome: AutoLevelCycleOutcome, nextAction: GameActionName, nextIntent: AutoLevelActionIntent
+    ) throws {
         let manifestURL = try #require(Bundle.module.url(
-            forResource: "retreat-direct-failure-sequence", withExtension: "json"
+            forResource: resourcePrefix + "-sequence", withExtension: "json"
         ))
         let fixtures = try JSONDecoder().decode(
             Manifest.self, from: Data(contentsOf: manifestURL)
         ).sequence
-        #expect(fixtures.map(\.captureSequence) == [182, 183])
+        #expect(fixtures.map(\.captureSequence) == captureSequences)
         let before = try #require(fixtures.first), final = try #require(fixtures.last)
         let beforeState = try classify(before), finalState = try classify(final)
         #expect(beforeState.state == .battle)
         #expect(VisualBattleEvidence.hasTrustedRetreat(in: beforeState))
-        #expect(finalState.state == .missionFailed)
-        #expect(finalState.allowedActions.map(\.name) == [.selectMissionRepeat])
+        #expect(finalState.state == resultState)
+        #expect(finalState.allowedActions.map(\.name) == [nextAction])
 
         let identity = AutoLevelWindowIdentity(processID: 91507, windowID: 65194)
         var controller = AutoLevelController(
-            session: .init(sessionID: "retreat-direct-failure", startedAt: 0, windowIdentity: identity),
+            session: .init(sessionID: resourcePrefix, startedAt: 0, windowIdentity: identity),
             policy: .init(actionCooldown: 0)
         )
-        // The source run's event 127 independently confirmed progress and a 13-sample stall.
+        // Each manifest records the source event that confirmed progress and a dense stall.
         // Replay supplies that runtime fact; a single fixture never establishes retreat proof.
         let beforeSnapshot = AutoLevelSnapshot(
             classification: beforeState,
@@ -52,7 +60,7 @@ struct RetreatDirectFailureRegressionTests {
                            frameFingerprint: final.frameFingerprint)
         )
         #expect(controller.consume(result, allowNewActions: false) == .completedCycle(
-            .init(count: 1, outcome: .failure)
+            .init(count: 1, outcome: outcome)
         ))
         #expect(controller.pendingActionAcknowledgementDeadline == nil)
         #expect(controller.actionsIssued == 1)
@@ -62,12 +70,12 @@ struct RetreatDirectFailureRegressionTests {
         #expect(controller.completedCycles == 1)
         #expect(controller.actionsIssued == 1)
 
-        let repeatRequest = try action(controller.consume(result))
-        #expect(repeatRequest.intent == .selectMissionRepeat)
-        #expect(repeatRequest.target == AutoLevelActionTarget(
+        let continuation = try action(controller.consume(result))
+        #expect(continuation.intent == nextIntent)
+        #expect(continuation.target == AutoLevelActionTarget(
             try #require(finalState.allowedActions.first).target
         ))
-        #expect(repeatRequest.requestID == retreat.requestID + 1)
+        #expect(continuation.requestID == retreat.requestID + 1)
         #expect(controller.completedCycles == 1)
         #expect(controller.actionsIssued == 2)
     }

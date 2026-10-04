@@ -2328,50 +2328,54 @@ struct AutoLevelControllerTests {
         #expect(controller.actionsIssued == 1)
     }
 
-    @Test("A posted retreat may reach either failure result directly and resume the next cycle",
-          arguments: [GameState.missionFailed, .missionFailedRepeatSelected])
-    func postedRetreatDirectFailureContinues(state: GameState) throws {
+    @Test("A posted retreat may reach any mission result directly and resume the next cycle",
+          arguments: [GameState.missionComplete, .missionCompleteRepeatSelected,
+                      .missionFailed, .missionFailedRepeatSelected])
+    func postedRetreatDirectResultContinues(state: GameState) throws {
         var (controller, retreat) = try makePendingRetreatController(
             policy: policy(actionCooldown: 0)
         )
-        let failureAt: (Double) -> AutoLevelSnapshot = { time in
+        let isSuccess = state == .missionComplete || state == .missionCompleteRepeatSelected
+        let needsSelection = state == .missionComplete || state == .missionFailed
+        let outcome: AutoLevelCycleOutcome = isSuccess ? .success : .failure
+        let advanceIntent: AutoLevelActionIntent = isSuccess ? .advanceMissionSuccess : .advanceMissionFailure
+        let resultAt: (Double) -> AutoLevelSnapshot = { time in
             self.makeSnapshot(
                 state: state,
                 time: time,
-                fingerprint: "direct-failure",
-                actions: [self.gameAction(state == .missionFailed
+                fingerprint: "direct-result",
+                actions: [self.gameAction(needsSelection
                     ? .selectMissionRepeat : .advanceMissionComplete)]
             )
         }
 
-        #expect(controller.consume(failureAt(2), allowNewActions: false)
-            == .completedCycle(.init(count: 1, outcome: .failure)))
+        #expect(controller.consume(resultAt(2), allowNewActions: false)
+            == .completedCycle(.init(count: 1, outcome: outcome)))
         #expect(controller.pendingActionAcknowledgementDeadline == nil)
         #expect(controller.actionsIssued == 1)
         let repostedRetreat = controller.markActionPosted(retreat, at: 2)
         #expect(!repostedRetreat)
-        #expect(controller.consume(failureAt(2.5), allowNewActions: false)
+        #expect(controller.consume(resultAt(2.5), allowNewActions: false)
             == .wait(.freshObservationRequired))
         #expect(controller.completedCycles == 1)
         #expect(controller.actionsIssued == 1)
 
-        var advance = try #require(requireAction(controller.consume(failureAt(3))))
+        var advance = try #require(requireAction(controller.consume(resultAt(3))))
         #expect(advance.requestID == 2)
-        #expect(advance.intent == (state == .missionFailed
-            ? .selectMissionRepeat : .advanceMissionFailure))
-        if state == .missionFailed {
+        #expect(advance.intent == (needsSelection ? .selectMissionRepeat : advanceIntent))
+        if needsSelection {
             let selectionPosted = controller.markActionPosted(advance, at: 3.5)
             #expect(selectionPosted)
             advance = try #require(requireAction(controller.consume(makeSnapshot(
-                state: .missionFailedRepeatSelected,
+                state: isSuccess ? .missionCompleteRepeatSelected : .missionFailedRepeatSelected,
                 time: 4,
-                fingerprint: "failure-now-selected",
+                fingerprint: "result-now-selected",
                 actions: [gameAction(.advanceMissionComplete)]
             ))))
-            #expect(advance.intent == .advanceMissionFailure)
+            #expect(advance.intent == advanceIntent)
         }
         #expect(controller.completedCycles == 1)
-        #expect(controller.actionsIssued == (state == .missionFailed ? 3 : 2))
+        #expect(controller.actionsIssued == (needsSelection ? 3 : 2))
         let advancePosted = controller.markActionPosted(advance, at: 4.5)
         #expect(advancePosted)
         #expect(controller.consume(makeSnapshot(
@@ -2388,14 +2392,15 @@ struct AutoLevelControllerTests {
         )) == .completedCycle(.init(count: 2, outcome: .failure)))
     }
 
-    @Test("A direct failure result does not acknowledge an unposted retreat",
-          arguments: [GameState.missionFailed, .missionFailedRepeatSelected])
-    func unpostedRetreatDirectFailureStops(state: GameState) throws {
+    @Test("A direct mission result does not acknowledge an unposted retreat",
+          arguments: [GameState.missionComplete, .missionCompleteRepeatSelected,
+                      .missionFailed, .missionFailedRepeatSelected])
+    func unpostedRetreatDirectResultStops(state: GameState) throws {
         var (controller, _) = try makePendingRetreatController(posted: false)
         #expect(controller.consume(makeSnapshot(
             state: state,
             time: 2,
-            fingerprint: "external-failure"
+            fingerprint: "external-result"
         )) == .stop(.unexpectedTransition(
             intent: .requestRetreat,
             from: .battle,
@@ -2405,15 +2410,18 @@ struct AutoLevelControllerTests {
         #expect(controller.actionsIssued == 1)
     }
 
-    @Test("A direct failure after retreat grants no later OCR confirmation authorization",
-          arguments: [GameState.missionFailed, .missionFailedRepeatSelected])
-    func postedRetreatDirectFailureDoesNotAuthorizeConfirmation(state: GameState) throws {
+    @Test("A direct mission result after retreat grants no later OCR confirmation authorization",
+          arguments: [GameState.missionComplete, .missionCompleteRepeatSelected,
+                      .missionFailed, .missionFailedRepeatSelected])
+    func postedRetreatDirectResultDoesNotAuthorizeConfirmation(state: GameState) throws {
         var (controller, _) = try makePendingRetreatController()
+        let outcome: AutoLevelCycleOutcome = state == .missionComplete || state == .missionCompleteRepeatSelected
+            ? .success : .failure
         #expect(controller.consume(makeSnapshot(
             state: state,
             time: 2,
-            fingerprint: "direct-failure"
-        )) == .completedCycle(.init(count: 1, outcome: .failure)))
+            fingerprint: "direct-result"
+        )) == .completedCycle(.init(count: 1, outcome: outcome)))
         #expect(controller.consume(makeSnapshot(
             state: .retreatConfirmation,
             time: 3,
@@ -2423,16 +2431,18 @@ struct AutoLevelControllerTests {
         #expect(controller.actionsIssued == 1)
     }
 
-    @Test("A directly observed selected failure keeps the repeat toggle latched")
-    func postedRetreatDirectSelectedFailureKeepsRepeatLatch() throws {
+    @Test("A directly observed selected result keeps the repeat toggle latched",
+          arguments: [GameState.missionCompleteRepeatSelected, .missionFailedRepeatSelected])
+    func postedRetreatDirectSelectedResultKeepsRepeatLatch(state: GameState) throws {
         var (controller, _) = try makePendingRetreatController()
+        let isSuccess = state == .missionCompleteRepeatSelected
         #expect(controller.consume(makeSnapshot(
-            state: .missionFailedRepeatSelected,
+            state: state,
             time: 2,
-            fingerprint: "direct-selected-failure"
-        )) == .completedCycle(.init(count: 1, outcome: .failure)))
+            fingerprint: "direct-selected-result"
+        )) == .completedCycle(.init(count: 1, outcome: isSuccess ? .success : .failure)))
         #expect(controller.consume(makeSnapshot(
-            state: .missionFailed,
+            state: isSuccess ? .missionComplete : .missionFailed,
             time: 3,
             fingerprint: "selected-marker-missed",
             actions: [gameAction(.selectMissionRepeat)]
@@ -2441,28 +2451,31 @@ struct AutoLevelControllerTests {
         #expect(controller.actionsIssued == 1)
     }
 
-    @Test("Direct failure acknowledgement retains the original fingerprint and deadline guards")
-    func postedRetreatDirectFailureKeepsAcknowledgementGuards() throws {
+    @Test("Direct result acknowledgement retains the original fingerprint and deadline guards",
+          arguments: [GameState.missionComplete, .missionCompleteRepeatSelected,
+                      .missionFailed, .missionFailedRepeatSelected])
+    func postedRetreatDirectResultKeepsAcknowledgementGuards(state: GameState) throws {
         var (controller, retreat) = try makePendingRetreatController()
         #expect(controller.pendingActionAcknowledgementDeadline == 9.5)
         #expect(controller.consume(makeSnapshot(
-            state: .missionFailed,
+            state: state,
             time: 2,
             fingerprint: retreat.frameFingerprint
         )) == .wait(.awaitingFrameChange(intent: .requestRetreat)))
         #expect(controller.completedCycles == 0)
         #expect(controller.pendingActionAcknowledgementDeadline == 9.5)
         #expect(controller.consume(makeSnapshot(
-            state: .missionFailed,
+            state: state,
             time: 9.5,
-            fingerprint: "failure-at-deadline"
+            fingerprint: "result-at-deadline"
         )) == .stop(.actionDidNotAdvance(intent: .requestRetreat)))
         #expect(controller.completedCycles == 0)
         #expect(controller.actionsIssued == 1)
     }
 
-    @Test("A posted retreat still rejects success results and stops on full inventory",
-          arguments: [GameState.missionComplete, .missionCompleteRepeatSelected, .inventoryFull])
+    @Test("A posted retreat still rejects unrelated states and stops on full inventory",
+          arguments: [GameState.lootCollectionConfirmation, .adventurerRecruitment,
+                      .battleEventPrompt, .inventoryFull])
     func postedRetreatStillRejectsUnrelatedStates(state: GameState) throws {
         var (controller, _) = try makePendingRetreatController()
         let expected: AutoLevelStopReason = state == .inventoryFull
@@ -2477,36 +2490,43 @@ struct AutoLevelControllerTests {
         #expect(controller.actionsIssued == 1)
     }
 
-    @Test("A direct failure cannot acknowledge retreat from a different window")
-    func postedRetreatDirectFailureRejectsWindowChange() throws {
+    @Test("A direct mission result cannot acknowledge retreat from a different window",
+          arguments: [GameState.missionComplete, .missionCompleteRepeatSelected,
+                      .missionFailed, .missionFailedRepeatSelected])
+    func postedRetreatDirectResultRejectsWindowChange(state: GameState) throws {
         var (controller, _) = try makePendingRetreatController()
         let changedWindow = AutoLevelWindowIdentity(processID: 11, windowID: 33)
         #expect(controller.consume(makeSnapshot(
-            state: .missionFailed,
+            state: state,
             time: 2,
-            fingerprint: "different-window-failure",
+            fingerprint: "different-window-result",
             windowIdentity: changedWindow
         )) == .stop(.windowIdentityChanged(expected: testWindow, actual: changedWindow)))
         #expect(controller.completedCycles == 0)
         #expect(controller.actionsIssued == 1)
     }
 
-    @Test("A direct failure after retreat retains cycle, runtime, and action limits",
-          arguments: ["cycles", "runtime", "actions"])
-    func postedRetreatDirectFailureKeepsRunLimits(limit: String) throws {
+    @Test("A direct mission result after retreat retains cycle, runtime, and action limits",
+          arguments: ["cycles", "runtime", "actions"],
+          [GameState.missionComplete, .missionCompleteRepeatSelected,
+           .missionFailed, .missionFailedRepeatSelected])
+    func postedRetreatDirectResultKeepsRunLimits(limit: String, state: GameState) throws {
         var (controller, _) = try makePendingRetreatController(policy: policy(
             maxCycles: limit == "cycles" ? 1 : 100,
             maxRuntime: limit == "runtime" ? 2 : 100,
             maxActions: limit == "actions" ? 1 : 100
         ))
+        let outcome: AutoLevelCycleOutcome = state == .missionComplete || state == .missionCompleteRepeatSelected
+            ? .success : .failure
+        let needsSelection = state == .missionComplete || state == .missionFailed
         let result = makeSnapshot(
-            state: .missionFailed,
+            state: state,
             time: 2,
-            fingerprint: "direct-failure",
-            actions: [gameAction(.selectMissionRepeat)]
+            fingerprint: "direct-result",
+            actions: [gameAction(needsSelection ? .selectMissionRepeat : .advanceMissionComplete)]
         )
         if limit == "cycles" {
-            #expect(controller.consume(result) == .completedCycle(.init(count: 1, outcome: .failure)))
+            #expect(controller.consume(result) == .completedCycle(.init(count: 1, outcome: outcome)))
             #expect(controller.consume(result) == .stop(.maximumCyclesReached(limit: 1)))
         } else {
             #expect(controller.consume(result) == .stop(limit == "runtime"
